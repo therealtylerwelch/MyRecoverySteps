@@ -420,6 +420,18 @@
               <path {...s} d="M13 3l-7 9h5l-1 9 7-10h-5l1-8Z"/>
             </svg>
           );
+        case 'mtb':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <circle {...s} cx="5.5" cy="17" r="3.4"/>
+              <circle {...s} cx="18.5" cy="17" r="3.4"/>
+              <path {...s} d="M5.5 17 L12 17 L9.5 9 L16 9 L12 17"/>
+              <path {...s} d="M5.5 17 L9.5 9"/>
+              <path {...s} d="M16 9 L18.5 17"/>
+              <path {...s} d="M8.6 9 H10.6"/>
+              <path {...s} d="M16 9 L17.7 7.7"/>
+            </svg>
+          );
         case 'target':
           return (
             <svg viewBox="0 0 24 24" style={base}>
@@ -597,7 +609,8 @@
           { id: 6, name: '25 Mile Club',    description: 'Walk 25+ miles total',          unlocked: false, mile: 25 },
           { id: 7, name: '50 Mile Club',    description: 'Walk 50+ miles total',          unlocked: false, mile: 50 },
           { id: 8, name: 'Marathon Master', description: 'Walk 26.2 miles total',         unlocked: false, icon: 'flag' },
-          { id: 9, name: '100 Mile Club',   description: 'Walk 100+ miles total',         unlocked: false, mile: 100 }
+          { id: 9, name: '100 Mile Club',   description: 'Walk 100+ miles total',         unlocked: false, mile: 100 },
+          { id: 10, name: 'Send It',        description: 'Log a Mountain Bike activity',  unlocked: false, icon: 'mtb' }
         ]
       };
 
