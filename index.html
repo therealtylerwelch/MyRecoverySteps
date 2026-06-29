@@ -105,6 +105,15 @@
       box-shadow:
         0 2px 10px rgba(116, 172, 223, 0.50),
         inset 0 1px 0  rgba(255, 255, 255, 0.60);
+      transition: filter 0.2s;
+    }
+    .bar.is-max {
+      background: linear-gradient(to top,
+        rgba(246, 180, 14, 0.70) 0%,
+        rgba(251, 218, 106, 0.98) 100%);
+      box-shadow:
+        0 2px 12px rgba(246, 180, 14, 0.55),
+        inset 0 1px 0 rgba(255, 255, 255, 0.65);
     }
 
     /* ── Responsive grids ── */
@@ -130,6 +139,20 @@
     @media (max-width: 620px) { .badge-grid { grid-template-columns: repeat(2, 1fr); } }
 
     /* ── Scrollable chart ── */
+    .chart-wrap { position: relative; }
+    .chart-wrap.has-overflow::before,
+    .chart-wrap.has-overflow::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 30px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .chart-wrap.has-overflow::before { left: 0;  background: linear-gradient(to right, rgba(8,38,86,0.92), transparent); }
+    .chart-wrap.has-overflow::after  { right: 0; background: linear-gradient(to left,  rgba(8,38,86,0.92), transparent); }
+
     .chart-scroll {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
@@ -137,6 +160,96 @@
       padding-bottom: 2px;
     }
     .chart-scroll::-webkit-scrollbar { display: none; }
+
+    .scroll-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      color: rgba(160, 210, 255, 0.65);
+      margin-top: 12px;
+    }
+    .scroll-hint svg { animation: nudge 1.8s ease-in-out infinite; }
+    .scroll-hint .r svg { transform: scaleX(-1); }
+    @keyframes nudge {
+      0%, 100% { opacity: 0.4; transform: translateX(0); }
+      50%      { opacity: 1;   transform: translateX(2px); }
+    }
+
+    /* ── Calendar ── */
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: clamp(5px, 1.4vw, 8px);
+    }
+    .cal-dow {
+      text-align: center;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: rgba(160, 210, 255, 0.55);
+      padding-bottom: 4px;
+    }
+    .cal-cell {
+      aspect-ratio: 1 / 1;
+      border-radius: 11px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .cal-num { font-size: clamp(10px, 2vw, 13px); font-weight: 600; line-height: 1; }
+    .cal-dist { font-size: 8px; font-weight: 700; margin-top: 2px; line-height: 1; }
+    .cal-twice {
+      position: absolute;
+      top: 4px;
+      right: 5px;
+      font-size: 8px;
+      color: #FBDA6A;
+      line-height: 1;
+    }
+    .cal-today { outline: 2px solid rgba(251, 218, 106, 0.85); outline-offset: 1px; }
+
+    /* ── Wordmark ── */
+    .wordmark { display: flex; align-items: center; gap: clamp(12px, 3vw, 16px); }
+    .wordmark-badge {
+      width: clamp(46px, 11vw, 60px);
+      height: clamp(46px, 11vw, 60px);
+      flex: 0 0 auto;
+      border-radius: 17px;
+      background: linear-gradient(145deg, #FBDA6A 0%, #F6B40E 60%, #E09A00 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow:
+        0 8px 22px rgba(246, 180, 14, 0.38),
+        inset 0 2px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -2px 4px rgba(160, 110, 0, 0.30);
+    }
+    .wordmark-eyebrow {
+      font-size: clamp(9px, 2vw, 11px);
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(251, 218, 106, 0.85);
+      margin-bottom: 3px;
+    }
+    .wordmark-title {
+      font-size: clamp(26px, 6.5vw, 40px);
+      font-weight: 800;
+      letter-spacing: -1px;
+      line-height: 0.95;
+      background: linear-gradient(115deg, #FFFFFF 0%, #E8F4FF 38%, #74ACDF 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
 
     /* ── BETA pill ── */
     .beta-pill {
@@ -152,7 +265,7 @@
       color: rgba(190, 225, 255, 0.92);
       vertical-align: middle;
       position: relative;
-      top: -2px;
+      top: -3px;
     }
 
     /* ── Badge glow ── */
@@ -161,6 +274,29 @@
         0 6px 24px rgba(246, 180, 14, 0.22),
         inset 0 1.5px 0 rgba(255, 255, 255, 0.35);
     }
+
+    /* ── Insights ── */
+    .insight-list { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 11px; }
+    .insight-list li {
+      display: flex;
+      gap: 11px;
+      font-size: clamp(12px, 2vw, 14px);
+      line-height: 1.6;
+      color: rgba(220, 238, 255, 0.92);
+    }
+    .insight-list li .ico {
+      flex: 0 0 auto;
+      width: 22px;
+      height: 22px;
+      border-radius: 7px;
+      background: rgba(246, 180, 14, 0.16);
+      border: 1px solid rgba(246, 180, 14, 0.40);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    .insight-list li b { color: #FBDA6A; font-weight: 700; }
   </style>
 </head>
 <body>
@@ -173,6 +309,128 @@
     const BLUE_LIGHT = '#E8F4FF';
     const BLUE_MID   = '#74ACDF';
     const BLUE_DIM   = 'rgba(160, 210, 255, 0.80)';
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    /* ── Modern monoline badge / UI icons ── */
+    const Icon = ({ name, c = '#fff', size = 30, sw = 1.8 }) => {
+      const base = { width: size, height: size, display: 'block' };
+      const s = { fill: 'none', stroke: c, strokeWidth: sw, strokeLinecap: 'round', strokeLinejoin: 'round' };
+      const t = { fill: c, stroke: 'none' };
+      switch (name) {
+        case 'footprints':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              {/* back foot (lower-left) */}
+              <ellipse {...t} cx="8" cy="15" rx="2.4" ry="3.4"/>
+              <circle {...t} cx="5.8" cy="10.2" r="0.95"/>
+              <circle {...t} cx="8" cy="9.1" r="1.05"/>
+              <circle {...t} cx="10.1" cy="10" r="0.9"/>
+              {/* front foot (upper-right) */}
+              <ellipse {...t} cx="16" cy="11" rx="2.4" ry="3.4"/>
+              <circle {...t} cx="13.9" cy="6.2" r="0.9"/>
+              <circle {...t} cx="16" cy="5.1" r="1.05"/>
+              <circle {...t} cx="18.1" cy="6" r="0.95"/>
+            </svg>
+          );
+        case 'shield':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M12 3l7 2.6v4.9c0 4.4-3 7.4-7 8.9-4-1.5-7-4.5-7-8.9V5.6L12 3Z"/>
+              <path {...s} d="M12.6 8.2l-2.4 4h2.4l-1.2 3.6 3.4-4.6h-2.4L12.6 8.2Z"/>
+            </svg>
+          );
+        case 'crown':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M4 8.5l3.4 3 4.6-6 4.6 6 3.4-3v9.5H4V8.5Z"/>
+              <path {...s} d="M4 18.5h16"/>
+              <circle {...t} cx="12" cy="9.6" r="1"/>
+            </svg>
+          );
+        case 'flame':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M12.5 3c.5 2.6 2.3 3.6 3.2 5.4.7 1.4.8 3 .2 4.4A4.7 4.7 0 0 1 7 12.4c0-1.5.6-2.6 1.4-3.5.3 1 .9 1.6 1.7 1.7-.7-2.6.4-5.3 2.4-7.6Z"/>
+            </svg>
+          );
+        case 'sparkles':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M8 4l1.1 3L12 8l-2.9 1L8 12l-1.1-3L4 8l2.9-1L8 4Z"/>
+              <path {...s} d="M16.5 12l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2Z"/>
+            </svg>
+          );
+        case 'flag':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M6 3v18"/>
+              <path {...s} d="M6 4.5h12l-2.4 3.3L18 11H6"/>
+              <path {...s} d="M9 4.5v6.5M12 4.5v6.5"/>
+            </svg>
+          );
+        case 'medal':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M8.5 3l2 5M15.5 3l-2 5"/>
+              <circle {...s} cx="12" cy="14.5" r="6"/>
+            </svg>
+          );
+        case 'arrow':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M5 12h14M13 6l6 6-6 6"/>
+            </svg>
+          );
+        case 'chevron':
+          return (
+            <svg viewBox="0 0 24 24" style={{ width: size, height: size, display: 'block' }}>
+              <path {...s} d="M9 6l6 6-6 6"/>
+            </svg>
+          );
+        case 'bolt':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M13 3l-7 9h5l-1 9 7-10h-5l1-8Z"/>
+            </svg>
+          );
+        case 'target':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <circle {...s} cx="12" cy="12" r="8"/><circle {...s} cx="12" cy="12" r="4"/><circle {...t} cx="12" cy="12" r="1.3"/>
+            </svg>
+          );
+        case 'layers':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <path {...s} d="M12 4l8 4-8 4-8-4 8-4Z"/><path {...s} d="M4 12l8 4 8-4M4 16l8 4 8-4"/>
+            </svg>
+          );
+        case 'calendar':
+          return (
+            <svg viewBox="0 0 24 24" style={base}>
+              <rect {...s} x="4" y="5" width="16" height="15" rx="2.5"/>
+              <path {...s} d="M4 9h16M8 3v4M16 3v4"/>
+            </svg>
+          );
+        default:
+          return null;
+      }
+    };
+
+    /* ── Medal icon with a number baked in (mile clubs) ── */
+    const MileIcon = ({ value, c, size = 30 }) => (
+      <svg viewBox="0 0 24 24" style={{ width: size, height: size, display: 'block' }}>
+        <path d="M8.5 3l2 5M15.5 3l-2 5" fill="none" stroke={c} strokeWidth="1.8" strokeLinecap="round" />
+        <circle cx="12" cy="14.5" r="6.3" fill="none" stroke={c} strokeWidth="1.8" />
+        <text x="12" y="16.6" textAnchor="middle" fontSize={value >= 100 ? 5 : 6.4} fontWeight="700" fill={c} stroke="none" fontFamily="-apple-system, sans-serif">{value}</text>
+      </svg>
+    );
+
+    const BadgeArt = ({ icon, value, color, size }) => (
+      value != null
+        ? <MileIcon value={value} c={color} size={size} />
+        : <Icon name={icon} c={color} size={size} />
+    );
 
     const StatCard = ({ label, value, unit, variant }) => {
       const isGold = variant === 'gold';
@@ -194,16 +452,95 @@
       );
     };
 
+    const SectionTitle = ({ icon, children, right }) => (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+          <Icon name={icon} c={BLUE_MID} size={18} sw={2} />
+          <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{children}</h2>
+        </div>
+        {right}
+      </div>
+    );
+
+    /* ── Monthly calendar ── */
+    const Calendar = ({ year, monthIndex, activeMap, twiceDays, today }) => {
+      const firstDow    = new Date(year, monthIndex, 1).getDay();
+      const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+      const cells = [];
+      for (let i = 0; i < firstDow; i++) cells.push(null);
+      for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+
+      return (
+        <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
+          <SectionTitle
+            icon="calendar"
+            right={<span style={{ fontSize: '12px', fontWeight: 600, color: GOLD_LIGHT }}>{MONTHS[monthIndex]} {year}</span>}
+          >
+            Activity Calendar
+          </SectionTitle>
+          <div className="cal-grid" style={{ marginBottom: '8px' }}>
+            {['S','M','T','W','T','F','S'].map((d, i) => <div key={i} className="cal-dow">{d}</div>)}
+          </div>
+          <div className="cal-grid">
+            {cells.map((d, i) => {
+              if (d === null) return <div key={i} />;
+              const dist   = activeMap[d];
+              const active = dist != null;
+              const twice  = twiceDays.includes(d);
+              const isToday = d === today;
+              return (
+                <div
+                  key={i}
+                  className={'cal-cell ' + (active ? 'glass-gold' : 'glass-dim') + (isToday ? ' cal-today' : '')}
+                  style={{ opacity: active ? 1 : 0.5 }}
+                >
+                  {twice && <span className="cal-twice">✦</span>}
+                  <span className="cal-num" style={{ color: active ? GOLD_LIGHT : BLUE_DIM }}>{d}</span>
+                  {active && <span className="cal-dist" style={{ color: 'rgba(251,218,106,0.85)' }}>{dist.toFixed(1)}</span>}
+                </div>
+              );
+            })}
+          </div>
+          <div style={{ display: 'flex', gap: '16px', marginTop: '14px', fontSize: '10px', color: BLUE_DIM, fontWeight: 500 }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: 'rgba(246,180,14,0.55)', border: '1px solid rgba(246,180,14,0.7)' }} /> Walked
+            </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ color: GOLD_LIGHT, fontSize: '11px' }}>✦</span> Two walks
+            </span>
+          </div>
+        </div>
+      );
+    };
+
+    const MiniStat = ({ icon, label, value, unit }) => (
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '11px', padding: '12px 14px', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(116,172,223,0.22)' }}>
+        <div style={{ width: '34px', height: '34px', flex: '0 0 auto', borderRadius: '10px', background: 'rgba(116,172,223,0.16)', border: '1px solid rgba(116,172,223,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon name={icon} c={BLUE_LIGHT} size={18} sw={2} />
+        </div>
+        <div>
+          <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{label}</div>
+          <div style={{ fontSize: 'clamp(16px, 3vw, 19px)', fontWeight: 300, color: BLUE_LIGHT, lineHeight: 1.1 }}>
+            {value} <span style={{ fontSize: '11px', color: BLUE_MID, fontWeight: 500 }}>{unit}</span>
+          </div>
+        </div>
+      </div>
+    );
+
     const WalkTracker = () => {
       const realData = {
+        year: 2026,
+        monthIndex: 5,          // June (0-based)
+        today: 29,
+        updated: 'June 29, 2026',
         currentStreak: 1,
+        longestStreak: 5,
+        longestStreakLabel: 'Jun 7–11',
+        totalWalks: 19,
+        activeDays: 18,
         totalDistance: 10.7,
-        lastActivity: {
-          date: '2026-06-29',
-          distance: 0.89,
-          duration: 1567,
-          pace: 29.3
-        },
+        twiceDailyDays: [11],
+        lastActivity: { date: '2026-06-29', distance: 0.89, duration: 1567, pace: 29.3 },
         dailyData: [
           { date: 'Jun 3',  distance: 0.33 },
           { date: 'Jun 4',  distance: 0.33 },
@@ -225,32 +562,57 @@
           { date: 'Jun 29', distance: 0.89 }
         ],
         badges: [
-          { id: 1, name: 'First Steps',    description: 'Complete your first walk',       unlocked: true,  icon: '👣' },
-          { id: 2, name: '5-Day Warrior',  description: '5 consecutive days walked',      unlocked: true,  icon: '⚔️' },
-          { id: 3, name: '10-Day Legend',  description: '10 consecutive days walked',     unlocked: false, icon: '👑' },
-          { id: 4, name: 'Marathon Master',description: 'Single walk of 26.2 miles',      unlocked: false, icon: '🏃' },
-          { id: 5, name: '100 Mile Club',  description: 'Walk 100+ miles',                unlocked: false, icon: '💯' },
-          { id: 6, name: '14-Day Streak',  description: '14 consecutive days walked',     unlocked: false, icon: '🔥' },
-          { id: 7, name: 'Twice Daily',    description: '2 walks in one day',             unlocked: true,  icon: '⭐' }
+          { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true,  icon: 'footprints' },
+          { id: 2, name: '5-Day Warrior',   description: '5 consecutive days walked',     unlocked: true,  icon: 'shield' },
+          { id: 3, name: 'Twice Daily',     description: '2 walks in one day',            unlocked: true,  icon: 'sparkles' },
+          { id: 4, name: '10-Day Legend',   description: '10 consecutive days walked',    unlocked: false, icon: 'crown' },
+          { id: 5, name: '14-Day Streak',   description: '14 consecutive days walked',    unlocked: false, icon: 'flame' },
+          { id: 6, name: '25 Mile Club',    description: 'Walk 25+ miles total',          unlocked: false, mile: 25 },
+          { id: 7, name: '50 Mile Club',    description: 'Walk 50+ miles total',          unlocked: false, mile: 50 },
+          { id: 8, name: 'Marathon Master', description: 'Walk 26.2 miles total',         unlocked: false, icon: 'flag' },
+          { id: 9, name: '100 Mile Club',   description: 'Walk 100+ miles total',         unlocked: false, mile: 100 }
         ]
       };
 
       const [data] = React.useState(realData);
+      const scrollRef = React.useRef(null);
+      const [overflow, setOverflow] = React.useState(false);
+      React.useEffect(() => {
+        const check = () => {
+          const e = scrollRef.current;
+          if (e) setOverflow(e.scrollWidth > e.clientWidth + 4);
+        };
+        check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+      }, []);
+
       const unlockedCount = data.badges.filter(b => b.unlocked).length;
-      const maxDistance   = Math.max(...data.dailyData.map(d => d.distance));
+      const dists         = data.dailyData.map(d => d.distance);
+      const maxDistance   = Math.max(...dists);
+      const avgDistance   = dists.reduce((a, b) => a + b, 0) / dists.length;
       const pct           = (data.totalDistance / 100) * 100;
+
+      const activeMap = {};
+      data.dailyData.forEach(d => { activeMap[parseInt(d.date.split(' ')[1], 10)] = d.distance; });
 
       return (
         <div className="glass-shell" style={{ padding: 'clamp(20px, 4vw, 40px)' }}>
 
-          {/* ── Header ── */}
+          {/* ── Header / wordmark ── */}
           <div style={{ marginBottom: 'clamp(20px, 4vw, 36px)' }}>
-            <h1 style={{ fontSize: 'clamp(22px, 5vw, 32px)', fontWeight: 600, color: W(0.96), letterSpacing: '-0.6px', marginBottom: '8px' }}>
-              My Recovery Steps
-              <span className="beta-pill">BETA</span>
-            </h1>
-            <p style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', color: BLUE_MID, fontWeight: 400, lineHeight: 1.55 }}>
-              Tracking daily walking progress · Powered by Strava MCP
+            <div className="wordmark">
+              <div className="wordmark-badge">
+                <Icon name="footprints" c="#0f3d6b" size={30} sw={2} />
+              </div>
+              <div>
+                <div className="wordmark-eyebrow">My Recovery</div>
+                <span className="wordmark-title">STEPS</span>
+                <span className="beta-pill">BETA</span>
+              </div>
+            </div>
+            <p style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', color: BLUE_MID, fontWeight: 400, lineHeight: 1.55, marginTop: '12px' }}>
+              Tracking daily walking progress · Powered by Strava MCP + Claude Opus 4.8
             </p>
           </div>
 
@@ -279,85 +641,138 @@
             </div>
           </div>
 
-          {/* ── Chart ── */}
+          {/* ── Calendar ── */}
+          <Calendar
+            year={data.year}
+            monthIndex={data.monthIndex}
+            activeMap={activeMap}
+            twiceDays={data.twiceDailyDays}
+            today={data.today}
+          />
+
+          {/* ── Daily Distance Trend ── */}
           <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
-            <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Daily Distance Trend
-            </h2>
-            <div className="chart-scroll">
-              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '160px', minWidth: 'min-content' }}>
-                {data.dailyData.map((day, idx) => (
-                  <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '0 0 auto', minWidth: '34px' }}>
-                    <div style={{ fontSize: '8px', color: BLUE_LIGHT, fontWeight: 700, marginBottom: '3px', height: '12px', textAlign: 'center' }}>
-                      {day.distance}
+            <SectionTitle icon="bolt">Daily Distance Trend</SectionTitle>
+
+            <div style={{ display: 'flex', gap: 'clamp(8px, 2vw, 12px)', marginBottom: '16px', flexWrap: 'wrap' }}>
+              <MiniStat icon="target" label="Average / day" value={avgDistance.toFixed(2)} unit="mi" />
+              <MiniStat icon="medal"  label="Longest walk"  value={maxDistance.toFixed(2)} unit="mi" />
+            </div>
+
+            <div className={'chart-wrap' + (overflow ? ' has-overflow' : '')}>
+              <div className="chart-scroll" ref={scrollRef}>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '160px', minWidth: 'min-content', padding: '0 4px' }}>
+                  {data.dailyData.map((day, idx) => (
+                    <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '0 0 auto', minWidth: '34px' }}>
+                      <div style={{ fontSize: '8px', color: day.distance === maxDistance ? GOLD_LIGHT : BLUE_LIGHT, fontWeight: 700, marginBottom: '3px', height: '12px', textAlign: 'center' }}>
+                        {day.distance}
+                      </div>
+                      <div
+                        className={'bar' + (day.distance === maxDistance ? ' is-max' : '')}
+                        style={{ width: '18px', height: `${(day.distance / maxDistance) * 120}px`, minHeight: '6px' }}
+                      />
+                      <div style={{ fontSize: '8px', color: BLUE_DIM, marginTop: '5px', fontWeight: 500, textAlign: 'center' }}>
+                        {day.date.split(' ')[1]}
+                      </div>
                     </div>
-                    <div
-                      className="bar"
-                      style={{ width: '18px', height: `${(day.distance / maxDistance) * 120}px`, minHeight: '6px' }}
-                    />
-                    <div style={{ fontSize: '8px', color: BLUE_DIM, marginTop: '5px', fontWeight: 500, textAlign: 'center' }}>
-                      {day.date.split(' ')[1]}
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             </div>
+
+            {overflow && (
+              <div className="scroll-hint">
+                <span className="l"><Icon name="chevron" c="rgba(160,210,255,0.65)" size={13} sw={2.4} /></span>
+                Scroll to see all {data.dailyData.length} days
+                <span className="r"><Icon name="chevron" c="rgba(160,210,255,0.65)" size={13} sw={2.4} /></span>
+              </div>
+            )}
           </div>
 
           {/* ── Badges ── */}
           <div style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 'clamp(12px, 2vw, 16px)' }}>
-              <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Badges Earned
-              </h2>
-              <span style={{
-                fontSize: '12px', fontWeight: 500, color: GOLD,
-                background: 'rgba(203,161,53,0.15)',
-                border: '1px solid rgba(203,161,53,0.32)',
-                borderRadius: '20px', padding: '3px 11px'
-              }}>
-                {unlockedCount} / {data.badges.length}
-              </span>
-            </div>
+            <SectionTitle
+              icon="crown"
+              right={
+                <span style={{
+                  fontSize: '12px', fontWeight: 500, color: GOLD,
+                  background: 'rgba(203,161,53,0.15)',
+                  border: '1px solid rgba(203,161,53,0.32)',
+                  borderRadius: '20px', padding: '3px 11px'
+                }}>
+                  {unlockedCount} / {data.badges.length}
+                </span>
+              }
+            >
+              Badges Earned
+            </SectionTitle>
             <div className="badge-grid">
-              {data.badges.map(badge => (
-                <div
-                  key={badge.id}
-                  className={badge.unlocked ? 'glass-gold badge-glow' : 'glass-dim'}
-                  style={{
-                    padding: 'clamp(10px, 2.5vw, 16px)',
-                    borderRadius: '16px',
-                    textAlign: 'center',
-                    opacity: badge.unlocked ? 1 : 0.65,
-                  }}
-                >
-                  <div style={{ fontSize: 'clamp(22px, 4vw, 30px)', marginBottom: '6px', lineHeight: 1 }}>{badge.icon}</div>
-                  <div style={{ fontSize: 'clamp(10px, 1.8vw, 12px)', fontWeight: 700, color: badge.unlocked ? GOLD_LIGHT : BLUE_DIM, marginBottom: '4px', lineHeight: 1.2 }}>
-                    {badge.name}
+              {data.badges.map(badge => {
+                const col = badge.unlocked ? GOLD_LIGHT : BLUE_DIM;
+                return (
+                  <div
+                    key={badge.id}
+                    className={badge.unlocked ? 'glass-gold badge-glow' : 'glass-dim'}
+                    style={{
+                      padding: 'clamp(10px, 2.5vw, 16px)',
+                      borderRadius: '16px',
+                      textAlign: 'center',
+                      opacity: badge.unlocked ? 1 : 0.6,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
+                      <BadgeArt icon={badge.icon} value={badge.mile} color={col} size={30} />
+                    </div>
+                    <div style={{ fontSize: 'clamp(10px, 1.8vw, 12px)', fontWeight: 700, color: col, marginBottom: '4px', lineHeight: 1.2 }}>
+                      {badge.name}
+                    </div>
+                    <div style={{ fontSize: '10px', color: badge.unlocked ? 'rgba(251,218,106,0.75)' : BLUE_DIM, lineHeight: 1.35 }}>{badge.description}</div>
+                    {badge.unlocked && (
+                      <div style={{ marginTop: '7px', fontSize: '10px', color: GOLD, fontWeight: 600, letterSpacing: '0.3px' }}>✓ Unlocked</div>
+                    )}
                   </div>
-                  <div style={{ fontSize: '10px', color: badge.unlocked ? 'rgba(251,218,106,0.75)' : BLUE_DIM, lineHeight: 1.35 }}>{badge.description}</div>
-                  {badge.unlocked && (
-                    <div style={{ marginTop: '7px', fontSize: '10px', color: GOLD, fontWeight: 600, letterSpacing: '0.3px' }}>✓ Unlocked</div>
-                  )}
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
 
-          {/* ── Insights ── */}
-          <div className="glass-blue" style={{ padding: 'clamp(14px, 3vw, 22px)', borderRadius: '20px' }}>
-            <h3 style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', fontWeight: 600, color: BLUE_LIGHT, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Walking Insights
-            </h3>
+          {/* ── Recovery Insights ── */}
+          <div className="glass-blue" style={{ padding: 'clamp(16px, 3vw, 24px)', borderRadius: '20px' }}>
+            <SectionTitle icon="target">Recovery Insights</SectionTitle>
             <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400 }}>
-              Great work on your walking routine! You've completed 19 walks totaling 10.7 miles since June 1st. Your longest streak was 5 consecutive days (Jun 7–11), and you've already unlocked 3 badges including the "Twice Daily" achievement. Keep building consistency to work toward your 14-day streak and 100-mile milestone!
+              Strong, steady recovery so far. You've logged <b style={{ color: GOLD_LIGHT }}>19 walks across 18 days</b> for <b style={{ color: GOLD_LIGHT }}>10.7 miles</b> since June 1, and the trend is clearly upward: your typical walk has grown from about <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> early on to roughly <b style={{ color: GOLD_LIGHT }}>0.9–1.0 mi</b> in your last three outings, while your pace has improved from ~38 to ~31 min/mi — about <b style={{ color: GOLD_LIGHT }}>18% faster</b>. Your best stretch was a 5-day streak (Jun 7–11).
             </p>
+            <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
+              The single biggest lever now is <b style={{ color: GOLD_LIGHT }}>consistency, not distance</b>. The gaps on Jun 6, 12, 14, 19–22, 26 and 28 are what keep resetting your streak — the four-day pause (Jun 19–22) alone broke what could have been a 3-week run. Here's how to convert your rising fitness into bigger milestones:
+            </p>
+            <ul className="insight-list">
+              <li>
+                <span className="ico"><Icon name="shield" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                <span><b>Set a daily floor.</b> On low-energy days, do a 0.3–0.4 mi "minimum walk" instead of skipping. That one habit would have turned your 5-day streak into 20+ and is the fastest route to the 14-Day Streak badge.</span>
+              </li>
+              <li>
+                <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                <span><b>Lock in 1 mile.</b> Your last three walks already average ~0.9 mi — round that up to a steady <b>1.0 mi/day</b> as your new baseline.</span>
+              </li>
+              <li>
+                <span className="ico"><Icon name="layers" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                <span><b>Stack a second short walk.</b> You did it once (Jun 11). Adding a 0.3 mi second walk on 2–3 days a week adds ~3 miles a month with almost no extra fatigue.</span>
+              </li>
+              <li>
+                <span className="ico"><Icon name="medal" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                <span><b>Next milestone: 25-Mile Club.</b> You're <b>14.3 miles away</b>. At a steady 1.0 mi/day that's about 2 weeks; at your current ~0.6 mi/day average it's closer to 3.5 weeks.</span>
+              </li>
+              <li>
+                <span className="ico"><Icon name="bolt" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                <span><b>Keep one brisk walk weekly.</b> Your pace is trending faster — protect that gain with one slightly quicker walk each week while keeping the rest easy and recovery-paced.</span>
+              </li>
+            </ul>
           </div>
 
           {/* ── Last updated ── */}
           <div style={{ marginTop: 'clamp(20px, 4vw, 32px)', textAlign: 'center' }}>
             <span style={{ fontSize: '11px', color: 'rgba(116,172,223,0.55)', fontWeight: 400, letterSpacing: '0.3px' }}>
-              Data updated · June 29, 2026
+              Data updated · {data.updated}
             </span>
           </div>
 
