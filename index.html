@@ -9,8 +9,8 @@
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="shortcut icon" href="favicon.ico">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
 
   <!-- iOS homescreen icon (solid square; iOS applies corner radius) -->
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -245,18 +245,14 @@
     /* ── Wordmark ── */
     .wordmark { display: flex; align-items: center; gap: clamp(12px, 3vw, 16px); }
     .wordmark-badge {
-      width: clamp(46px, 11vw, 60px);
-      height: clamp(46px, 11vw, 60px);
+      width: clamp(52px, 12vw, 68px);
+      height: clamp(52px, 12vw, 68px);
       flex: 0 0 auto;
       border-radius: 17px;
-      background: linear-gradient(145deg, #FBDA6A 0%, #F6B40E 60%, #E09A00 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      overflow: hidden;
       box-shadow:
-        0 8px 22px rgba(246, 180, 14, 0.38),
-        inset 0 2px 0 rgba(255, 255, 255, 0.55),
-        inset 0 -2px 4px rgba(160, 110, 0, 0.30);
+        0 8px 24px rgba(0, 0, 0, 0.40),
+        0 2px 6px rgba(0, 0, 0, 0.25);
     }
     .wordmark-eyebrow {
       font-size: clamp(9px, 2vw, 11px);
@@ -643,7 +639,7 @@
           <div style={{ marginBottom: 'clamp(20px, 4vw, 36px)' }}>
             <div className="wordmark">
               <div className="wordmark-badge">
-                <Icon name="footprints" c="#0f3d6b" size={30} sw={2} />
+                <img src="android-chrome-192x192.png" alt="My Recovery Steps" style={{ width: '100%', height: '100%', display: 'block' }} />
               </div>
               <div>
                 <div className="wordmark-eyebrow">My Recovery</div>
