@@ -1,0 +1,53 @@
+<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="gold" x1="70" y1="46" x2="452" y2="470" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FBDA6A"/>
+      <stop offset="0.55" stop-color="#F6B40E"/>
+      <stop offset="1" stop-color="#E09A00"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="0.32" cy="0.2" r="0.95">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.6"/>
+      <stop offset="0.45" stop-color="#FFFFFF" stop-opacity="0.12"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="gloss" x1="0" y1="34" x2="0" y2="309.28" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.34"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="foot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14477e"/>
+      <stop offset="1" stop-color="#0a2c52"/>
+    </linearGradient>
+    <filter id="footsh" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="7" stdDeviation="7" flood-color="#5a3c00" flood-opacity="0.38"/>
+    </filter>
+    <clipPath id="badge"><rect x="34" y="34" width="444" height="444" rx="116" ry="116"/></clipPath>
+  </defs>
+
+  <!-- base gold -->
+  <rect x="34" y="34" width="444" height="444" rx="116" ry="116" fill="url(#gold)"/>
+
+  <!-- gloss + sheen, clipped to badge -->
+  <g clip-path="url(#badge)">
+    <rect x="34" y="34" width="444" height="275.28" fill="url(#gloss)"/>
+    <rect x="34" y="34" width="444" height="444" fill="url(#sheen)"/>
+    <!-- bottom inner shadow for depth -->
+    <rect x="34" y="408" width="444" height="70" fill="#7a5200" opacity="0.18"/>
+  </g>
+
+  <!-- inner top highlight + crisp edge -->
+  <rect x="36" y="36" width="440" height="440" rx="114" ry="114"
+        fill="none" stroke="#FFFFFF" stroke-opacity="0.5" stroke-width="3"/>
+
+  <!-- footprints (header motif), centered & diagonal -->
+  <g transform="translate(76.5 96) scale(15)" fill="url(#foot)" filter="url(#footsh)">
+    <ellipse cx="8" cy="15" rx="2.45" ry="3.5"/>
+    <circle cx="5.7" cy="10.1" r="1.0"/>
+    <circle cx="8" cy="9.0" r="1.12"/>
+    <circle cx="10.2" cy="9.95" r="0.95"/>
+    <ellipse cx="16" cy="11" rx="2.45" ry="3.5"/>
+    <circle cx="13.8" cy="6.1" r="0.95"/>
+    <circle cx="16" cy="5.0" r="1.12"/>
+    <circle cx="18.2" cy="5.95" r="1.0"/>
+  </g>
+</svg>

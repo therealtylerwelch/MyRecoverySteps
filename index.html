@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MyRecoverySteps</title>
 
-  <!-- Favicons: ICO first (Safari picks the first matching rel="shortcut icon") -->
+  <!-- Favicons: SVG for crisp modern browsers, ICO/PNG fallbacks -->
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="shortcut icon" href="favicon.ico">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
@@ -14,6 +15,9 @@
   <!-- iOS homescreen icon (solid square; iOS applies corner radius) -->
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+
+  <!-- Android / PWA -->
+  <link rel="manifest" href="site.webmanifest">
 
   <!-- iOS web-app appearance when launched from homescreen -->
   <meta name="apple-mobile-web-app-capable" content="yes">
