@@ -394,6 +394,50 @@
       margin-top: 1px;
     }
     .insight-list li b { color: #FBDA6A; font-weight: 700; }
+
+    /* ── TL;DR card ── */
+    .tldr-card {
+      background: rgba(116, 172, 223, 0.10);
+      border: 1px solid rgba(116, 172, 223, 0.30);
+      border-radius: 16px;
+      padding: clamp(14px, 3vw, 18px);
+    }
+    .tldr-pill {
+      display: inline-block;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      background: rgba(116, 172, 223, 0.22);
+      border: 1px solid rgba(116, 172, 223, 0.45);
+      border-radius: 6px;
+      padding: 3px 9px;
+      color: #BEE1FF;
+      margin-bottom: 10px;
+    }
+    .tldr-action {
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(116, 172, 223, 0.20);
+      font-size: clamp(12px, 2vw, 14px);
+      line-height: 1.6;
+      color: rgba(220, 238, 255, 0.92);
+    }
+    .tldr-action .ico {
+      flex: 0 0 auto;
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      background: rgba(246, 180, 14, 0.18);
+      border: 1px solid rgba(246, 180, 14, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
   </style>
 </head>
 <body>
@@ -636,16 +680,16 @@
       const data = {
         year: 2026,
         monthIndex: 5,
-        today: 29,
-        updated: 'June 29, 2026',
-        currentStreak: 1,
+        today: 30,
+        updated: 'June 30, 2026',
+        currentStreak: 2,
         longestStreak: 5,
         longestStreakLabel: 'Jun 7–11',
-        totalWalks: 19,
-        activeDays: 18,
-        totalDistance: 10.7,
-        twiceDailyDays: [11],
-        lastActivity: { date: '2026-06-29', distance: 0.89, duration: 1567, pace: 29.3 },
+        totalWalks: 21,
+        activeDays: 19,
+        totalDistance: 12.2,
+        twiceDailyDays: [11, 29],
+        lastActivity: { date: '2026-06-30', distance: 1.04, duration: 1551, pace: 24.8 },
         dailyData: [
           { date: 'Jun 3',  distance: 0.33 },
           { date: 'Jun 4',  distance: 0.33 },
@@ -662,9 +706,10 @@
           { date: 'Jun 18', distance: 0.59 },
           { date: 'Jun 23', distance: 0.62 },
           { date: 'Jun 24', distance: 0.55 },
-          { date: 'Jun 25', distance: 1.01 },
+          { date: 'Jun 25', distance: 1.00 },
           { date: 'Jun 27', distance: 0.93 },
-          { date: 'Jun 29', distance: 0.89 }
+          { date: 'Jun 29', distance: 1.32 },
+          { date: 'Jun 30', distance: 1.04 }
         ],
         badges: [
           { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true,  icon: 'footprints' },
@@ -682,6 +727,7 @@
 
       const [badgesOpen, setBadgesOpen] = React.useState(false);
       const [badgeFilter, setBadgeFilter] = React.useState('all');
+      const [insightsOpen, setInsightsOpen] = React.useState(false);
       const scrollRef = React.useRef(null);
       const [overflow, setOverflow] = React.useState(false);
 
@@ -771,7 +817,7 @@
             <SectionTitle icon="bolt">Daily Distance Trend</SectionTitle>
             <div style={{ display: 'flex', gap: 'clamp(8px, 2vw, 12px)', marginBottom: '16px', flexWrap: 'wrap' }}>
               <MiniStat icon="target" label="Average / day" value={avgDistance.toFixed(2)} unit="mi" />
-              <MiniStat icon="medal"  label="Longest walk"  value={maxDistance.toFixed(2)} unit="mi" />
+              <MiniStat icon="medal"  label="Biggest day"   value={maxDistance.toFixed(2)} unit="mi" />
             </div>
             <div className={'chart-wrap' + (overflow ? ' has-overflow' : '')}>
               <div className="chart-scroll" ref={scrollRef}>
@@ -908,34 +954,78 @@
           {/* ── Recovery Insights ── */}
           <div className="glass-blue" style={{ padding: 'clamp(16px, 3vw, 24px)', borderRadius: '20px' }}>
             <SectionTitle icon="target">Recovery Insights</SectionTitle>
-            <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400 }}>
-              Strong, steady recovery so far. You've logged <b style={{ color: GOLD_LIGHT }}>19 walks across 18 days</b> for <b style={{ color: GOLD_LIGHT }}>10.7 miles</b> since June 1, and the trend is clearly upward: your typical walk has grown from about <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> early on to roughly <b style={{ color: GOLD_LIGHT }}>0.9–1.0 mi</b> in your last three outings, while your pace has improved from ~38 to ~31 min/mi — about <b style={{ color: GOLD_LIGHT }}>18% faster</b>. Your best stretch was a 5-day streak (Jun 7–11).
-            </p>
-            <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
-              The single biggest lever now is <b style={{ color: GOLD_LIGHT }}>consistency, not distance</b>. The gaps on Jun 6, 12, 14, 19–22, 26 and 28 are what keep resetting your streak — the four-day pause (Jun 19–22) alone broke what could have been a 3-week run. Here's how to convert your rising fitness into bigger milestones:
-            </p>
-            <ul className="insight-list">
-              <li>
-                <span className="ico"><Icon name="shield" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                <span><b>Set a daily floor.</b> On low-energy days, do a 0.3–0.4 mi "minimum walk" instead of skipping. That one habit would have turned your 5-day streak into 20+ and is the fastest route to the 14-Day Streak badge.</span>
-              </li>
-              <li>
-                <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                <span><b>Lock in 1 mile.</b> Your last three walks already average ~0.9 mi — round that up to a steady <b>1.0 mi/day</b> as your new baseline.</span>
-              </li>
-              <li>
-                <span className="ico"><Icon name="layers" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                <span><b>Stack a second short walk.</b> You did it once (Jun 11). Adding a 0.3 mi second walk on 2–3 days a week adds ~3 miles a month with almost no extra fatigue.</span>
-              </li>
-              <li>
-                <span className="ico"><Icon name="medal" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                <span><b>Next milestone: 25-Mile Club.</b> You're <b>14.3 miles away</b>. At a steady 1.0 mi/day that's about 2 weeks; at your current ~0.6 mi/day average it's closer to 3.5 weeks.</span>
-              </li>
-              <li>
-                <span className="ico"><Icon name="bolt" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                <span><b>Keep one brisk walk weekly.</b> Your pace is trending faster — protect that gain with one slightly quicker walk each week while keeping the rest easy and recovery-paced.</span>
-              </li>
-            </ul>
+
+            {/* TL;DR — always visible */}
+            <div className="tldr-card">
+              <div className="tldr-pill">TL;DR</div>
+              <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.7, fontWeight: 400 }}>
+                You're trending up fast — <b style={{ color: GOLD_LIGHT }}>21 walks over 19 days</b> for <b style={{ color: GOLD_LIGHT }}>12.2 miles</b>, with your pace now roughly <b style={{ color: GOLD_LIGHT }}>30% quicker</b> than week one and your last four days all near or above a mile. June 30 was a peak: your <b style={{ color: GOLD_LIGHT }}>longest walk yet (1.04 mi)</b> at your fastest pace. The one thing still holding you back is <b style={{ color: GOLD_LIGHT }}>consistency</b> — short gaps keep resetting your streak.
+              </p>
+              <div className="tldr-action">
+                <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={15} sw={2} /></span>
+                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. Keep it up and the <b>25-Mile Club</b> is about two weeks away.</span>
+              </div>
+            </div>
+
+            {/* Collapsible full analysis — same pattern as Badges */}
+            <div
+              className="section-toggle"
+              onClick={() => setInsightsOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: insightsOpen ? '6px' : '0', padding: '4px 2px' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                <Icon name="layers" c={BLUE_MID} size={18} sw={2} />
+                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Full Analysis
+                </h2>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{
+                  fontSize: '12px', fontWeight: 500, color: BLUE_MID,
+                  background: 'rgba(116,172,223,0.15)',
+                  border: '1px solid rgba(116,172,223,0.32)',
+                  borderRadius: '20px', padding: '3px 11px'
+                }}>
+                  5 tips
+                </span>
+                <span className={'chevron-icon' + (insightsOpen ? ' open' : '')}>
+                  <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
+                </span>
+              </div>
+            </div>
+
+            {insightsOpen && (
+              <>
+                <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '8px' }}>
+                  Strong, steady recovery so far. You've logged <b style={{ color: GOLD_LIGHT }}>21 walks across 19 days</b> for <b style={{ color: GOLD_LIGHT }}>12.2 miles</b> since June 1, and the trend is clearly upward: your typical walk has grown from about <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> early on to roughly <b style={{ color: GOLD_LIGHT }}>1.0–1.3 mi</b> in your last few outings, while your pace has improved from ~36 to ~25 min/mi — about <b style={{ color: GOLD_LIGHT }}>30% faster</b>. Your best stretch was a 5-day streak (Jun 7–11), and Jun 30 set a new mark: your longest single walk (1.04 mi) at your fastest pace yet.
+                </p>
+                <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
+                  The single biggest lever now is <b style={{ color: GOLD_LIGHT }}>consistency, not distance</b>. The gaps on Jun 6, 12, 14, 19–22, 26 and 28 are what keep resetting your streak — the four-day pause (Jun 19–22) alone broke what could have been a 3-week run. You've now stacked two-a-day walks twice (Jun 11 and Jun 29), a great sign. Here's how to convert your rising fitness into bigger milestones:
+                </p>
+                <ul className="insight-list">
+                  <li>
+                    <span className="ico"><Icon name="shield" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                    <span><b>Set a daily floor.</b> On low-energy days, do a 0.3–0.4 mi "minimum walk" instead of skipping. That one habit would have turned your 5-day streak into 20+ and is the fastest route to the 14-Day Streak badge.</span>
+                  </li>
+                  <li>
+                    <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                    <span><b>Lock in 1 mile.</b> Your last four days already average ~1.1 mi — make a steady <b>1.0 mi/day</b> your new baseline.</span>
+                  </li>
+                  <li>
+                    <span className="ico"><Icon name="layers" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                    <span><b>Stack a second short walk.</b> You've done it twice now (Jun 11, Jun 29). Adding a 0.3 mi second walk on 2–3 days a week adds ~3 miles a month with almost no extra fatigue.</span>
+                  </li>
+                  <li>
+                    <span className="ico"><Icon name="medal" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                    <span><b>Next milestone: 25-Mile Club.</b> You're <b>12.8 miles away</b>. At a steady 1.0 mi/day that's about 2 weeks; at your current ~0.64 mi/day average it's closer to 3 weeks.</span>
+                  </li>
+                  <li>
+                    <span className="ico"><Icon name="bolt" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                    <span><b>Keep one brisk walk weekly.</b> Your pace hit ~25 min/mi on Jun 30, your fastest yet — protect that gain with one quicker walk each week while keeping the rest easy and recovery-paced.</span>
+                  </li>
+                </ul>
+              </>
+            )}
           </div>
 
           {/* ── Last updated ── */}
