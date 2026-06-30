@@ -3,16 +3,7 @@
   "version": "1.0.0",
   "description": "My first Claude app",
   "main": "api/claude.js",
-  "scripts": {
-    "build": "babel app.jsx -o app.js",
-    "watch": "babel app.jsx -o app.js --watch"
-  },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.28.0"
-  },
-  "devDependencies": {
-    "@babel/cli": "^8.0.1",
-    "@babel/preset-env": "^8.0.2",
-    "@babel/preset-react": "^8.0.1"
   }
 }
