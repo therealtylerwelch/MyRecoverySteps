@@ -408,11 +408,25 @@ const WalkTracker = () => {
       {/* ── Badges ── */}
       <div style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
 
+        {/* Latest badge spotlight — always visible */}
+        {latestBadge && (
+          <div className="latest-badge-spotlight" style={{ marginBottom: '14px' }}>
+            <div className="latest-badge-icon">
+              <BadgeArt icon={latestBadge.icon} value={latestBadge.mile} color={GOLD_LIGHT} size={28} />
+            </div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="badge-latest-pill">Latest earned</div>
+              <div style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', fontWeight: 700, color: GOLD_LIGHT, lineHeight: 1.2 }}>{latestBadge.name}</div>
+              <div style={{ fontSize: '11px', color: 'rgba(251,218,106,0.70)', marginTop: '2px' }}>{latestBadge.description}</div>
+            </div>
+          </div>
+        )}
+
         {/* Collapsible header */}
         <div
           className="section-toggle"
           onClick={() => setBadgesOpen(o => !o)}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: badgesOpen ? '14px' : '12px', padding: '4px 2px' }}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: badgesOpen ? '14px' : '0', padding: '4px 2px' }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
             <Icon name="crown" c={BLUE_MID} size={18} sw={2} />
@@ -434,36 +448,6 @@ const WalkTracker = () => {
             </span>
           </div>
         </div>
-
-        {/* Collapsed: latest badge spotlight */}
-        {!badgesOpen && latestBadge && (
-          <div className="latest-badge-spotlight">
-            <div className="latest-badge-icon">
-              <BadgeArt icon={latestBadge.icon} value={latestBadge.mile} color={GOLD_LIGHT} size={28} />
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div className="badge-latest-pill">Latest earned</div>
-              <div style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', fontWeight: 700, color: GOLD_LIGHT, lineHeight: 1.2 }}>{latestBadge.name}</div>
-              <div style={{ fontSize: '11px', color: 'rgba(251,218,106,0.70)', marginTop: '2px' }}>{latestBadge.description}</div>
-            </div>
-            <button
-              onClick={e => { e.stopPropagation(); setBadgesOpen(true); }}
-              style={{
-                flexShrink: 0,
-                fontSize: '11px', fontWeight: 600,
-                color: GOLD_LIGHT,
-                background: 'rgba(246,180,14,0.14)',
-                border: '1px solid rgba(246,180,14,0.38)',
-                borderRadius: '10px',
-                padding: '6px 12px',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap'
-              }}
-            >
-              See all →
-            </button>
-          </div>
-        )}
 
         {/* Expanded: filter tabs + grid */}
         {badgesOpen && (
