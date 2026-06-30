@@ -910,7 +910,39 @@ var WalkTracker = function WalkTracker() {
     style: {
       marginBottom: 'clamp(14px, 3vw, 22px)'
     }
+  }, latestBadge && /*#__PURE__*/React.createElement("div", {
+    className: "latest-badge-spotlight",
+    style: {
+      marginBottom: '14px'
+    }
   }, /*#__PURE__*/React.createElement("div", {
+    className: "latest-badge-icon"
+  }, /*#__PURE__*/React.createElement(BadgeArt, {
+    icon: latestBadge.icon,
+    value: latestBadge.mile,
+    color: GOLD_LIGHT,
+    size: 28
+  })), /*#__PURE__*/React.createElement("div", {
+    style: {
+      flex: 1,
+      minWidth: 0
+    }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "badge-latest-pill"
+  }, "Latest earned"), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: 'clamp(13px, 2.5vw, 15px)',
+      fontWeight: 700,
+      color: GOLD_LIGHT,
+      lineHeight: 1.2
+    }
+  }, latestBadge.name), /*#__PURE__*/React.createElement("div", {
+    style: {
+      fontSize: '11px',
+      color: 'rgba(251,218,106,0.70)',
+      marginTop: '2px'
+    }
+  }, latestBadge.description))), /*#__PURE__*/React.createElement("div", {
     className: "section-toggle",
     onClick: function onClick() {
       return setBadgesOpen(function (o) {
@@ -921,7 +953,7 @@ var WalkTracker = function WalkTracker() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: badgesOpen ? '14px' : '12px',
+      marginBottom: badgesOpen ? '14px' : '0',
       padding: '4px 2px'
     }
   }, /*#__PURE__*/React.createElement("div", {
@@ -966,53 +998,7 @@ var WalkTracker = function WalkTracker() {
     c: BLUE_MID,
     size: 18,
     sw: 2.2
-  })))), !badgesOpen && latestBadge && /*#__PURE__*/React.createElement("div", {
-    className: "latest-badge-spotlight"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "latest-badge-icon"
-  }, /*#__PURE__*/React.createElement(BadgeArt, {
-    icon: latestBadge.icon,
-    value: latestBadge.mile,
-    color: GOLD_LIGHT,
-    size: 28
-  })), /*#__PURE__*/React.createElement("div", {
-    style: {
-      flex: 1,
-      minWidth: 0
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "badge-latest-pill"
-  }, "Latest earned"), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: 'clamp(13px, 2.5vw, 15px)',
-      fontWeight: 700,
-      color: GOLD_LIGHT,
-      lineHeight: 1.2
-    }
-  }, latestBadge.name), /*#__PURE__*/React.createElement("div", {
-    style: {
-      fontSize: '11px',
-      color: 'rgba(251,218,106,0.70)',
-      marginTop: '2px'
-    }
-  }, latestBadge.description)), /*#__PURE__*/React.createElement("button", {
-    onClick: function onClick(e) {
-      e.stopPropagation();
-      setBadgesOpen(true);
-    },
-    style: {
-      flexShrink: 0,
-      fontSize: '11px',
-      fontWeight: 600,
-      color: GOLD_LIGHT,
-      background: 'rgba(246,180,14,0.14)',
-      border: '1px solid rgba(246,180,14,0.38)',
-      borderRadius: '10px',
-      padding: '6px 12px',
-      cursor: 'pointer',
-      whiteSpace: 'nowrap'
-    }
-  }, "See all \u2192")), badgesOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+  })))), badgesOpen && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
     className: "badge-filters"
   }, [{
     key: 'all',
