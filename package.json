@@ -4,7 +4,8 @@
   "description": "My first Claude app",
   "main": "api/claude.js",
   "scripts": {
-    "build": "babel app.jsx -o app.js"
+    "build": "babel app.jsx -o app.js",
+    "watch": "babel app.jsx -o app.js --watch"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.28.0"
