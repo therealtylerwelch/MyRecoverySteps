@@ -298,6 +298,88 @@
         inset 0 1.5px 0 rgba(255, 255, 255, 0.35);
     }
 
+    /* ── Collapsible section header ── */
+    .section-toggle {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      border-radius: 12px;
+      transition: background 0.15s;
+    }
+    .section-toggle:hover { background: rgba(116, 172, 223, 0.06); }
+
+    .chevron-icon {
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .chevron-icon.open { transform: rotate(90deg); }
+
+    /* ── Badge filter tabs ── */
+    .badge-filters {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .badge-filter-tab {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      padding: 5px 13px;
+      border-radius: 20px;
+      cursor: pointer;
+      border: 1px solid rgba(116, 172, 223, 0.28);
+      background: rgba(10, 45, 100, 0.35);
+      color: rgba(160, 210, 255, 0.70);
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+    }
+    .badge-filter-tab:hover {
+      background: rgba(10, 55, 120, 0.55);
+      color: rgba(200, 232, 255, 0.90);
+    }
+    .badge-filter-tab.active {
+      background: rgba(246, 180, 14, 0.18);
+      border-color: rgba(246, 180, 14, 0.55);
+      color: #FBDA6A;
+    }
+
+    /* ── Latest-badge spotlight (collapsed state) ── */
+    .latest-badge-spotlight {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(80, 50, 5, 0.45);
+      border: 1px solid rgba(246, 180, 14, 0.40);
+      box-shadow: 0 4px 16px rgba(246, 180, 14, 0.12), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .latest-badge-icon {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 auto;
+      border-radius: 14px;
+      background: rgba(246, 180, 14, 0.14);
+      border: 1px solid rgba(246, 180, 14, 0.40);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ── Badge "Latest" label ── */
+    .badge-latest-pill {
+      display: inline-block;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      background: rgba(246, 180, 14, 0.20);
+      border: 1px solid rgba(246, 180, 14, 0.45);
+      border-radius: 5px;
+      padding: 2px 6px;
+      color: #FBDA6A;
+      margin-bottom: 4px;
+    }
+
     /* ── Insights ── */
     .insight-list { list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 11px; }
     .insight-list li {
@@ -611,6 +693,8 @@
       };
 
       const [data] = React.useState(realData);
+      const [badgesOpen, setBadgesOpen] = React.useState(false);
+      const [badgeFilter, setBadgeFilter] = React.useState('all');
       const scrollRef = React.useRef(null);
       const [overflow, setOverflow] = React.useState(false);
       React.useEffect(() => {
@@ -623,7 +707,14 @@
         return () => window.removeEventListener('resize', check);
       }, []);
 
-      const unlockedCount = data.badges.filter(b => b.unlocked).length;
+      const unlockedBadges = data.badges.filter(b => b.unlocked);
+      const unlockedCount  = unlockedBadges.length;
+      const latestBadge    = unlockedBadges[unlockedBadges.length - 1];
+      const filteredBadges = badgeFilter === 'earned'
+        ? data.badges.filter(b => b.unlocked)
+        : badgeFilter === 'unearned'
+        ? data.badges.filter(b => !b.unlocked)
+        : data.badges;
       const dists         = data.dailyData.map(d => d.distance);
       const maxDistance   = Math.max(...dists);
       const avgDistance   = dists.reduce((a, b) => a + b, 0) / dists.length;
@@ -727,9 +818,20 @@
 
           {/* ── Badges ── */}
           <div style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
-            <SectionTitle
-              icon="crown"
-              right={
+
+            {/* Collapsible header */}
+            <div
+              className="section-toggle"
+              onClick={() => setBadgesOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: badgesOpen ? '14px' : '12px', padding: '4px 2px' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                <Icon name="crown" c={BLUE_MID} size={18} sw={2} />
+                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Badges Earned
+                </h2>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span style={{
                   fontSize: '12px', fontWeight: 500, color: GOLD,
                   background: 'rgba(203,161,53,0.15)',
@@ -738,38 +840,100 @@
                 }}>
                   {unlockedCount} / {data.badges.length}
                 </span>
-              }
-            >
-              Badges Earned
-            </SectionTitle>
-            <div className="badge-grid">
-              {data.badges.map(badge => {
-                const col = badge.unlocked ? GOLD_LIGHT : BLUE_DIM;
-                return (
-                  <div
-                    key={badge.id}
-                    className={badge.unlocked ? 'glass-gold badge-glow' : 'glass-dim'}
-                    style={{
-                      padding: 'clamp(10px, 2.5vw, 16px)',
-                      borderRadius: '16px',
-                      textAlign: 'center',
-                      opacity: badge.unlocked ? 1 : 0.6,
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px' }}>
-                      <BadgeArt icon={badge.icon} value={badge.mile} color={col} size={30} />
-                    </div>
-                    <div style={{ fontSize: 'clamp(10px, 1.8vw, 12px)', fontWeight: 700, color: col, marginBottom: '4px', lineHeight: 1.2 }}>
-                      {badge.name}
-                    </div>
-                    <div style={{ fontSize: '10px', color: badge.unlocked ? 'rgba(251,218,106,0.75)' : BLUE_DIM, lineHeight: 1.35 }}>{badge.description}</div>
-                    {badge.unlocked && (
-                      <div style={{ marginTop: '7px', fontSize: '10px', color: GOLD, fontWeight: 600, letterSpacing: '0.3px' }}>✓ Unlocked</div>
-                    )}
-                  </div>
-                );
-              })}
+                <span className={'chevron-icon' + (badgesOpen ? ' open' : '')}>
+                  <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
+                </span>
+              </div>
             </div>
+
+            {/* Collapsed: latest badge spotlight */}
+            {!badgesOpen && latestBadge && (
+              <div className="latest-badge-spotlight">
+                <div className="latest-badge-icon">
+                  <BadgeArt icon={latestBadge.icon} value={latestBadge.mile} color={GOLD_LIGHT} size={28} />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div className="badge-latest-pill">Latest earned</div>
+                  <div style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', fontWeight: 700, color: GOLD_LIGHT, lineHeight: 1.2 }}>{latestBadge.name}</div>
+                  <div style={{ fontSize: '11px', color: 'rgba(251,218,106,0.70)', marginTop: '2px' }}>{latestBadge.description}</div>
+                </div>
+                <button
+                  onClick={e => { e.stopPropagation(); setBadgesOpen(true); }}
+                  style={{
+                    flexShrink: 0,
+                    fontSize: '11px', fontWeight: 600,
+                    color: GOLD_LIGHT,
+                    background: 'rgba(246,180,14,0.14)',
+                    border: '1px solid rgba(246,180,14,0.38)',
+                    borderRadius: '10px',
+                    padding: '6px 12px',
+                    cursor: 'pointer',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  See all →
+                </button>
+              </div>
+            )}
+
+            {/* Expanded: filter tabs + grid */}
+            {badgesOpen && (
+              <>
+                <div className="badge-filters">
+                  {[
+                    { key: 'all',      label: `All (${data.badges.length})` },
+                    { key: 'earned',   label: `Earned (${unlockedCount})` },
+                    { key: 'unearned', label: `Unearned (${data.badges.length - unlockedCount})` },
+                  ].map(f => (
+                    <button
+                      key={f.key}
+                      className={'badge-filter-tab' + (badgeFilter === f.key ? ' active' : '')}
+                      onClick={() => setBadgeFilter(f.key)}
+                    >
+                      {f.label}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="badge-grid">
+                  {filteredBadges.map(badge => {
+                    const isLatest = badge.id === latestBadge?.id;
+                    const col = badge.unlocked ? GOLD_LIGHT : BLUE_DIM;
+                    return (
+                      <div
+                        key={badge.id}
+                        className={badge.unlocked ? 'glass-gold badge-glow' : 'glass-dim'}
+                        style={{
+                          padding: 'clamp(10px, 2.5vw, 16px)',
+                          borderRadius: '16px',
+                          textAlign: 'center',
+                          opacity: badge.unlocked ? 1 : 0.6,
+                          position: 'relative',
+                          outline: isLatest ? `2px solid rgba(246,180,14,0.70)` : 'none',
+                          outlineOffset: '2px',
+                        }}
+                      >
+                        {isLatest && (
+                          <div style={{ position: 'absolute', top: '-8px', left: '50%', transform: 'translateX(-50%)' }}>
+                            <span className="badge-latest-pill" style={{ whiteSpace: 'nowrap' }}>Latest</span>
+                          </div>
+                        )}
+                        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '8px', marginTop: isLatest ? '4px' : 0 }}>
+                          <BadgeArt icon={badge.icon} value={badge.mile} color={col} size={30} />
+                        </div>
+                        <div style={{ fontSize: 'clamp(10px, 1.8vw, 12px)', fontWeight: 700, color: col, marginBottom: '4px', lineHeight: 1.2 }}>
+                          {badge.name}
+                        </div>
+                        <div style={{ fontSize: '10px', color: badge.unlocked ? 'rgba(251,218,106,0.75)' : BLUE_DIM, lineHeight: 1.35 }}>{badge.description}</div>
+                        {badge.unlocked && (
+                          <div style={{ marginTop: '7px', fontSize: '10px', color: GOLD, fontWeight: 600, letterSpacing: '0.3px' }}>✓ Unlocked</div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            )}
           </div>
 
           {/* ── Recovery Insights ── */}
