@@ -407,12 +407,13 @@
       font-weight: 700;
       letter-spacing: 0.6px;
       text-transform: uppercase;
-      background: rgba(246, 180, 14, 0.20);
-      border: 1px solid rgba(246, 180, 14, 0.45);
+      background: rgb(43, 30, 6);
+      border: 1px solid rgba(246, 180, 14, 0.70);
       border-radius: 5px;
       padding: 2px 6px;
       color: #FBDA6A;
       margin-bottom: 4px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
     }
 
     /* ── Insights ── */
@@ -860,7 +861,8 @@
         ? data.badges.filter(b => !b.unlocked)
         : data.badges;
 
-      const pct = (data.totalDistance / 100) * 100;
+      const goalMiles = data.totalDistance >= 50 ? 100 : data.totalDistance >= 25 ? 50 : 25;
+      const pct = (data.totalDistance / goalMiles) * 100;
 
       /* ── Dated daily data: real Date objects + derived per-day pace ── */
       const dailyDataWithDate = data.dailyData
@@ -936,7 +938,7 @@
               </div>
             </div>
             <p style={{ fontSize: 'clamp(12px, 2.5vw, 14px)', color: BLUE_MID, fontWeight: 400, lineHeight: 1.55, marginTop: '12px' }}>
-              Tracking daily walking progress · Powered by Strava MCP + Claude Opus 4.8
+              Tracking my mountain bike accident recovery progress. Powered by the Strava MCP + Claude Sonnet 5.
             </p>
           </div>
 
@@ -944,13 +946,13 @@
           <div className="stat-grid" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
             <StatCard label="Current Streak"  value={data.currentStreak}                   unit="days in a row"     variant="blue" />
             <StatCard label="Total Distance"  value={data.totalDistance.toFixed(1)}         unit="miles since Jun 1" variant="blue" />
-            <StatCard label="To 100 Miles"    value={(100 - data.totalDistance).toFixed(1)} unit="miles away"        variant="gold" />
+            <StatCard label={`To ${goalMiles} Miles`} value={(goalMiles - data.totalDistance).toFixed(1)} unit="miles away" variant="gold" />
           </div>
 
           {/* ── Progress bar ── */}
           <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '10px' }}>
-              <span style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: BLUE_LIGHT, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>100-Mile Goal</span>
+              <span style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: BLUE_LIGHT, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{goalMiles}-Mile Goal</span>
               <span style={{ fontSize: 'clamp(11px, 2vw, 13px)', color: GOLD_LIGHT, fontWeight: 600 }}>{pct.toFixed(1)}%</span>
             </div>
             <div style={{ height: '8px', borderRadius: '100px', background: 'rgba(255,255,255,0.10)', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)' }}>
