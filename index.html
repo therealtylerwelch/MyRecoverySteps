@@ -26,25 +26,25 @@
   <meta name="theme-color" content="#74ACDF">
 
   <!-- SEO -->
-  <meta name="description" content="Tracking daily walking progress · Powered by Strava">
+  <meta name="description" content="Tracking my mountain bike accident recovery progress. Powered by the Strava MCP + Claude Sonnet 5.">
 
   <!-- Open Graph (iMessage, Facebook, LinkedIn, Slack…) -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="My Recovery Steps">
   <meta property="og:title" content="My Recovery Steps">
-  <meta property="og:description" content="Tracking daily walking progress · Powered by Strava">
+  <meta property="og:description" content="Tracking my mountain bike accident recovery progress. Powered by the Strava MCP + Claude Sonnet 5.">
   <meta property="og:url" content="https://myrecoverysteps.com/">
   <meta property="og:image" content="https://myrecoverysteps.com/og-image.png">
   <meta property="og:image:secure_url" content="https://myrecoverysteps.com/og-image.png">
   <meta property="og:image:type" content="image/png">
   <meta property="og:image:width" content="1800">
   <meta property="og:image:height" content="945">
-  <meta property="og:image:alt" content="My Recovery Steps — tracking daily walking progress">
+  <meta property="og:image:alt" content="My Recovery Steps — tracking mountain bike accident recovery progress">
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="My Recovery Steps">
-  <meta name="twitter:description" content="Tracking daily walking progress · Powered by Strava">
+  <meta name="twitter:description" content="Tracking my mountain bike accident recovery progress. Powered by the Strava MCP + Claude Sonnet 5.">
   <meta name="twitter:image" content="https://myrecoverysteps.com/og-image.png">
 
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -458,6 +458,13 @@
       padding: 3px 9px;
       color: #BEE1FF;
       margin-bottom: 10px;
+    }
+    .tldr-headline {
+      font-size: clamp(21px, 4.6vw, 29px);
+      font-weight: 800;
+      letter-spacing: -0.4px;
+      line-height: 1.15;
+      color: #FBDA6A;
     }
     .tldr-action {
       display: flex;
@@ -1222,12 +1229,16 @@
             {/* TL;DR — always visible */}
             <div className="tldr-card">
               <div className="tldr-pill">TL;DR</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '9px' }}>
+                <Icon name="shield" c={GOLD_LIGHT} size={26} sw={2} />
+                <div className="tldr-headline">Consistency, not distance</div>
+              </div>
               <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.7, fontWeight: 400 }}>
-                You're trending up fast — <b style={{ color: GOLD_LIGHT }}>22 walks over 19 days</b> for <b style={{ color: GOLD_LIGHT }}>14.9 miles</b>, with your pace now roughly <b style={{ color: GOLD_LIGHT }}>40% quicker</b> than week one. June 30 was a breakout day: a brand-new <b style={{ color: GOLD_LIGHT }}>longest walk (2.68 mi at 18:05/mi)</b> — more than double your previous record. The one thing still holding you back is <b style={{ color: GOLD_LIGHT }}>consistency</b> — short gaps keep resetting your streak.
+                You're <b style={{ color: GOLD_LIGHT }}>40% faster</b> than week one — short gaps, not fitness, are what keep resetting your streak.
               </p>
               <div className="tldr-action">
                 <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={15} sw={2} /></span>
-                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. Keep it up and the <b>25-Mile Club</b> is about 10 miles away.</span>
+                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. The <b>25-Mile Club</b> is about 10 miles away.</span>
               </div>
             </div>
 
