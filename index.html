@@ -274,22 +274,29 @@
       line-height: 1;
     }
     .cal-today { outline: 2px solid rgba(251, 218, 106, 0.85); outline-offset: 1px; }
+    .cal-clickable { cursor: pointer; transition: filter 0.15s, box-shadow 0.15s; }
+    .cal-clickable:hover { filter: brightness(1.18); }
+    .cal-selected { box-shadow: 0 0 0 2px rgba(232, 244, 255, 0.85), 0 4px 14px rgba(232, 244, 255, 0.25); }
 
-    /* ── Month nav arrows ── */
+    /* ── Month nav pills ── */
     .month-nav-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 8px;
       display: flex;
       align-items: center;
-      justify-content: center;
+      gap: 5px;
+      padding: 7px 13px;
+      border-radius: 20px;
       cursor: pointer;
-      background: rgba(116, 172, 223, 0.14);
-      border: 1px solid rgba(116, 172, 223, 0.30);
-      transition: background 0.15s;
+      background: rgba(116, 172, 223, 0.16);
+      border: 1px solid rgba(116, 172, 223, 0.38);
+      color: rgba(210, 232, 255, 0.90);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s;
     }
-    .month-nav-btn:hover { background: rgba(116, 172, 223, 0.28); }
-    .month-nav-btn.disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+    .month-nav-btn:hover { background: rgba(116, 172, 223, 0.30); border-color: rgba(116, 172, 223, 0.55); }
+    .month-nav-btn:active { transform: scale(0.96); }
+    .month-nav-btn.disabled { opacity: 0.28; cursor: default; pointer-events: none; }
 
     /* ── Trend delta pill ── */
     .trend-delta {
@@ -780,28 +787,39 @@
 
     /* ── Detailed month grid, with prev/next navigation to browse history ── */
     const Calendar = ({ year, monthIndex, activeMap, twiceDays, today, onPrevMonth, onNextMonth, canGoPrev, canGoNext }) => {
+      const [selectedDay, setSelectedDay] = React.useState(null);
+      React.useEffect(() => { setSelectedDay(null); }, [year, monthIndex]);
+
       const firstDow    = new Date(year, monthIndex, 1).getDay();
       const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
       const cells = [];
       for (let i = 0; i < firstDow; i++) cells.push(null);
       for (let d = 1; d <= daysInMonth; d++) cells.push(d);
+      const prevMonthLabel = MONTHS[new Date(year, monthIndex - 1, 1).getMonth()];
+      const nextMonthLabel = MONTHS[new Date(year, monthIndex + 1, 1).getMonth()];
+
+      const selected = selectedDay != null ? activeMap[selectedDay] : null;
+      const selectedPace = selected?.duration ? (selected.duration / 60) / selected.distance : null;
+
       return (
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', gap: '8px' }}>
             <div
               className={'month-nav-btn' + (!canGoPrev ? ' disabled' : '')}
               onClick={canGoPrev ? onPrevMonth : undefined}
             >
               <span style={{ display: 'block', transform: 'rotate(180deg)' }}>
-                <Icon name="chevron" c={BLUE_MID} size={13} sw={2.4} />
+                <Icon name="chevron" c={BLUE_LIGHT} size={13} sw={2.6} />
               </span>
+              {prevMonthLabel}
             </div>
-            <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD_LIGHT }}>{MONTHS[monthIndex]} {year}</span>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD_LIGHT, whiteSpace: 'nowrap' }}>{MONTHS[monthIndex]} {year}</span>
             <div
               className={'month-nav-btn' + (!canGoNext ? ' disabled' : '')}
               onClick={canGoNext ? onNextMonth : undefined}
             >
-              <Icon name="chevron" c={BLUE_MID} size={13} sw={2.4} />
+              {nextMonthLabel}
+              <Icon name="chevron" c={BLUE_LIGHT} size={13} sw={2.6} />
             </div>
           </div>
           <div className="cal-grid" style={{ marginBottom: '8px' }}>
@@ -810,19 +828,26 @@
           <div className="cal-grid">
             {cells.map((d, i) => {
               if (d === null) return <div key={i} />;
-              const dist    = activeMap[d];
-              const active  = dist != null;
+              const dayData = activeMap[d];
+              const active  = dayData != null;
               const twice   = twiceDays.includes(d);
               const isToday = d === today;
+              const isSelected = d === selectedDay;
               return (
                 <div
                   key={i}
-                  className={'cal-cell ' + (active ? 'glass-gold' : 'glass-dim') + (isToday ? ' cal-today' : '')}
+                  className={
+                    'cal-cell ' + (active ? 'glass-gold' : 'glass-dim') +
+                    (isToday ? ' cal-today' : '') +
+                    (active ? ' cal-clickable' : '') +
+                    (isSelected ? ' cal-selected' : '')
+                  }
                   style={{ opacity: active ? 1 : 0.5 }}
+                  onClick={active ? () => setSelectedDay(sel => sel === d ? null : d) : undefined}
                 >
                   {twice && <span className="cal-twice">✦</span>}
                   <span className="cal-num" style={{ color: active ? GOLD_LIGHT : BLUE_DIM }}>{d}</span>
-                  {active && <span className="cal-dist" style={{ color: 'rgba(251,218,106,0.85)' }}>{dist.toFixed(1)}</span>}
+                  {active && <span className="cal-dist" style={{ color: 'rgba(251,218,106,0.85)' }}>{dayData.distance.toFixed(1)}</span>}
                 </div>
               );
             })}
@@ -834,7 +859,76 @@
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ color: GOLD_LIGHT, fontSize: '11px' }}>✦</span> Two walks
             </span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span style={{ width: '10px', height: '10px', borderRadius: '3px', border: '2px solid rgba(232,244,255,0.85)' }} /> Tap for details
+            </span>
           </div>
+
+          {selected && (
+            <div style={{ marginTop: '14px', padding: 'clamp(12px, 3vw, 16px)', borderRadius: '14px', background: 'rgba(246,180,14,0.08)', border: '1px solid rgba(246,180,14,0.28)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD_LIGHT }}>{MONTHS[monthIndex]} {selectedDay}, {year}</span>
+                <span
+                  onClick={() => setSelectedDay(null)}
+                  style={{ cursor: 'pointer', color: BLUE_DIM, fontSize: '13px', padding: '2px 6px', lineHeight: 1 }}
+                >
+                  ✕
+                </span>
+              </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'clamp(14px, 3vw, 22px)' }}>
+                <div>
+                  <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '3px' }}>Distance</div>
+                  <div style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', fontWeight: 700, color: BLUE_LIGHT }}>
+                    {selected.distance.toFixed(2)} <span style={{ fontSize: '11px', fontWeight: 500, color: BLUE_MID }}>mi</span>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '3px' }}>Pace</div>
+                  <div style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', fontWeight: 700, color: BLUE_LIGHT }}>
+                    {formatPace(selectedPace)} <span style={{ fontSize: '11px', fontWeight: 500, color: BLUE_MID }}>/mi</span>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '3px' }}>Effort</div>
+                  <div style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', fontWeight: 700, color: BLUE_LIGHT }}>{selected.effort ?? '—'}</div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '3px' }}>Elevation</div>
+                  <div style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', fontWeight: 700, color: BLUE_LIGHT }}>
+                    {selected.elevGain ?? 0} <span style={{ fontSize: '11px', fontWeight: 500, color: BLUE_MID }}>ft</span>
+                  </div>
+                </div>
+                <div>
+                  <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '3px' }}>Duration</div>
+                  <div style={{ fontSize: 'clamp(14px, 2.5vw, 16px)', fontWeight: 700, color: BLUE_LIGHT }}>
+                    {Math.round(selected.duration / 60)} <span style={{ fontSize: '11px', fontWeight: 500, color: BLUE_MID }}>min</span>
+                  </div>
+                </div>
+              </div>
+
+              {selected.walks && selected.walks.length > 1 && (
+                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(246,180,14,0.20)' }}>
+                  <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.3px', marginBottom: '8px' }}>
+                    {selected.walks.length} Walks
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    {selected.walks.map((w, i) => (
+                      <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: BLUE_LIGHT }}>
+                        <span>Walk {i + 1}</span>
+                        <span>{w.distance.toFixed(2)} mi · {formatPace((w.duration / 60) / w.distance)}/mi</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {selected.achievements > 0 && (
+                <div style={{ marginTop: '10px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: GOLD_LIGHT, fontWeight: 600 }}>
+                  <Icon name="sparkles" c={GOLD_LIGHT} size={12} sw={2} /> Strava achievement earned
+                </div>
+              )}
+            </div>
+          )}
         </div>
       );
     };
@@ -969,7 +1063,7 @@
       const monthActiveMap = {};
       dailyDataWithDate.forEach(d => {
         if (d.dateObj.getFullYear() === calendarMonth.year && d.dateObj.getMonth() === calendarMonth.monthIndex) {
-          monthActiveMap[d.dateObj.getDate()] = d.distance;
+          monthActiveMap[d.dateObj.getDate()] = d;
         }
       });
       const monthIsCurrent = calendarMonth.year === data.year && calendarMonth.monthIndex === data.monthIndex;
