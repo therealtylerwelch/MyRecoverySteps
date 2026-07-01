@@ -202,6 +202,45 @@
       50%      { opacity: 1;   transform: translateX(2px); }
     }
 
+    /* ── Dancing flag ── */
+    .flag-icon {
+      animation: flag-sway 3.2s ease-in-out infinite;
+      transform-origin: 50% 90%;
+    }
+    .flag-label {
+      display: inline-block;
+    }
+    .flag-link:hover .flag-icon {
+      animation: flag-dance 0.6s ease-in-out infinite;
+    }
+    .flag-link:hover .flag-label {
+      animation: flag-bob 0.6s ease-in-out infinite;
+      animation-delay: 0.08s;
+    }
+    @keyframes flag-sway {
+      0%, 100% { transform: rotate(0deg); }
+      50%      { transform: rotate(3deg); }
+    }
+    @keyframes flag-dance {
+      0%   { transform: rotate(0deg)    translateY(0)    scale(1); }
+      15%  { transform: rotate(-12deg)  translateY(-4px) scale(1.06); }
+      30%  { transform: rotate(9deg)    translateY(0)    scale(0.95); }
+      45%  { transform: rotate(-8deg)   translateY(-3px) scale(1.05); }
+      60%  { transform: rotate(10deg)   translateY(1px)  scale(0.96); }
+      75%  { transform: rotate(-6deg)   translateY(-2px) scale(1.03); }
+      90%  { transform: rotate(4deg)    translateY(0)    scale(0.99); }
+      100% { transform: rotate(0deg)    translateY(0)    scale(1); }
+    }
+    @keyframes flag-bob {
+      0%, 100% { transform: translateY(0)    rotate(0deg); }
+      25%      { transform: translateY(-2px) rotate(-3deg); }
+      50%      { transform: translateY(0)    rotate(0deg); }
+      75%      { transform: translateY(-2px) rotate(3deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .flag-icon, .flag-label { animation: none !important; }
+    }
+
     /* ── Calendar ── */
     .cal-grid {
       display: grid;
@@ -1317,11 +1356,12 @@
               target="_blank"
               rel="noopener noreferrer"
               title="AFA Selección Argentina"
+              className="flag-link"
               style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textDecoration: 'none', opacity: 0.85, transition: 'opacity 0.2s' }}
               onMouseEnter={e => e.currentTarget.style.opacity = '1'}
               onMouseLeave={e => e.currentTarget.style.opacity = '0.85'}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="48" height="32" style={{ display: 'block', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.35)' }}>
+              <svg className="flag-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="48" height="32" style={{ display: 'block', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.35)' }}>
                 <rect width="900" height="600" fill="#74ACDF"/>
                 <rect y="200" width="900" height="200" fill="#fff"/>
                 <circle cx="450" cy="300" r="60" fill="#F6B40E"/>
@@ -1339,7 +1379,7 @@
                 <circle cx="450" cy="300" r="30" fill="#CD8B00"/>
                 <circle cx="450" cy="300" r="22" fill="#F6B40E"/>
               </svg>
-              <span style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>Campeones Del Mundo</span>
+              <span className="flag-label" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>Campeones Del Mundo</span>
             </a>
           </div>
 
