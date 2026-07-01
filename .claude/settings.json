@@ -7,7 +7,14 @@
       "Read(//private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/**)",
       "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node og2.js)",
       "Bash(sips -g pixelWidth -g pixelHeight \"/Users/tylerwelch/My Recovery Steps/og-image.png\")",
-      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_final.js)"
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_final.js)",
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_flag.js)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" https://api.github.com/repos/therealtylerwelch/MyRecoverySteps)",
+      "Bash(curl -s https://api.github.com/repos/therealtylerwelch/MyRecoverySteps)",
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_bigbuild.js)",
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_trimmed.js)",
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_july.js)",
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_final_july.js)"
     ]
   }
 }
