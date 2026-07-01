@@ -236,6 +236,108 @@
     }
     .cal-today { outline: 2px solid rgba(251, 218, 106, 0.85); outline-offset: 1px; }
 
+    /* ── Activity heatmap ── */
+    .heatmap-months {
+      display: flex;
+      padding-left: 22px;
+      margin-bottom: 4px;
+    }
+    .heatmap-month-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: rgba(160, 210, 255, 0.60);
+      flex: 0 0 auto;
+    }
+    .heatmap-body { display: flex; gap: 4px; }
+    .heatmap-dow-col {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 0 0 auto;
+      width: 16px;
+      margin-right: 4px;
+    }
+    .heatmap-dow-col span {
+      height: clamp(11px, 2.6vw, 14px);
+      font-size: 8px;
+      font-weight: 700;
+      color: rgba(160, 210, 255, 0.45);
+      display: flex;
+      align-items: center;
+    }
+    .heatmap-week { display: flex; flex-direction: column; gap: 3px; flex: 0 0 auto; }
+    .heatmap-cell {
+      width: clamp(11px, 2.6vw, 14px);
+      height: clamp(11px, 2.6vw, 14px);
+      border-radius: 3px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid rgba(116, 172, 223, 0.16);
+    }
+    .heatmap-cell.out-range { visibility: hidden; cursor: default; }
+    .heatmap-cell.level-0 { background: rgba(10, 35, 80, 0.45); }
+    .heatmap-cell.level-1 { background: rgba(246, 180, 14, 0.22); border-color: rgba(246, 180, 14, 0.30); }
+    .heatmap-cell.level-2 { background: rgba(246, 180, 14, 0.42); border-color: rgba(246, 180, 14, 0.45); }
+    .heatmap-cell.level-3 { background: rgba(246, 180, 14, 0.68); border-color: rgba(246, 180, 14, 0.65); }
+    .heatmap-cell.level-4 { background: rgba(251, 218, 106, 0.95); border-color: rgba(251, 218, 106, 1); }
+    .heatmap-cell.is-today { outline: 2px solid rgba(251, 218, 106, 0.85); outline-offset: 1px; }
+    .heatmap-cell.is-twice::after {
+      content: '';
+      position: absolute;
+      top: -3px; right: -3px;
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #FBDA6A;
+      box-shadow: 0 0 3px rgba(251,218,106,0.8);
+    }
+    .heatmap-cell:hover { filter: brightness(1.25); }
+    .heatmap-legend-swatch { display: flex; gap: 3px; align-items: center; }
+    .heatmap-legend-swatch .heatmap-cell { cursor: default; width: 10px; height: 10px; }
+
+    /* ── Month nav arrows ── */
+    .month-nav-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: rgba(116, 172, 223, 0.14);
+      border: 1px solid rgba(116, 172, 223, 0.30);
+      transition: background 0.15s;
+    }
+    .month-nav-btn:hover { background: rgba(116, 172, 223, 0.28); }
+    .month-nav-btn.disabled { opacity: 0.3; cursor: default; pointer-events: none; }
+
+    /* ── Trend delta pill ── */
+    .trend-delta {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      font-weight: 700;
+      border-radius: 20px;
+      padding: 2px 8px;
+      letter-spacing: 0.2px;
+    }
+    .trend-delta.up {
+      color: #FBDA6A;
+      background: rgba(246, 180, 14, 0.18);
+      border: 1px solid rgba(246, 180, 14, 0.45);
+    }
+    .trend-delta.down {
+      color: rgba(190, 220, 255, 0.85);
+      background: rgba(116, 172, 223, 0.14);
+      border: 1px solid rgba(116, 172, 223, 0.30);
+    }
+    .trend-delta.flat {
+      color: rgba(160, 210, 255, 0.70);
+      background: rgba(116, 172, 223, 0.10);
+      border: 1px solid rgba(116, 172, 223, 0.24);
+    }
+
     /* ── Wordmark ── */
     .wordmark { display: flex; align-items: center; gap: clamp(12px, 3vw, 16px); }
     .wordmark-badge {
@@ -450,6 +552,85 @@
     const BLUE_MID   = '#74ACDF';
     const BLUE_DIM   = 'rgba(160, 210, 255, 0.80)';
     const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const DOW = ['S','M','T','W','T','F','S'];
+
+    /* ── Date / trend helpers ── */
+    const parseDataDate = (dateStr, year) => {
+      const [mon, day] = dateStr.split(' ');
+      return new Date(year, MONTHS.indexOf(mon), parseInt(day, 10));
+    };
+
+    const formatPace = (minPerMile) => {
+      if (!isFinite(minPerMile) || minPerMile <= 0) return '—';
+      const m = Math.floor(minPerMile);
+      const s = Math.round((minPerMile - m) * 60);
+      return `${m}:${String(s).padStart(2, '0')}`;
+    };
+
+    const rollingAverage = (values, windowSize = 7) =>
+      values.map((_, i) => {
+        const start = Math.max(0, i - windowSize + 1);
+        const slice = values.slice(start, i + 1);
+        return slice.reduce((a, b) => a + b, 0) / slice.length;
+      });
+
+    const getWeekStart = (date) => {
+      const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+      d.setDate(d.getDate() - d.getDay());
+      return d;
+    };
+
+    const bucketByWeek = (days) => {
+      const buckets = new Map();
+      days.forEach(d => {
+        const wk = getWeekStart(d.dateObj).getTime();
+        if (!buckets.has(wk)) buckets.set(wk, []);
+        buckets.get(wk).push(d);
+      });
+      return [...buckets.entries()]
+        .sort((a, b) => a[0] - b[0])
+        .map(([wk, wDays]) => {
+          const totalDistance = wDays.reduce((a, d) => a + d.distance, 0);
+          const totalDuration = wDays.reduce((a, d) => a + (d.duration || 0), 0);
+          return {
+            weekStart: new Date(wk),
+            days: wDays,
+            avgDistance: totalDistance / wDays.length,
+            avgPace: totalDuration > 0 ? (totalDuration / 60) / totalDistance : null,
+            totalDistance,
+          };
+        });
+    };
+
+    const buildHeatmapWeeks = (days, startDate, endDate) => {
+      const byTime = new Map(days.map(d => [d.dateObj.getTime(), d]));
+      const gridStart = getWeekStart(startDate);
+      const weeks = [];
+      const cursor = new Date(gridStart);
+      while (cursor <= endDate) {
+        const week = [];
+        for (let i = 0; i < 7; i++) {
+          const cellDate = new Date(cursor);
+          cellDate.setDate(cursor.getDate() + i);
+          week.push({
+            date: cellDate,
+            entry: byTime.get(cellDate.getTime()) || null,
+            inRange: cellDate >= startDate && cellDate <= endDate,
+          });
+        }
+        weeks.push(week);
+        cursor.setDate(cursor.getDate() + 7);
+      }
+      return weeks;
+    };
+
+    const heatmapLevel = (distance) => {
+      if (distance == null) return 0;
+      if (distance < 0.4) return 1;
+      if (distance < 0.7) return 2;
+      if (distance < 1.0) return 3;
+      return 4;
+    };
 
     const Icon = ({ name, c = '#fff', size = 30, sw = 1.8 }) => {
       const base = { width: size, height: size, display: 'block' };
@@ -613,22 +794,34 @@
       </div>
     );
 
-    const Calendar = ({ year, monthIndex, activeMap, twiceDays, today }) => {
+    /* ── Month detail grid (drill-in from the heatmap) ── */
+    const Calendar = ({ year, monthIndex, activeMap, twiceDays, today, onPrevMonth, onNextMonth, canGoPrev, canGoNext }) => {
       const firstDow    = new Date(year, monthIndex, 1).getDay();
       const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
       const cells = [];
       for (let i = 0; i < firstDow; i++) cells.push(null);
       for (let d = 1; d <= daysInMonth; d++) cells.push(d);
       return (
-        <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
-          <SectionTitle
-            icon="calendar"
-            right={<span style={{ fontSize: '12px', fontWeight: 600, color: GOLD_LIGHT }}>{MONTHS[monthIndex]} {year}</span>}
-          >
-            Activity Calendar
-          </SectionTitle>
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+            <div
+              className={'month-nav-btn' + (!canGoPrev ? ' disabled' : '')}
+              onClick={canGoPrev ? onPrevMonth : undefined}
+            >
+              <span style={{ display: 'block', transform: 'rotate(180deg)' }}>
+                <Icon name="chevron" c={BLUE_MID} size={13} sw={2.4} />
+              </span>
+            </div>
+            <span style={{ fontSize: '13px', fontWeight: 700, color: GOLD_LIGHT }}>{MONTHS[monthIndex]} {year}</span>
+            <div
+              className={'month-nav-btn' + (!canGoNext ? ' disabled' : '')}
+              onClick={canGoNext ? onNextMonth : undefined}
+            >
+              <Icon name="chevron" c={BLUE_MID} size={13} sw={2.4} />
+            </div>
+          </div>
           <div className="cal-grid" style={{ marginBottom: '8px' }}>
-            {['S','M','T','W','T','F','S'].map((d, i) => <div key={i} className="cal-dow">{d}</div>)}
+            {DOW.map((d, i) => <div key={i} className="cal-dow">{d}</div>)}
           </div>
           <div className="cal-grid">
             {cells.map((d, i) => {
@@ -656,6 +849,79 @@
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ color: GOLD_LIGHT, fontSize: '11px' }}>✦</span> Two walks
+            </span>
+          </div>
+        </div>
+      );
+    };
+
+    /* ── Contribution-style heatmap: the default multi-month calendar view ── */
+    const ActivityHeatmap = ({ days, startDate, endDate, todayTime, isTwiceDay, onSelectDay, scrollRef, overflow }) => {
+      const weeks = buildHeatmapWeeks(days, startDate, endDate);
+      let lastMonth = null;
+      const monthLabels = weeks.map((week) => {
+        const firstValid = week.find(c => c.inRange);
+        if (!firstValid) return '';
+        const m = firstValid.date.getMonth();
+        if (m !== lastMonth) { lastMonth = m; return MONTHS[m]; }
+        return '';
+      });
+
+      return (
+        <div>
+          <div className={'chart-wrap' + (overflow ? ' has-overflow' : '')}>
+            <div className="chart-scroll" ref={scrollRef}>
+              <div style={{ minWidth: 'min-content' }}>
+                <div className="heatmap-months">
+                  <span style={{ width: '20px', flex: '0 0 auto' }} />
+                  {weeks.map((_, wi) => (
+                    <span key={wi} className="heatmap-month-label" style={{ width: 'clamp(11px, 2.6vw, 14px)', marginRight: '3px' }}>
+                      {monthLabels[wi]}
+                    </span>
+                  ))}
+                </div>
+                <div style={{ display: 'flex' }}>
+                  <div className="heatmap-dow-col">
+                    {DOW.map((d, i) => <span key={i}>{i % 2 === 1 ? d : ''}</span>)}
+                  </div>
+                  <div className="heatmap-body">
+                    {weeks.map((week, wi) => (
+                      <div key={wi} className="heatmap-week">
+                        {week.map((cell, ci) => {
+                          if (!cell.inRange) return <div key={ci} className="heatmap-cell out-range" />;
+                          const dist    = cell.entry ? cell.entry.distance : null;
+                          const level   = heatmapLevel(dist);
+                          const isToday = cell.date.getTime() === todayTime;
+                          const twice   = isTwiceDay(cell.date);
+                          const label   = `${MONTHS[cell.date.getMonth()]} ${cell.date.getDate()}` + (dist != null ? ` · ${dist.toFixed(2)} mi` : ' · no walk');
+                          return (
+                            <div
+                              key={ci}
+                              className={`heatmap-cell level-${level}${isToday ? ' is-today' : ''}${twice ? ' is-twice' : ''}`}
+                              title={label}
+                              onClick={() => onSelectDay(cell.date)}
+                            />
+                          );
+                        })}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', flexWrap: 'wrap', gap: '10px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', color: BLUE_DIM, fontWeight: 500 }}>
+              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#FBDA6A', boxShadow: '0 0 3px rgba(251,218,106,0.8)' }} /> Two walks
+            </span>
+            <span className="heatmap-legend-swatch" style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 500 }}>
+              Less
+              <span className="heatmap-cell level-0" />
+              <span className="heatmap-cell level-1" />
+              <span className="heatmap-cell level-2" />
+              <span className="heatmap-cell level-3" />
+              <span className="heatmap-cell level-4" />
+              More
             </span>
           </div>
         </div>
@@ -691,25 +957,25 @@
         twiceDailyDays: [11, 29],
         lastActivity: { date: '2026-06-30', distance: 1.04, duration: 1551, pace: 24.8 },
         dailyData: [
-          { date: 'Jun 3',  distance: 0.33 },
-          { date: 'Jun 4',  distance: 0.33 },
-          { date: 'Jun 5',  distance: 0.30 },
-          { date: 'Jun 7',  distance: 0.36 },
-          { date: 'Jun 8',  distance: 1.02 },
-          { date: 'Jun 9',  distance: 0.33 },
-          { date: 'Jun 10', distance: 0.36 },
-          { date: 'Jun 11', distance: 0.69 },
-          { date: 'Jun 13', distance: 0.81 },
-          { date: 'Jun 15', distance: 0.59 },
-          { date: 'Jun 16', distance: 0.61 },
-          { date: 'Jun 17', distance: 0.39 },
-          { date: 'Jun 18', distance: 0.59 },
-          { date: 'Jun 23', distance: 0.62 },
-          { date: 'Jun 24', distance: 0.55 },
-          { date: 'Jun 25', distance: 1.00 },
-          { date: 'Jun 27', distance: 0.93 },
-          { date: 'Jun 29', distance: 1.32 },
-          { date: 'Jun 30', distance: 1.04 }
+          { date: 'Jun 3',  distance: 0.33, duration: 713 },
+          { date: 'Jun 4',  distance: 0.33, duration: 644 },
+          { date: 'Jun 5',  distance: 0.30, duration: 860 },
+          { date: 'Jun 7',  distance: 0.36, duration: 945 },
+          { date: 'Jun 8',  distance: 1.02, duration: 2338 },
+          { date: 'Jun 9',  distance: 0.33, duration: 920 },
+          { date: 'Jun 10', distance: 0.36, duration: 790 },
+          { date: 'Jun 11', distance: 0.69, duration: 1344, walks: [{ distance: 0.33, duration: 568 }, { distance: 0.36, duration: 776 }] },
+          { date: 'Jun 13', distance: 0.81, duration: 1681 },
+          { date: 'Jun 15', distance: 0.59, duration: 1348 },
+          { date: 'Jun 16', distance: 0.61, duration: 1203 },
+          { date: 'Jun 17', distance: 0.39, duration: 824 },
+          { date: 'Jun 18', distance: 0.59, duration: 1282 },
+          { date: 'Jun 23', distance: 0.62, duration: 1448 },
+          { date: 'Jun 24', distance: 0.55, duration: 1069 },
+          { date: 'Jun 25', distance: 1.00, duration: 1801 },
+          { date: 'Jun 27', distance: 0.93, duration: 1900 },
+          { date: 'Jun 29', distance: 1.32, duration: 2287, walks: [{ distance: 0.89, duration: 1567 }, { distance: 0.43, duration: 720 }] },
+          { date: 'Jun 30', distance: 1.04, duration: 1551 }
         ],
         badges: [
           { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true,  icon: 'footprints' },
@@ -728,8 +994,14 @@
       const [badgesOpen, setBadgesOpen] = React.useState(false);
       const [badgeFilter, setBadgeFilter] = React.useState('all');
       const [insightsOpen, setInsightsOpen] = React.useState(false);
+      const [calendarDetailOpen, setCalendarDetailOpen] = React.useState(false);
+      const [heatmapMonth, setHeatmapMonth] = React.useState({ year: data.year, monthIndex: data.monthIndex });
+      const [distanceRange, setDistanceRange] = React.useState('30d');
+
       const scrollRef = React.useRef(null);
       const [overflow, setOverflow] = React.useState(false);
+      const heatmapScrollRef = React.useRef(null);
+      const [heatmapOverflow, setHeatmapOverflow] = React.useState(false);
 
       React.useEffect(() => {
         const check = () => {
@@ -737,6 +1009,16 @@
           if (e) setOverflow(e.scrollWidth > e.clientWidth + 4);
         };
         check();
+        window.addEventListener('resize', check);
+        return () => window.removeEventListener('resize', check);
+      }, [distanceRange]);
+
+      React.useEffect(() => {
+        const e = heatmapScrollRef.current;
+        if (!e) return;
+        const check = () => setHeatmapOverflow(e.scrollWidth > e.clientWidth + 4);
+        check();
+        e.scrollLeft = e.scrollWidth; // start scrolled to the most recent week
         window.addEventListener('resize', check);
         return () => window.removeEventListener('resize', check);
       }, []);
@@ -750,13 +1032,75 @@
         ? data.badges.filter(b => !b.unlocked)
         : data.badges;
 
-      const dists       = data.dailyData.map(d => d.distance);
-      const maxDistance = Math.max(...dists);
-      const avgDistance = dists.reduce((a, b) => a + b, 0) / dists.length;
-      const pct         = (data.totalDistance / 100) * 100;
+      const pct = (data.totalDistance / 100) * 100;
 
-      const activeMap = {};
-      data.dailyData.forEach(d => { activeMap[parseInt(d.date.split(' ')[1], 10)] = d.distance; });
+      /* ── Dated daily data: real Date objects + derived per-day pace ── */
+      const dailyDataWithDate = data.dailyData
+        .map(d => ({ ...d, dateObj: parseDataDate(d.date, data.year), pace: d.duration ? (d.duration / 60) / d.distance : null }))
+        .sort((a, b) => a.dateObj - b.dateObj);
+
+      const todayDate      = new Date(data.year, data.monthIndex, data.today);
+      const firstDataDate  = dailyDataWithDate[0].dateObj;
+      const heatmapStart   = new Date(firstDataDate.getFullYear(), firstDataDate.getMonth(), 1);
+
+      // twiceDailyDays are day-of-month numbers within data.monthIndex/data.year (today's single-month data model)
+      const isTwiceDay = (dateObj) =>
+        dateObj.getFullYear() === data.year &&
+        dateObj.getMonth() === data.monthIndex &&
+        data.twiceDailyDays.includes(dateObj.getDate());
+
+      /* ── Month drill-in (Calendar) ── */
+      const monthActiveMap = {};
+      dailyDataWithDate.forEach(d => {
+        if (d.dateObj.getFullYear() === heatmapMonth.year && d.dateObj.getMonth() === heatmapMonth.monthIndex) {
+          monthActiveMap[d.dateObj.getDate()] = d.distance;
+        }
+      });
+      const monthIsCurrent = heatmapMonth.year === data.year && heatmapMonth.monthIndex === data.monthIndex;
+      const monthTwiceDays = monthIsCurrent ? data.twiceDailyDays : [];
+      const monthToday     = monthIsCurrent ? data.today : null;
+
+      const canGoPrevMonth = new Date(heatmapMonth.year, heatmapMonth.monthIndex, 1) > heatmapStart;
+      const canGoNextMonth = new Date(heatmapMonth.year, heatmapMonth.monthIndex, 1) < new Date(data.year, data.monthIndex, 1);
+      const goPrevMonth = () => setHeatmapMonth(m => { const d = new Date(m.year, m.monthIndex - 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
+      const goNextMonth = () => setHeatmapMonth(m => { const d = new Date(m.year, m.monthIndex + 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
+      const selectHeatmapDay = (dateObj) => {
+        setHeatmapMonth({ year: dateObj.getFullYear(), monthIndex: dateObj.getMonth() });
+        setCalendarDetailOpen(true);
+      };
+
+      /* ── Distance Trends ── */
+      const rangeDayCount = distanceRange === '7d' ? 7 : distanceRange === '30d' ? 30 : Infinity;
+      const rangeCutoff = new Date(todayDate);
+      rangeCutoff.setDate(rangeCutoff.getDate() - (rangeDayCount - 1));
+      const rangedData = dailyDataWithDate.filter(d => distanceRange === 'all' || d.dateObj >= rangeCutoff);
+      const rangeDists = rangedData.map(d => d.distance);
+      const rangeMaxDistance = rangeDists.length ? Math.max(...rangeDists) : 1;
+      const rangeAvgLine = rollingAverage(rangeDists, 7);
+
+      const totalDistanceAll = data.dailyData.reduce((a, d) => a + d.distance, 0);
+      const totalDurationAll = data.dailyData.reduce((a, d) => a + (d.duration || 0), 0);
+      const avgPaceAll      = totalDurationAll > 0 ? (totalDurationAll / 60) / totalDistanceAll : null;
+      const avgPerWalk      = totalDistanceAll / data.totalWalks;
+      const longestWalkDist = Math.max(...dailyDataWithDate.flatMap(d => d.walks ? d.walks.map(w => w.distance) : [d.distance]));
+
+      const weekBuckets = bucketByWeek(dailyDataWithDate);
+      const thisWeek = weekBuckets[weekBuckets.length - 1];
+      const lastWeek = weekBuckets.length > 1 ? weekBuckets[weekBuckets.length - 2] : null;
+      const distanceDeltaPct = (lastWeek && lastWeek.avgDistance > 0)
+        ? ((thisWeek.avgDistance - lastWeek.avgDistance) / lastWeek.avgDistance) * 100
+        : null;
+      const paceDeltaPct = (lastWeek && lastWeek.avgPace && thisWeek.avgPace)
+        ? ((lastWeek.avgPace - thisWeek.avgPace) / lastWeek.avgPace) * 100 // positive = faster than last week
+        : null;
+      const deltaClass = (pct) => pct == null ? 'flat' : pct > 0.5 ? 'up' : pct < -0.5 ? 'down' : 'flat';
+      const weekRangeLabel = (weekStart) => {
+        const end = new Date(weekStart); end.setDate(end.getDate() + 6);
+        const endLabel = end.getMonth() === weekStart.getMonth()
+          ? `${end.getDate()}`
+          : `${MONTHS[end.getMonth()]} ${end.getDate()}`;
+        return `${MONTHS[weekStart.getMonth()]} ${weekStart.getDate()}–${endLabel}`;
+      };
 
       return (
         <div className="glass-shell" style={{ padding: 'clamp(20px, 4vw, 40px)' }}>
@@ -803,46 +1147,174 @@
             </div>
           </div>
 
-          {/* ── Calendar ── */}
-          <Calendar
-            year={data.year}
-            monthIndex={data.monthIndex}
-            activeMap={activeMap}
-            twiceDays={data.twiceDailyDays}
-            today={data.today}
-          />
-
-          {/* ── Daily Distance Trend ── */}
+          {/* ── Activity Calendar: heatmap (default) + collapsible month drill-in ── */}
           <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
-            <SectionTitle icon="bolt">Daily Distance Trend</SectionTitle>
-            <div style={{ display: 'flex', gap: 'clamp(8px, 2vw, 12px)', marginBottom: '16px', flexWrap: 'wrap' }}>
-              <MiniStat icon="target" label="Average / day" value={avgDistance.toFixed(2)} unit="mi" />
-              <MiniStat icon="medal"  label="Biggest day"   value={maxDistance.toFixed(2)} unit="mi" />
-            </div>
-            <div className={'chart-wrap' + (overflow ? ' has-overflow' : '')}>
-              <div className="chart-scroll" ref={scrollRef}>
-                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '160px', minWidth: 'min-content', padding: '0 4px' }}>
-                  {data.dailyData.map((day, idx) => (
-                    <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '0 0 auto', minWidth: '34px' }}>
-                      <div style={{ fontSize: '8px', color: day.distance === maxDistance ? GOLD_LIGHT : BLUE_LIGHT, fontWeight: 700, marginBottom: '3px', height: '12px', textAlign: 'center' }}>
-                        {day.distance}
-                      </div>
-                      <div
-                        className={'bar' + (day.distance === maxDistance ? ' is-max' : '')}
-                        style={{ width: '18px', height: `${(day.distance / maxDistance) * 120}px`, minHeight: '6px' }}
-                      />
-                      <div style={{ fontSize: '8px', color: BLUE_DIM, marginTop: '5px', fontWeight: 500, textAlign: 'center' }}>
-                        {day.date.split(' ')[1]}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <SectionTitle icon="calendar">Activity Calendar</SectionTitle>
+
+            <ActivityHeatmap
+              days={dailyDataWithDate}
+              startDate={heatmapStart}
+              endDate={todayDate}
+              todayTime={todayDate.getTime()}
+              isTwiceDay={isTwiceDay}
+              onSelectDay={selectHeatmapDay}
+              scrollRef={heatmapScrollRef}
+              overflow={heatmapOverflow}
+            />
+
+            <div
+              className="section-toggle"
+              onClick={() => setCalendarDetailOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: calendarDetailOpen ? '14px' : '0', padding: '4px 2px' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+                <Icon name="layers" c={BLUE_MID} size={18} sw={2} />
+                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Month Detail
+                </h2>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: GOLD_LIGHT }}>{MONTHS[heatmapMonth.monthIndex]} {heatmapMonth.year}</span>
+                <span className={'chevron-icon' + (calendarDetailOpen ? ' open' : '')}>
+                  <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
+                </span>
               </div>
             </div>
+
+            {calendarDetailOpen && (
+              <Calendar
+                year={heatmapMonth.year}
+                monthIndex={heatmapMonth.monthIndex}
+                activeMap={monthActiveMap}
+                twiceDays={monthTwiceDays}
+                today={monthToday}
+                onPrevMonth={goPrevMonth}
+                onNextMonth={goNextMonth}
+                canGoPrev={canGoPrevMonth}
+                canGoNext={canGoNextMonth}
+              />
+            )}
+          </div>
+
+          {/* ── Distance Trends ── */}
+          <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
+            <SectionTitle icon="bolt">Distance Trends</SectionTitle>
+
+            <div style={{ display: 'flex', gap: 'clamp(8px, 2vw, 12px)', marginBottom: '14px', flexWrap: 'wrap' }}>
+              <MiniStat icon="medal"  label="Longest walk" value={longestWalkDist.toFixed(2)} unit="mi" />
+              <MiniStat icon="target" label="Avg / walk"   value={avgPerWalk.toFixed(2)}      unit="mi" />
+              <MiniStat icon="bolt"   label="Avg pace"     value={formatPace(avgPaceAll)}      unit="/mi" />
+            </div>
+
+            {thisWeek && (
+              <div style={{ padding: '14px 16px', marginBottom: '16px', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(116,172,223,0.22)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '6px' }}>
+                  <span style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Week over Week</span>
+                  {lastWeek && (
+                    <span style={{ fontSize: '10px', color: BLUE_MID }}>{weekRangeLabel(thisWeek.weekStart)} vs {weekRangeLabel(lastWeek.weekStart)}</span>
+                  )}
+                </div>
+                <div style={{ display: 'flex', gap: 'clamp(16px, 4vw, 28px)', flexWrap: 'wrap' }}>
+                  <div>
+                    <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, marginBottom: '3px' }}>Avg distance / day</div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                      <span style={{ fontSize: 'clamp(16px, 3vw, 19px)', fontWeight: 300, color: BLUE_LIGHT }}>
+                        {thisWeek.avgDistance.toFixed(2)} <span style={{ fontSize: '11px', color: BLUE_MID, fontWeight: 500 }}>mi</span>
+                      </span>
+                      {distanceDeltaPct != null && (
+                        <span className={'trend-delta ' + deltaClass(distanceDeltaPct)}>
+                          {distanceDeltaPct >= 0 ? '▲' : '▼'} {Math.abs(distanceDeltaPct).toFixed(0)}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, marginBottom: '3px' }}>Avg pace</div>
+                    <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                      <span style={{ fontSize: 'clamp(16px, 3vw, 19px)', fontWeight: 300, color: BLUE_LIGHT }}>
+                        {formatPace(thisWeek.avgPace)} <span style={{ fontSize: '11px', color: BLUE_MID, fontWeight: 500 }}>/mi</span>
+                      </span>
+                      {paceDeltaPct != null && (
+                        <span className={'trend-delta ' + deltaClass(paceDeltaPct)}>
+                          {paceDeltaPct >= 0 ? '▲' : '▼'} {Math.abs(paceDeltaPct).toFixed(0)}%
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="badge-filters">
+              {[
+                { key: '7d',  label: '7D' },
+                { key: '30d', label: '30D' },
+                { key: 'all', label: 'All' },
+              ].map(r => (
+                <button
+                  key={r.key}
+                  className={'badge-filter-tab' + (distanceRange === r.key ? ' active' : '')}
+                  onClick={() => setDistanceRange(r.key)}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+
+            {rangedData.length === 0 ? (
+              <p style={{ fontSize: '12px', color: BLUE_DIM, padding: '20px 0', textAlign: 'center' }}>No walks in this range yet.</p>
+            ) : (
+              <div className={'chart-wrap' + (overflow ? ' has-overflow' : '')}>
+                <div className="chart-scroll" ref={scrollRef}>
+                  <div style={{ minWidth: 'min-content', padding: '0 4px' }}>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      {rangedData.map((day, idx) => (
+                        <div key={idx} style={{ width: '34px', flex: '0 0 auto', fontSize: '8px', fontWeight: 700, textAlign: 'center', height: '12px', marginBottom: '3px', color: day.distance === rangeMaxDistance ? GOLD_LIGHT : BLUE_LIGHT }}>
+                          {day.distance.toFixed(2)}
+                        </div>
+                      ))}
+                    </div>
+                    <div style={{ position: 'relative', height: '120px' }}>
+                      <svg width={Math.max(0, rangedData.length * 40 - 6)} height="120" style={{ position: 'absolute', left: 0, top: 0, pointerEvents: 'none', overflow: 'visible' }}>
+                        <polyline
+                          points={rangeAvgLine.map((v, i) => `${i * 40 + 17},${120 - (v / rangeMaxDistance) * 120}`).join(' ')}
+                          fill="none" stroke={GOLD_LIGHT} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.85"
+                        />
+                        {rangeAvgLine.map((v, i) => (
+                          <circle key={i} cx={i * 40 + 17} cy={120 - (v / rangeMaxDistance) * 120} r="2" fill={GOLD_LIGHT} opacity="0.9" />
+                        ))}
+                      </svg>
+                      <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '100%' }}>
+                        {rangedData.map((day, idx) => (
+                          <div key={idx} style={{ width: '34px', flex: '0 0 auto', display: 'flex', justifyContent: 'center' }}>
+                            <div
+                              className={'bar' + (day.distance === rangeMaxDistance ? ' is-max' : '')}
+                              style={{ width: '18px', height: `${(day.distance / rangeMaxDistance) * 120}px`, minHeight: '6px' }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '6px', marginTop: '5px' }}>
+                      {rangedData.map((day, idx) => (
+                        <div key={idx} style={{ width: '34px', flex: '0 0 auto', fontSize: '8px', color: BLUE_DIM, fontWeight: 500, textAlign: 'center' }}>
+                          {day.date.split(' ')[1]}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '10px', fontSize: '10px', color: BLUE_DIM, fontWeight: 500 }}>
+              <span style={{ width: '14px', height: '2px', borderRadius: '2px', background: GOLD_LIGHT, opacity: 0.85 }} /> 7-day average
+            </div>
+
             {overflow && (
               <div className="scroll-hint">
                 <span className="l"><Icon name="chevron" c="rgba(160,210,255,0.65)" size={13} sw={2.4} /></span>
-                Scroll to see all {data.dailyData.length} days
+                Scroll to see all {rangedData.length} days
                 <span className="r"><Icon name="chevron" c="rgba(160,210,255,0.65)" size={13} sw={2.4} /></span>
               </div>
             )}
