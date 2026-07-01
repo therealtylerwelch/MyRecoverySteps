@@ -236,65 +236,6 @@
     }
     .cal-today { outline: 2px solid rgba(251, 218, 106, 0.85); outline-offset: 1px; }
 
-    /* ── Activity heatmap ── */
-    .heatmap-months {
-      display: flex;
-      padding-left: 22px;
-      margin-bottom: 4px;
-    }
-    .heatmap-month-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-      color: rgba(160, 210, 255, 0.60);
-      flex: 0 0 auto;
-    }
-    .heatmap-body { display: flex; gap: 4px; }
-    .heatmap-dow-col {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      flex: 0 0 auto;
-      width: 16px;
-      margin-right: 4px;
-    }
-    .heatmap-dow-col span {
-      height: clamp(11px, 2.6vw, 14px);
-      font-size: 8px;
-      font-weight: 700;
-      color: rgba(160, 210, 255, 0.45);
-      display: flex;
-      align-items: center;
-    }
-    .heatmap-week { display: flex; flex-direction: column; gap: 3px; flex: 0 0 auto; }
-    .heatmap-cell {
-      width: clamp(11px, 2.6vw, 14px);
-      height: clamp(11px, 2.6vw, 14px);
-      border-radius: 3px;
-      position: relative;
-      cursor: pointer;
-      border: 1px solid rgba(116, 172, 223, 0.16);
-    }
-    .heatmap-cell.out-range { visibility: hidden; cursor: default; }
-    .heatmap-cell.level-0 { background: rgba(10, 35, 80, 0.45); }
-    .heatmap-cell.level-1 { background: rgba(246, 180, 14, 0.22); border-color: rgba(246, 180, 14, 0.30); }
-    .heatmap-cell.level-2 { background: rgba(246, 180, 14, 0.42); border-color: rgba(246, 180, 14, 0.45); }
-    .heatmap-cell.level-3 { background: rgba(246, 180, 14, 0.68); border-color: rgba(246, 180, 14, 0.65); }
-    .heatmap-cell.level-4 { background: rgba(251, 218, 106, 0.95); border-color: rgba(251, 218, 106, 1); }
-    .heatmap-cell.is-today { outline: 2px solid rgba(251, 218, 106, 0.85); outline-offset: 1px; }
-    .heatmap-cell.is-twice::after {
-      content: '';
-      position: absolute;
-      top: -3px; right: -3px;
-      width: 5px; height: 5px;
-      border-radius: 50%;
-      background: #FBDA6A;
-      box-shadow: 0 0 3px rgba(251,218,106,0.8);
-    }
-    .heatmap-cell:hover { filter: brightness(1.25); }
-    .heatmap-legend-swatch { display: flex; gap: 3px; align-items: center; }
-    .heatmap-legend-swatch .heatmap-cell { cursor: default; width: 10px; height: 10px; }
-
     /* ── Month nav arrows ── */
     .month-nav-btn {
       width: 24px;
@@ -602,36 +543,6 @@
         });
     };
 
-    const buildHeatmapWeeks = (days, startDate, endDate) => {
-      const byTime = new Map(days.map(d => [d.dateObj.getTime(), d]));
-      const gridStart = getWeekStart(startDate);
-      const weeks = [];
-      const cursor = new Date(gridStart);
-      while (cursor <= endDate) {
-        const week = [];
-        for (let i = 0; i < 7; i++) {
-          const cellDate = new Date(cursor);
-          cellDate.setDate(cursor.getDate() + i);
-          week.push({
-            date: cellDate,
-            entry: byTime.get(cellDate.getTime()) || null,
-            inRange: cellDate >= startDate && cellDate <= endDate,
-          });
-        }
-        weeks.push(week);
-        cursor.setDate(cursor.getDate() + 7);
-      }
-      return weeks;
-    };
-
-    const heatmapLevel = (distance) => {
-      if (distance == null) return 0;
-      if (distance < 0.4) return 1;
-      if (distance < 0.7) return 2;
-      if (distance < 1.0) return 3;
-      return 4;
-    };
-
     const Icon = ({ name, c = '#fff', size = 30, sw = 1.8 }) => {
       const base = { width: size, height: size, display: 'block' };
       const s = { fill: 'none', stroke: c, strokeWidth: sw, strokeLinecap: 'round', strokeLinejoin: 'round' };
@@ -794,7 +705,7 @@
       </div>
     );
 
-    /* ── Month detail grid (drill-in from the heatmap) ── */
+    /* ── Detailed month grid, with prev/next navigation to browse history ── */
     const Calendar = ({ year, monthIndex, activeMap, twiceDays, today, onPrevMonth, onNextMonth, canGoPrev, canGoNext }) => {
       const firstDow    = new Date(year, monthIndex, 1).getDay();
       const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
@@ -849,79 +760,6 @@
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ color: GOLD_LIGHT, fontSize: '11px' }}>✦</span> Two walks
-            </span>
-          </div>
-        </div>
-      );
-    };
-
-    /* ── Contribution-style heatmap: the default multi-month calendar view ── */
-    const ActivityHeatmap = ({ days, startDate, endDate, todayTime, isTwiceDay, onSelectDay, scrollRef, overflow }) => {
-      const weeks = buildHeatmapWeeks(days, startDate, endDate);
-      let lastMonth = null;
-      const monthLabels = weeks.map((week) => {
-        const firstValid = week.find(c => c.inRange);
-        if (!firstValid) return '';
-        const m = firstValid.date.getMonth();
-        if (m !== lastMonth) { lastMonth = m; return MONTHS[m]; }
-        return '';
-      });
-
-      return (
-        <div>
-          <div className={'chart-wrap' + (overflow ? ' has-overflow' : '')}>
-            <div className="chart-scroll" ref={scrollRef}>
-              <div style={{ minWidth: 'min-content' }}>
-                <div className="heatmap-months">
-                  <span style={{ width: '20px', flex: '0 0 auto' }} />
-                  {weeks.map((_, wi) => (
-                    <span key={wi} className="heatmap-month-label" style={{ width: 'clamp(11px, 2.6vw, 14px)', marginRight: '3px' }}>
-                      {monthLabels[wi]}
-                    </span>
-                  ))}
-                </div>
-                <div style={{ display: 'flex' }}>
-                  <div className="heatmap-dow-col">
-                    {DOW.map((d, i) => <span key={i}>{i % 2 === 1 ? d : ''}</span>)}
-                  </div>
-                  <div className="heatmap-body">
-                    {weeks.map((week, wi) => (
-                      <div key={wi} className="heatmap-week">
-                        {week.map((cell, ci) => {
-                          if (!cell.inRange) return <div key={ci} className="heatmap-cell out-range" />;
-                          const dist    = cell.entry ? cell.entry.distance : null;
-                          const level   = heatmapLevel(dist);
-                          const isToday = cell.date.getTime() === todayTime;
-                          const twice   = isTwiceDay(cell.date);
-                          const label   = `${MONTHS[cell.date.getMonth()]} ${cell.date.getDate()}` + (dist != null ? ` · ${dist.toFixed(2)} mi` : ' · no walk');
-                          return (
-                            <div
-                              key={ci}
-                              className={`heatmap-cell level-${level}${isToday ? ' is-today' : ''}${twice ? ' is-twice' : ''}`}
-                              title={label}
-                              onClick={() => onSelectDay(cell.date)}
-                            />
-                          );
-                        })}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', flexWrap: 'wrap', gap: '10px' }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '10px', color: BLUE_DIM, fontWeight: 500 }}>
-              <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#FBDA6A', boxShadow: '0 0 3px rgba(251,218,106,0.8)' }} /> Two walks
-            </span>
-            <span className="heatmap-legend-swatch" style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 500 }}>
-              Less
-              <span className="heatmap-cell level-0" />
-              <span className="heatmap-cell level-1" />
-              <span className="heatmap-cell level-2" />
-              <span className="heatmap-cell level-3" />
-              <span className="heatmap-cell level-4" />
-              More
             </span>
           </div>
         </div>
@@ -994,14 +832,11 @@
       const [badgesOpen, setBadgesOpen] = React.useState(false);
       const [badgeFilter, setBadgeFilter] = React.useState('all');
       const [insightsOpen, setInsightsOpen] = React.useState(false);
-      const [calendarDetailOpen, setCalendarDetailOpen] = React.useState(false);
-      const [heatmapMonth, setHeatmapMonth] = React.useState({ year: data.year, monthIndex: data.monthIndex });
+      const [calendarMonth, setCalendarMonth] = React.useState({ year: data.year, monthIndex: data.monthIndex });
       const [distanceRange, setDistanceRange] = React.useState('30d');
 
       const scrollRef = React.useRef(null);
       const [overflow, setOverflow] = React.useState(false);
-      const heatmapScrollRef = React.useRef(null);
-      const [heatmapOverflow, setHeatmapOverflow] = React.useState(false);
 
       React.useEffect(() => {
         const check = () => {
@@ -1012,16 +847,6 @@
         window.addEventListener('resize', check);
         return () => window.removeEventListener('resize', check);
       }, [distanceRange]);
-
-      React.useEffect(() => {
-        const e = heatmapScrollRef.current;
-        if (!e) return;
-        const check = () => setHeatmapOverflow(e.scrollWidth > e.clientWidth + 4);
-        check();
-        e.scrollLeft = e.scrollWidth; // start scrolled to the most recent week
-        window.addEventListener('resize', check);
-        return () => window.removeEventListener('resize', check);
-      }, []);
 
       const unlockedBadges = data.badges.filter(b => b.unlocked);
       const unlockedCount  = unlockedBadges.length;
@@ -1041,33 +866,23 @@
 
       const todayDate      = new Date(data.year, data.monthIndex, data.today);
       const firstDataDate  = dailyDataWithDate[0].dateObj;
-      const heatmapStart   = new Date(firstDataDate.getFullYear(), firstDataDate.getMonth(), 1);
+      const firstDataMonth = new Date(firstDataDate.getFullYear(), firstDataDate.getMonth(), 1);
 
-      // twiceDailyDays are day-of-month numbers within data.monthIndex/data.year (today's single-month data model)
-      const isTwiceDay = (dateObj) =>
-        dateObj.getFullYear() === data.year &&
-        dateObj.getMonth() === data.monthIndex &&
-        data.twiceDailyDays.includes(dateObj.getDate());
-
-      /* ── Month drill-in (Calendar) ── */
+      /* ── Activity Calendar: detailed month grid with prev/next navigation ── */
       const monthActiveMap = {};
       dailyDataWithDate.forEach(d => {
-        if (d.dateObj.getFullYear() === heatmapMonth.year && d.dateObj.getMonth() === heatmapMonth.monthIndex) {
+        if (d.dateObj.getFullYear() === calendarMonth.year && d.dateObj.getMonth() === calendarMonth.monthIndex) {
           monthActiveMap[d.dateObj.getDate()] = d.distance;
         }
       });
-      const monthIsCurrent = heatmapMonth.year === data.year && heatmapMonth.monthIndex === data.monthIndex;
+      const monthIsCurrent = calendarMonth.year === data.year && calendarMonth.monthIndex === data.monthIndex;
       const monthTwiceDays = monthIsCurrent ? data.twiceDailyDays : [];
       const monthToday     = monthIsCurrent ? data.today : null;
 
-      const canGoPrevMonth = new Date(heatmapMonth.year, heatmapMonth.monthIndex, 1) > heatmapStart;
-      const canGoNextMonth = new Date(heatmapMonth.year, heatmapMonth.monthIndex, 1) < new Date(data.year, data.monthIndex, 1);
-      const goPrevMonth = () => setHeatmapMonth(m => { const d = new Date(m.year, m.monthIndex - 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
-      const goNextMonth = () => setHeatmapMonth(m => { const d = new Date(m.year, m.monthIndex + 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
-      const selectHeatmapDay = (dateObj) => {
-        setHeatmapMonth({ year: dateObj.getFullYear(), monthIndex: dateObj.getMonth() });
-        setCalendarDetailOpen(true);
-      };
+      const canGoPrevMonth = new Date(calendarMonth.year, calendarMonth.monthIndex, 1) > firstDataMonth;
+      const canGoNextMonth = new Date(calendarMonth.year, calendarMonth.monthIndex, 1) < new Date(data.year, data.monthIndex, 1);
+      const goPrevMonth = () => setCalendarMonth(m => { const d = new Date(m.year, m.monthIndex - 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
+      const goNextMonth = () => setCalendarMonth(m => { const d = new Date(m.year, m.monthIndex + 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
 
       /* ── Distance Trends ── */
       const rangeDayCount = distanceRange === '7d' ? 7 : distanceRange === '30d' ? 30 : Infinity;
@@ -1147,53 +962,21 @@
             </div>
           </div>
 
-          {/* ── Activity Calendar: heatmap (default) + collapsible month drill-in ── */}
+          {/* ── Activity Calendar: detailed month view, browse history via prev/next ── */}
           <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
             <SectionTitle icon="calendar">Activity Calendar</SectionTitle>
 
-            <ActivityHeatmap
-              days={dailyDataWithDate}
-              startDate={heatmapStart}
-              endDate={todayDate}
-              todayTime={todayDate.getTime()}
-              isTwiceDay={isTwiceDay}
-              onSelectDay={selectHeatmapDay}
-              scrollRef={heatmapScrollRef}
-              overflow={heatmapOverflow}
+            <Calendar
+              year={calendarMonth.year}
+              monthIndex={calendarMonth.monthIndex}
+              activeMap={monthActiveMap}
+              twiceDays={monthTwiceDays}
+              today={monthToday}
+              onPrevMonth={goPrevMonth}
+              onNextMonth={goNextMonth}
+              canGoPrev={canGoPrevMonth}
+              canGoNext={canGoNextMonth}
             />
-
-            <div
-              className="section-toggle"
-              onClick={() => setCalendarDetailOpen(o => !o)}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: calendarDetailOpen ? '14px' : '0', padding: '4px 2px' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                <Icon name="layers" c={BLUE_MID} size={18} sw={2} />
-                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Month Detail
-                </h2>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontSize: '12px', fontWeight: 600, color: GOLD_LIGHT }}>{MONTHS[heatmapMonth.monthIndex]} {heatmapMonth.year}</span>
-                <span className={'chevron-icon' + (calendarDetailOpen ? ' open' : '')}>
-                  <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
-                </span>
-              </div>
-            </div>
-
-            {calendarDetailOpen && (
-              <Calendar
-                year={heatmapMonth.year}
-                monthIndex={heatmapMonth.monthIndex}
-                activeMap={monthActiveMap}
-                twiceDays={monthTwiceDays}
-                today={monthToday}
-                onPrevMonth={goPrevMonth}
-                onNextMonth={goNextMonth}
-                canGoPrev={canGoPrevMonth}
-                canGoNext={canGoNextMonth}
-              />
-            )}
           </div>
 
           {/* ── Distance Trends ── */}
