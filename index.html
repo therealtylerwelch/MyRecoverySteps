@@ -856,17 +856,16 @@
     const WalkTracker = () => {
       const data = {
         year: 2026,
-        monthIndex: 5,
-        today: 30,
-        updated: 'June 30, 2026',
-        currentStreak: 2,
+        monthIndex: 6,
+        today: 1,
+        updated: 'July 1, 2026',
+        currentStreak: 3,
         longestStreak: 5,
         longestStreakLabel: 'Jun 7–11',
-        totalWalks: 22,
-        activeDays: 19,
-        totalDistance: 14.9,
-        twiceDailyDays: [11, 29, 30],
-        lastActivity: { date: '2026-06-30', distance: 2.68, duration: 2909, pace: 18.1 },
+        totalWalks: 23,
+        activeDays: 20,
+        totalDistance: 15.8,
+        lastActivity: { date: '2026-07-01', distance: 0.90, duration: 1380, pace: 25.6 },
         dailyData: [
           { date: 'Jun 3',  distance: 0.33, duration: 713,  elevGain: 10, effort: 1, achievements: 0 },
           { date: 'Jun 4',  distance: 0.33, duration: 644,  elevGain: 20, effort: 1, achievements: 0 },
@@ -886,7 +885,8 @@
           { date: 'Jun 25', distance: 1.01, duration: 1801, elevGain: 69, effort: 3, achievements: 0 },
           { date: 'Jun 27', distance: 0.93, duration: 1900, elevGain: 56, effort: 2, achievements: 0 },
           { date: 'Jun 29', distance: 1.32, duration: 2287, elevGain: 85, effort: 3, achievements: 0, walks: [{ distance: 0.89, duration: 1567 }, { distance: 0.43, duration: 720 }] },
-          { date: 'Jun 30', distance: 3.72, duration: 4460, elevGain: 61, effort: 9, achievements: 0, walks: [{ distance: 1.04, duration: 1551 }, { distance: 2.68, duration: 2909 }] }
+          { date: 'Jun 30', distance: 3.72, duration: 4460, elevGain: 61, effort: 9, achievements: 0, walks: [{ distance: 1.04, duration: 1551 }, { distance: 2.68, duration: 2909 }] },
+          { date: 'Jul 1',  distance: 0.90, duration: 1380, elevGain: 59, effort: 2, achievements: 0 }
         ],
         badges: [
           { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true,  icon: 'footprints' },
@@ -973,7 +973,9 @@
         }
       });
       const monthIsCurrent = calendarMonth.year === data.year && calendarMonth.monthIndex === data.monthIndex;
-      const monthTwiceDays = monthIsCurrent ? data.twiceDailyDays : [];
+      const monthTwiceDays = dailyDataWithDate
+        .filter(d => d.dateObj.getFullYear() === calendarMonth.year && d.dateObj.getMonth() === calendarMonth.monthIndex && d.walks && d.walks.length > 1)
+        .map(d => d.dateObj.getDate());
       const monthToday     = monthIsCurrent ? data.today : null;
 
       const canGoPrevMonth = new Date(calendarMonth.year, calendarMonth.monthIndex, 1) > firstDataMonth;
@@ -1353,7 +1355,7 @@
               </p>
               <div className="tldr-action">
                 <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={15} sw={2} /></span>
-                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. The <b>25-Mile Club</b> is about 10 miles away.</span>
+                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. The <b>25-Mile Club</b> is about 9 miles away.</span>
               </div>
             </div>
 
@@ -1387,10 +1389,10 @@
             {insightsOpen && (
               <>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '8px' }}>
-                  Strong, steady recovery so far. You've logged <b style={{ color: GOLD_LIGHT }}>22 walks across 19 days</b> for <b style={{ color: GOLD_LIGHT }}>14.9 miles</b> since June 1, and the trend is clearly upward: your typical walk has grown from about <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> early on to a standout <b style={{ color: GOLD_LIGHT }}>2.68 mi</b> effort on June 30, while your pace has improved from ~39 to ~22 min/mi this week — about <b style={{ color: GOLD_LIGHT }}>40% faster</b>. Your best stretch was a 5-day streak (Jun 7–11), and Jun 30 set a new mark: your longest single walk (2.68 mi) at 18:05/mi, your fastest pace yet.
+                  Strong, steady recovery so far. You've logged <b style={{ color: GOLD_LIGHT }}>23 walks across 20 days</b> for <b style={{ color: GOLD_LIGHT }}>15.8 miles</b> since June 1, and the trend is clearly upward: your typical walk has grown from about <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> early on to a standout <b style={{ color: GOLD_LIGHT }}>2.68 mi</b> effort on June 30, while your pace has improved from ~39 to ~23 min/mi this week — about <b style={{ color: GOLD_LIGHT }}>40% faster</b>. Your best stretch was a 5-day streak (Jun 7–11), and Jun 30 set a new mark: your longest single walk (2.68 mi) at 18:05/mi, your fastest pace yet.
                 </p>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
-                  The single biggest lever now is <b style={{ color: GOLD_LIGHT }}>consistency, not distance</b>. The gaps on Jun 6, 12, 14, 19–22, 26 and 28 are what keep resetting your streak — the four-day pause (Jun 19–22) alone broke what could have been a 3-week run. You've now stacked two-a-day walks three times (Jun 11, Jun 29, and Jun 30), a great sign. Here's how to convert your rising fitness into bigger milestones:
+                  The single biggest lever now is <b style={{ color: GOLD_LIGHT }}>consistency, not distance</b>. The gaps on Jun 6, 12, 14, 19–22, 26 and 28 are what keep resetting your streak — the four-day pause (Jun 19–22) alone broke what could have been a 3-week run. You've now stacked two-a-day walks three times (Jun 11, Jun 29, and Jun 30), a great sign, and carried a 3-day streak straight across into July (Jun 29–Jul 1) — your first stretch that's crossed a month boundary. Here's how to convert your rising fitness into bigger milestones:
                 </p>
                 <ul className="insight-list">
                   <li>
@@ -1399,7 +1401,7 @@
                   </li>
                   <li>
                     <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Lock in 1 mile.</b> Outside of June 30's breakout, your recent daily average is running just under 1 mi — nudge that up to a steady <b>1.0 mi/day</b> baseline, and treat June 30-style efforts as a stretch goal, not the norm.</span>
+                    <span><b>Lock in 1 mile.</b> Outside of June 30's breakout, your last three walks (Jun 27, 29, Jul 1) are averaging just over 1 mi — you're already there. Hold the line at a steady <b>1.0 mi/day</b> baseline, and treat June 30-style efforts as a bonus, not the norm.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="layers" c={GOLD_LIGHT} size={14} sw={2} /></span>
@@ -1407,7 +1409,7 @@
                   </li>
                   <li>
                     <span className="ico"><Icon name="medal" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Next milestone: 25-Mile Club.</b> You're <b>10.1 miles away</b>. At a steady 1.0 mi/day that's about 10 days; at your current ~0.78 mi/day average it's closer to 13 days.</span>
+                    <span><b>Next milestone: 25-Mile Club.</b> You're <b>9.2 miles away</b>. At a steady 1.0 mi/day that's about 9 days; at your current ~0.79 mi/day average it's closer to 12 days.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="bolt" c={GOLD_LIGHT} size={14} sw={2} /></span>
