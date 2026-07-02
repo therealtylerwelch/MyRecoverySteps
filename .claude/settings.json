@@ -25,7 +25,8 @@
       "Bash(node -e ' *)",
       "Bash(lsof -ti:8934)",
       "Bash(open -na \"Google Chrome\" --args --new-window \"http://127.0.0.1:8934/index.html\")",
-      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_server.js)"
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_server.js)",
+      "Bash(NODE_PATH=/private/tmp/claude-501/-Users-tylerwelch-My-Recovery-Steps/2099bdd9-97f5-48fb-b9ab-8bf6c4542415/scratchpad/node_modules node verify_jul1_twice.js)"
     ]
   }
 }
