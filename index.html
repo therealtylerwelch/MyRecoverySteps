@@ -263,13 +263,31 @@
       align-items: center;
       justify-content: center;
       position: relative;
+      overflow: hidden;
     }
     .cal-num  { font-size: clamp(10px, 2vw, 13px); font-weight: 600; line-height: 1; }
-    .cal-dist { font-size: 8px; font-weight: 700; margin-top: 2px; line-height: 1; }
+    .cal-cell-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      width: 100%;
+      flex: 0 0 auto;
+      padding: clamp(4px, 1vw, 7px) clamp(5px, 1.2vw, 8px) 0;
+      box-sizing: border-box;
+    }
+    .cal-num-active {
+      font-size: clamp(8.5px, 1.6vw, 11px);
+      font-weight: 700;
+      line-height: 1;
+    }
+    .cal-hero { display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column; align-items: center; justify-content: center; line-height: 1; }
+    .cal-hero-val { font-size: clamp(13px, 3.6vw, 25px); font-weight: 800; line-height: 1; }
+    .cal-hero-unit { font-size: clamp(6px, 1.3vw, 9px); font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; margin-top: clamp(1px, 0.5vw, 3px); opacity: 0.7; }
     .cal-twice {
       position: absolute;
-      top: 4px; right: 5px;
-      font-size: 8px;
+      top: clamp(4px, 1vw, 7px);
+      right: clamp(5px, 1.2vw, 8px);
+      font-size: clamp(8px, 1.6vw, 10px);
       color: #FBDA6A;
       line-height: 1;
     }
@@ -846,8 +864,19 @@
                   onClick={active ? () => setSelectedDay(sel => sel === d ? null : d) : undefined}
                 >
                   {twice && <span className="cal-twice">✦</span>}
-                  <span className="cal-num" style={{ color: active ? GOLD_LIGHT : BLUE_DIM }}>{d}</span>
-                  {active && <span className="cal-dist" style={{ color: 'rgba(251,218,106,0.85)' }}>{dayData.distance.toFixed(1)}</span>}
+                  {active ? (
+                    <>
+                      <div className="cal-cell-top">
+                        <span className="cal-num-active" style={{ color: 'rgba(232,244,255,0.8)' }}>{d}</span>
+                      </div>
+                      <div className="cal-hero">
+                        <span className="cal-hero-val" style={{ color: GOLD_LIGHT }}>{dayData.distance.toFixed(1)}</span>
+                        <span className="cal-hero-unit" style={{ color: GOLD_LIGHT }}>mi</span>
+                      </div>
+                    </>
+                  ) : (
+                    <span className="cal-num" style={{ color: BLUE_DIM }}>{d}</span>
+                  )}
                 </div>
               );
             })}
@@ -956,10 +985,10 @@
         currentStreak: 3,
         longestStreak: 5,
         longestStreakLabel: 'Jun 7–11',
-        totalWalks: 23,
+        totalWalks: 24,
         activeDays: 20,
-        totalDistance: 15.8,
-        lastActivity: { date: '2026-07-01', distance: 0.90, duration: 1380, pace: 25.6 },
+        totalDistance: 17.0,
+        lastActivity: { date: '2026-07-01', distance: 1.26, duration: 1348, pace: 17.8 },
         dailyData: [
           { date: 'Jun 3',  distance: 0.33, duration: 713,  elevGain: 10, effort: 1, achievements: 0 },
           { date: 'Jun 4',  distance: 0.33, duration: 644,  elevGain: 20, effort: 1, achievements: 0 },
@@ -980,7 +1009,7 @@
           { date: 'Jun 27', distance: 0.93, duration: 1900, elevGain: 56, effort: 2, achievements: 0 },
           { date: 'Jun 29', distance: 1.32, duration: 2287, elevGain: 85, effort: 3, achievements: 0, walks: [{ distance: 0.89, duration: 1567 }, { distance: 0.43, duration: 720 }] },
           { date: 'Jun 30', distance: 3.72, duration: 4460, elevGain: 61, effort: 9, achievements: 0, walks: [{ distance: 1.04, duration: 1551 }, { distance: 2.68, duration: 2909 }] },
-          { date: 'Jul 1',  distance: 0.90, duration: 1380, elevGain: 59, effort: 2, achievements: 0 }
+          { date: 'Jul 1',  distance: 2.16, duration: 2728, elevGain: 72, effort: 5, achievements: 0, walks: [{ distance: 0.90, duration: 1380 }, { distance: 1.26, duration: 1348 }] }
         ],
         badges: [
           { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true,  icon: 'footprints' },
@@ -1449,7 +1478,7 @@
               </p>
               <div className="tldr-action">
                 <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={15} sw={2} /></span>
-                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. The <b>25-Mile Club</b> is about 9 miles away.</span>
+                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. The <b>25-Mile Club</b> is about 8 miles away.</span>
               </div>
             </div>
 
@@ -1483,10 +1512,10 @@
             {insightsOpen && (
               <>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '8px' }}>
-                  Strong, steady recovery so far. You've logged <b style={{ color: GOLD_LIGHT }}>23 walks across 20 days</b> for <b style={{ color: GOLD_LIGHT }}>15.8 miles</b> since June 1, and the trend is clearly upward: your typical walk has grown from about <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> early on to a standout <b style={{ color: GOLD_LIGHT }}>2.68 mi</b> effort on June 30, while your pace has improved from ~39 to ~23 min/mi this week — about <b style={{ color: GOLD_LIGHT }}>40% faster</b>. Your best stretch was a 5-day streak (Jun 7–11), and Jun 30 set a new mark: your longest single walk (2.68 mi) at 18:05/mi, your fastest pace yet.
+                  Strong, steady recovery so far. You've logged <b style={{ color: GOLD_LIGHT }}>24 walks across 20 days</b> for <b style={{ color: GOLD_LIGHT }}>17.0 miles</b> since June 1, and the trend is clearly upward: your typical walk has grown from about <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> early on to a standout <b style={{ color: GOLD_LIGHT }}>2.68 mi</b> effort on June 30, while your pace has improved from ~40 to ~24 min/mi this week — about <b style={{ color: GOLD_LIGHT }}>40% faster</b>. Your best stretch was a 5-day streak (Jun 7–11); June 30 set your longest single walk (2.68 mi), and July 1's second walk broke the pace record again at 17:50/mi.
                 </p>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
-                  The single biggest lever now is <b style={{ color: GOLD_LIGHT }}>consistency, not distance</b>. The gaps on Jun 6, 12, 14, 19–22, 26 and 28 are what keep resetting your streak — the four-day pause (Jun 19–22) alone broke what could have been a 3-week run. You've now stacked two-a-day walks three times (Jun 11, Jun 29, and Jun 30), a great sign, and carried a 3-day streak straight across into July (Jun 29–Jul 1) — your first stretch that's crossed a month boundary. Here's how to convert your rising fitness into bigger milestones:
+                  The single biggest lever now is <b style={{ color: GOLD_LIGHT }}>consistency, not distance</b>. The gaps on Jun 6, 12, 14, 19–22, 26 and 28 are what keep resetting your streak — the four-day pause (Jun 19–22) alone broke what could have been a 3-week run. You've now stacked two-a-day walks four times (Jun 11, Jun 29, Jun 30, and Jul 1), a great sign, and carried a 3-day streak straight across into July (Jun 29–Jul 1) — your first stretch that's crossed a month boundary. Here's how to convert your rising fitness into bigger milestones:
                 </p>
                 <ul className="insight-list">
                   <li>
@@ -1495,19 +1524,19 @@
                   </li>
                   <li>
                     <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Lock in 1 mile.</b> Outside of June 30's breakout, your last three walks (Jun 27, 29, Jul 1) are averaging just over 1 mi — you're already there. Hold the line at a steady <b>1.0 mi/day</b> baseline, and treat June 30-style efforts as a bonus, not the norm.</span>
+                    <span><b>Lock in 1 mile.</b> Outside of June 30's breakout, your last three walks (Jun 27, 29, Jul 1) are averaging about <b>1.5 mi</b> — comfortably above the floor. Hold the line at a steady <b>1.0 mi/day</b> baseline, and treat big days like June 30 and July 1 as bonuses, not the norm.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="layers" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Stack a second effort.</b> You've now done it three times (Jun 11, Jun 29, Jun 30) — and June 30's second walk was your best one yet. Two solid walks in a day is a proven way to rack up miles fast.</span>
+                    <span><b>Stack a second effort.</b> You've now done it four times (Jun 11, Jun 29, Jun 30, and Jul 1) — and July 1's second walk set a new pace record. Two solid walks in a day is a proven way to rack up miles fast.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="medal" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Next milestone: 25-Mile Club.</b> You're <b>9.2 miles away</b>. At a steady 1.0 mi/day that's about 9 days; at your current ~0.79 mi/day average it's closer to 12 days.</span>
+                    <span><b>Next milestone: 25-Mile Club.</b> You're <b>8.0 miles away</b>. At a steady 1.0 mi/day that's about 8 days; at your current ~0.85 mi/day average it's closer to 9 days.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="bolt" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Keep one brisk walk weekly.</b> Your pace hit 18:05/mi on June 30's afternoon walk, a big step up from your typical 25–35 min/mi — protect that gain with one brisk effort like this each week while keeping the rest easy and recovery-paced.</span>
+                    <span><b>Keep one brisk walk weekly.</b> Your pace hit a new record of 17:50/mi on July 1's afternoon walk, a big step up from your typical 25–35 min/mi — protect that gain with one brisk effort like this each week while keeping the rest easy and recovery-paced.</span>
                   </li>
                 </ul>
               </>
