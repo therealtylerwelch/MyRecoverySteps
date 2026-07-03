@@ -142,6 +142,23 @@
         0 2px 12px rgba(246, 180, 14, 0.55),
         inset 0 1px 0 rgba(255, 255, 255, 0.65);
     }
+    .bar.is-hot {
+      background: linear-gradient(to top,
+        rgba(232, 116, 60, 0.65) 0%,
+        rgba(255, 178, 120, 0.95) 100%);
+      border: 1px solid rgba(255, 200, 160, 0.40);
+      box-shadow:
+        0 2px 12px rgba(232, 116, 60, 0.50),
+        inset 0 1px 0 rgba(255, 255, 255, 0.50);
+    }
+
+    /* ── Hero: momentum score + today's rings ── */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(10px, 2vw, 16px);
+    }
+    @media (max-width: 640px) { .hero-grid { grid-template-columns: 1fr; } }
 
     /* ── Responsive grids ── */
     .stat-grid {
@@ -780,6 +797,70 @@
         : <Icon name={icon} c={color} size={size} />
     );
 
+    /* ── Recovery momentum score ring ── */
+    const ScoreRing = ({ score }) => {
+      const r = 48, c = 2 * Math.PI * r;
+      return (
+        <svg viewBox="0 0 116 116" style={{ width: 'clamp(96px, 22vw, 124px)', height: 'auto', flex: '0 0 auto', display: 'block' }}>
+          <circle cx="58" cy="58" r={r} fill="none" stroke="rgba(116,172,223,0.18)" strokeWidth="10" />
+          {score > 0 && (
+            <circle
+              cx="58" cy="58" r={r} fill="none"
+              stroke={GOLD_LIGHT} strokeWidth="10" strokeLinecap="round"
+              strokeDasharray={`${(score / 100) * c} ${c}`}
+              transform="rotate(-90 58 58)"
+              style={{ filter: 'drop-shadow(0 0 6px rgba(246,180,14,0.45))' }}
+            />
+          )}
+          <text x="58" y="62" textAnchor="middle" fontSize="32" fontWeight="200" fill={BLUE_LIGHT} letterSpacing="-1" fontFamily="-apple-system, sans-serif">{score}</text>
+          <text x="58" y="78" textAnchor="middle" fontSize="8" fontWeight="700" fill="rgba(160,210,255,0.70)" letterSpacing="1.2" fontFamily="-apple-system, sans-serif">OF 100</text>
+        </svg>
+      );
+    };
+
+    /* ── Today's concentric goal rings (Apple-style) ── */
+    const GoalRings = ({ items }) => {
+      const radii = [48, 37, 26];
+      return (
+        <svg viewBox="0 0 116 116" style={{ width: 'clamp(96px, 22vw, 124px)', height: 'auto', flex: '0 0 auto', display: 'block' }}>
+          {items.map((it, i) => {
+            const r = radii[i], c = 2 * Math.PI * r;
+            return (
+              <g key={i}>
+                <circle cx="58" cy="58" r={r} fill="none" stroke="rgba(116,172,223,0.16)" strokeWidth="9" />
+                {it.pct > 0 && (
+                  <circle
+                    cx="58" cy="58" r={r} fill="none"
+                    stroke={it.color} strokeWidth="9" strokeLinecap="round"
+                    strokeDasharray={`${Math.min(1, it.pct) * c} ${c}`}
+                    transform="rotate(-90 58 58)" opacity="0.95"
+                  />
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      );
+    };
+
+    const HeroRow = ({ icon, label, value, tone }) => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
+        <span style={{ width: '22px', height: '22px', flex: '0 0 auto', borderRadius: '7px', background: 'rgba(116,172,223,0.14)', border: '1px solid rgba(116,172,223,0.32)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Icon name={icon} c={tone || BLUE_LIGHT} size={13} sw={2.2} />
+        </span>
+        <span style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{label}</span>
+        <span style={{ fontSize: '12px', color: tone || BLUE_LIGHT, fontWeight: 700, marginLeft: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>{value}</span>
+      </div>
+    );
+
+    const RingRow = ({ color, label, value }) => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span style={{ width: '10px', height: '10px', flex: '0 0 auto', borderRadius: '3px', background: color }} />
+        <span style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{label}</span>
+        <span style={{ fontSize: '12px', color: BLUE_LIGHT, fontWeight: 700, marginLeft: 'auto', whiteSpace: 'nowrap' }}>{value}</span>
+      </div>
+    );
+
     const StatCard = ({ label, value, unit, variant }) => {
       const isGold = variant === 'gold';
       return (
@@ -858,6 +939,12 @@
               const twice   = twiceDays.includes(d);
               const isToday = d === today;
               const isSelected = d === selectedDay;
+              /* Heatmap intensity: fixed distance tiers so a month of progress reads at a glance */
+              const heat = !active ? null
+                : dayData.distance >= 2   ? 0.42
+                : dayData.distance >= 1   ? 0.26
+                : dayData.distance >= 0.5 ? 0.14
+                : 0.06;
               return (
                 <div
                   key={i}
@@ -867,7 +954,10 @@
                     (active ? ' cal-clickable' : '') +
                     (isSelected ? ' cal-selected' : '')
                   }
-                  style={{ opacity: active ? 1 : 0.5 }}
+                  style={{
+                    opacity: active ? 1 : 0.5,
+                    ...(heat != null ? { backgroundImage: `linear-gradient(rgba(246,180,14,${heat}), rgba(246,180,14,${heat}))` } : {})
+                  }}
                   onClick={active ? () => setSelectedDay(sel => sel === d ? null : d) : undefined}
                 >
                   {twice && <span className="cal-twice">✦</span>}
@@ -888,9 +978,13 @@
               );
             })}
           </div>
-          <div style={{ display: 'flex', gap: '16px', marginTop: '14px', fontSize: '10px', color: BLUE_DIM, fontWeight: 500 }}>
-            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <span style={{ width: '10px', height: '10px', borderRadius: '3px', background: 'rgba(246,180,14,0.55)', border: '1px solid rgba(246,180,14,0.7)' }} /> Walked
+          <div style={{ display: 'flex', gap: '16px', marginTop: '14px', fontSize: '10px', color: BLUE_DIM, fontWeight: 500, flexWrap: 'wrap' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              less
+              {[0.10, 0.22, 0.38, 0.55].map((a, i) => (
+                <span key={i} style={{ width: '10px', height: '10px', borderRadius: '3px', background: `rgba(246,180,14,${a})`, border: '1px solid rgba(246,180,14,0.55)' }} />
+              ))}
+              more miles
             </span>
             <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <span style={{ color: GOLD_LIGHT, fontSize: '11px' }}>✦</span> Two walks
@@ -1040,12 +1134,60 @@
       const now       = new Date();
       const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-      let currentStreak = 1;
-      for (let i = dailyDataWithDate.length - 1; i > 0; i--) {
-        if (Math.round((dailyDataWithDate[i].dateObj - dailyDataWithDate[i - 1].dateObj) / DAY_MS) === 1) currentStreak++;
-        else break;
+      /* Forgiving streak: bridges one rest day per rolling 7, so a single recovery day doesn't reset progress */
+      const activeSet = new Set(dailyDataWithDate.map(d => d.dateObj.getTime()));
+      let currentStreak = 0, streakRestDays = 0;
+      {
+        const graces = [];
+        let t = todayDate.getTime();
+        if (!activeSet.has(t)) t -= DAY_MS; // today without a walk yet isn't a rest day
+        while (true) {
+          if (activeSet.has(t)) { currentStreak++; t -= DAY_MS; continue; }
+          const graceFree = graces.every(g => g - t >= 7 * DAY_MS);
+          if (activeSet.has(t - DAY_MS) && graceFree) { graces.push(t); currentStreak++; t -= DAY_MS; continue; }
+          break;
+        }
+        streakRestDays = graces.length;
       }
-      if ((todayDate - lastActiveDate) / DAY_MS > 1) currentStreak = 0;
+
+      /* ── Recovery Momentum: consistency × load ramp × pace trend ── */
+      const dayByTime = new Map(dailyDataWithDate.map(d => [d.dateObj.getTime(), d]));
+      const windowStats = (endTime, nDays) => {
+        let miles = 0, mins = 0, active = 0;
+        for (let i = 0; i < nDays; i++) {
+          const d = dayByTime.get(endTime - i * DAY_MS);
+          if (d) { miles += d.distance; mins += (d.duration || 0) / 60; active++; }
+        }
+        return { miles, mins, active };
+      };
+      const acute   = windowStats(todayDate.getTime(), 7);                 // last 7 days
+      const chronic = windowStats(todayDate.getTime() - 7 * DAY_MS, 21);   // the 21 days before that
+      const loadRatio = chronic.miles > 0 ? (acute.miles / 7) / (chronic.miles / 21) : 1;
+      const consistencyPart = acute.active / 7;
+      /* Sweet spot is 0.8–1.3× recent baseline; ramping much faster trims the score */
+      const loadPart = loadRatio < 0.8 ? loadRatio / 0.8
+                     : loadRatio <= 1.3 ? 1
+                     : Math.max(0.4, 1 - (loadRatio - 1.3) * 0.28);
+      const acutePace   = acute.miles   > 0 ? acute.mins / acute.miles     : null;
+      const chronicPace = chronic.miles > 0 ? chronic.mins / chronic.miles : null;
+      const paceGain = acutePace && chronicPace ? (chronicPace - acutePace) / chronicPace : 0;
+      const pacePart = Math.max(0, Math.min(1, 0.6 + paceGain * 4));       // steady ≈ 0.6, ~10% faster = 1.0
+      const recoveryScore = Math.round(consistencyPart * 40 + loadPart * 30 + pacePart * 30);
+      const scoreBand = recoveryScore >= 80 ? 'Dialed in'
+                      : recoveryScore >= 65 ? 'Building well'
+                      : recoveryScore >= 50 ? 'Finding footing'
+                      : 'Rebuild mode';
+      const HOT = '#FFB278';
+      const loadLabel = loadRatio > 1.5 ? 'Ramping fast' : loadRatio >= 0.8 ? 'In the zone' : 'Light week';
+      const loadTone  = loadRatio > 1.5 ? HOT : undefined;
+      const paceLabel = paceGain > 0.03 ? `${Math.round(paceGain * 100)}% faster` : paceGain < -0.03 ? 'Easing off' : 'Steady';
+
+      /* Today's goal rings */
+      const GOAL_MILES = 1.0, GOAL_MINS = 30, GOAL_WALKS = 2;
+      const todayEntry = dayByTime.get(todayDate.getTime());
+      const todayMiles = todayEntry ? todayEntry.distance : 0;
+      const todayMins  = todayEntry ? (todayEntry.duration || 0) / 60 : 0;
+      const todayWalks = todayEntry ? (todayEntry.walks ? todayEntry.walks.length : 1) : 0;
 
       /* Calendar can browse up to the later of today / the newest logged month */
       const newestMonth = new Date(Math.max(
@@ -1139,8 +1281,25 @@
       const avgPaceAll    = totalDuration > 0 ? (totalDuration / 60) / totalDistance : null;
       const avgPerWalk    = totalDistance / totalWalks;
       const longestWalkDist = Math.max(...dailyDataWithDate.flatMap(d => d.walks ? d.walks.map(w => w.distance) : [d.distance]));
+      const bestWalkPace = Math.min(...dailyDataWithDate.flatMap(d =>
+        (d.walks && d.walks.length ? d.walks : [d]).map(w => w.duration ? (w.duration / 60) / w.distance : Infinity)
+      ));
 
       const weekBuckets = bucketByWeek(dailyDataWithDate, todayDate);
+
+      /* ── Weekly load vs safe ramp: keep each week within RAMP_CAP× the previous ── */
+      const RAMP_CAP = 1.3;
+      /* No cap until the baseline week is meaningful — tiny early-recovery volumes always "jump" */
+      const weekLoad = weekBuckets.map((w, i) => {
+        const prev = i > 0 ? weekBuckets[i - 1].totalDistance : null;
+        const cap  = prev != null && prev >= 2 ? prev * RAMP_CAP : null;
+        return { ...w, cap, over: cap != null && w.totalDistance > cap };
+      });
+      const weekLoadMax = Math.max(...weekLoad.map(w => Math.max(w.totalDistance, w.cap || 0)));
+      const currentWeekLoad = weekLoad[weekLoad.length - 1];
+
+      /* Pace trend series (uses the active chart range) */
+      const paceSeries = rangedData.filter(d => d.pace != null && isFinite(d.pace));
       const thisWeek = weekBuckets[weekBuckets.length - 1];
       const lastWeek = weekBuckets.length > 1 ? weekBuckets[weekBuckets.length - 2] : null;
       const distanceDeltaPct = (lastWeek && lastWeek.avgDistance > 0)
@@ -1185,9 +1344,46 @@
             </p>
           </div>
 
+          {/* ── Recovery Momentum + Today's rings ── */}
+          <div className="hero-grid" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
+            <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', borderRadius: '18px' }}>
+              <SectionTitle icon="target">Recovery Momentum</SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px, 3vw, 20px)' }}>
+                <ScoreRing score={recoveryScore} />
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: GOLD_LIGHT }}>{scoreBand}</div>
+                  <HeroRow icon="calendar" label="Consistency" value={`${acute.active} of 7 days`} />
+                  <HeroRow icon="layers"   label="Load"        value={loadLabel} tone={loadTone} />
+                  <HeroRow icon="bolt"     label="Pace"        value={paceLabel} tone={paceGain > 0.03 ? GOLD_LIGHT : undefined} />
+                </div>
+              </div>
+            </div>
+            <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', borderRadius: '18px' }}>
+              <SectionTitle icon="flame">{`Today · ${MONTHS[todayDate.getMonth()]} ${todayDate.getDate()}`}</SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px, 3vw, 20px)' }}>
+                <GoalRings items={[
+                  { pct: todayMiles / GOAL_MILES, color: GOLD_LIGHT },
+                  { pct: todayMins  / GOAL_MINS,  color: BLUE_MID },
+                  { pct: todayWalks / GOAL_WALKS, color: BLUE_LIGHT },
+                ]} />
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <RingRow color={GOLD_LIGHT}  label="Distance" value={`${todayMiles.toFixed(2)} / ${GOAL_MILES.toFixed(0)} mi`} />
+                  <RingRow color={BLUE_MID}    label="Time"     value={`${Math.round(todayMins)} / ${GOAL_MINS} min`} />
+                  <RingRow color={BLUE_LIGHT}  label="Walks"    value={`${todayWalks} / ${GOAL_WALKS}`} />
+                  {todayWalks === 0 && (
+                    <div style={{ fontSize: '11px', color: BLUE_DIM, lineHeight: 1.5 }}>
+                      No walk logged yet — even 0.3 mi closes the ring.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* ── Stats ── */}
           <div className="stat-grid" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
-            <StatCard label="Current Streak"  value={currentStreak}                   unit="days in a row"     variant="blue" />
+            <StatCard label="Current Streak"  value={currentStreak}
+              unit={currentStreak > 0 && streakRestDays > 0 ? `days · ${streakRestDays} rest day bridged` : 'days in a row'} variant="blue" />
             <StatCard label="Total Distance"  value={totalDistance.toFixed(1)}         unit="miles since Jun 1" variant="blue" />
             <StatCard label={`To ${goalMiles} Miles`} value={(goalMiles - totalDistance).toFixed(1)} unit="miles away" variant="gold" />
           </div>
@@ -1235,6 +1431,7 @@
               <MiniStat icon="medal"  label="Longest walk" value={longestWalkDist.toFixed(2)} unit="mi" />
               <MiniStat icon="target" label="Avg / walk"   value={avgPerWalk.toFixed(2)}      unit="mi" />
               <MiniStat icon="bolt"   label="Avg pace"     value={formatPace(avgPaceAll)}      unit="/mi" />
+              <MiniStat icon="flame"  label="Best pace"    value={formatPace(bestWalkPace)}    unit="/mi" />
             </div>
 
             {thisWeek && (
@@ -1273,6 +1470,51 @@
                     </div>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* ── Weekly load vs safe ramp ── */}
+            {weekLoad.length > 1 && (
+              <div style={{ padding: '14px 16px', marginBottom: '16px', borderRadius: '14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(116,172,223,0.22)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '6px' }}>
+                  <span style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Weekly Load</span>
+                  <span style={{ fontSize: '10px', color: BLUE_MID }}>miles per week · dashes mark the safe ramp (≤{Math.round((RAMP_CAP - 1) * 100)}% over the prior week)</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: 'clamp(8px, 2.5vw, 16px)', height: '118px' }}>
+                  {weekLoad.map((w, i) => (
+                    <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-end', height: '100%' }}>
+                      <div style={{ fontSize: '9px', fontWeight: 700, color: w.over ? HOT : BLUE_LIGHT, marginBottom: '3px' }}>
+                        {w.totalDistance.toFixed(1)}
+                      </div>
+                      <div style={{ position: 'relative', width: '100%', display: 'flex', justifyContent: 'center', height: `${Math.max(6, (w.totalDistance / weekLoadMax) * 92)}px` }}>
+                        <div className={'bar' + (w.over ? ' is-hot' : '')} style={{ width: '55%', maxWidth: '44px', height: '100%' }} />
+                        {w.cap != null && (
+                          <div style={{ position: 'absolute', bottom: `${(w.cap / weekLoadMax) * 92}px`, left: '10%', right: '10%', borderTop: '2px dashed rgba(232,244,255,0.55)' }} />
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ display: 'flex', gap: 'clamp(8px, 2.5vw, 16px)', marginTop: '5px' }}>
+                  {weekLoad.map((w, i) => (
+                    <div key={i} style={{ flex: 1, textAlign: 'center', fontSize: '9px', color: BLUE_DIM, fontWeight: 500 }}>
+                      {w.weekStart.getMonth() + 1}/{w.weekStart.getDate()}
+                    </div>
+                  ))}
+                </div>
+                {currentWeekLoad.over ? (
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-start', marginTop: '12px', fontSize: '11px', lineHeight: 1.55, color: HOT }}>
+                    <span style={{ flex: '0 0 auto', marginTop: '1px' }}><Icon name="layers" c={HOT} size={13} sw={2.2} /></span>
+                    <span>
+                      This week is {(currentWeekLoad.totalDistance / weekLoad[weekLoad.length - 2].totalDistance).toFixed(1)}× last week.
+                      Big jumps raise re-injury risk — favor short, easy walks the rest of the week.
+                    </span>
+                  </div>
+                ) : (
+                  <div style={{ marginTop: '12px', fontSize: '11px', color: BLUE_DIM }}>
+                    Within the safe ramp — steady builds beat big jumps.
+                  </div>
+                )}
               </div>
             )}
 
@@ -1368,6 +1610,46 @@
                 <span className="r"><Icon name="chevron" c="rgba(160,210,255,0.65)" size={13} sw={2.4} /></span>
               </div>
             )}
+
+            {/* ── Pace trend: time-scaled line, PR marked ── */}
+            {paceSeries.length >= 2 && (() => {
+              const W = 600, H = 110, PADT = 16, PADB = 20, PADX = 16;
+              const t0 = paceSeries[0].dateObj.getTime();
+              const t1 = paceSeries[paceSeries.length - 1].dateObj.getTime();
+              const paces = paceSeries.map(d => d.pace);
+              const lo = Math.min(...paces), hi = Math.max(...paces);
+              const px = (d) => t1 === t0 ? W / 2 : PADX + ((d.dateObj.getTime() - t0) / (t1 - t0)) * (W - 2 * PADX);
+              const py = (p) => PADT + ((p - lo) / Math.max(0.001, hi - lo)) * (H - PADT - PADB);
+              const best = paceSeries.reduce((a, d) => (d.pace < a.pace ? d : a));
+              const bestOnRight = px(best) > W * 0.72;
+              return (
+                <div style={{ marginTop: '18px', paddingTop: '16px', borderTop: '1px solid rgba(116,172,223,0.18)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px', flexWrap: 'wrap', gap: '6px' }}>
+                    <span style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>Pace Trend</span>
+                    <span style={{ fontSize: '10px', color: BLUE_MID }}>min/mi per day · lower is better</span>
+                  </div>
+                  <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: 'auto', display: 'block' }}>
+                    <polyline
+                      points={paceSeries.map(d => `${px(d).toFixed(1)},${py(d.pace).toFixed(1)}`).join(' ')}
+                      fill="none" stroke={BLUE_MID} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" opacity="0.9"
+                    />
+                    {paceSeries.map((d, i) => (
+                      <circle key={i} cx={px(d)} cy={py(d.pace)} r="2.5" fill={BLUE_MID} opacity="0.9" />
+                    ))}
+                    <circle cx={px(best)} cy={py(best.pace)} r="4.5" fill={GOLD_LIGHT} stroke="rgba(5,30,65,0.9)" strokeWidth="1.5" />
+                    <text
+                      x={px(best) + (bestOnRight ? -9 : 9)} y={py(best.pace) + 4}
+                      textAnchor={bestOnRight ? 'end' : 'start'}
+                      fontSize="11" fontWeight="700" fill={GOLD_LIGHT} fontFamily="-apple-system, sans-serif"
+                    >
+                      {formatPace(best.pace)} /mi · {best.date}
+                    </text>
+                    <text x={PADX} y={H - 4} fontSize="10" fill="rgba(160,210,255,0.65)" fontFamily="-apple-system, sans-serif">{paceSeries[0].date}</text>
+                    <text x={W - PADX} y={H - 4} textAnchor="end" fontSize="10" fill="rgba(160,210,255,0.65)" fontFamily="-apple-system, sans-serif">{paceSeries[paceSeries.length - 1].date}</text>
+                  </svg>
+                </div>
+              );
+            })()}
           </div>
 
           {/* ── Badges ── */}
@@ -1540,7 +1822,7 @@
                   Strong, steady recovery: <b style={{ color: GOLD_LIGHT }}>25 walks across 21 days</b> for <b style={{ color: GOLD_LIGHT }}>18.2 miles</b> since June 1. Your typical walk has grown from <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> to a <b style={{ color: GOLD_LIGHT }}>2.68 mi</b> peak on June 30, and pace has improved from ~40 to ~24 min/mi this week — about <b style={{ color: GOLD_LIGHT }}>40% faster</b>. Best stretch: a 5-day streak (Jun 7–11). Current records: longest walk 2.68 mi (Jun 30), fastest pace 17:50/mi (Jul 1).
                 </p>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
-                  <b style={{ color: GOLD_LIGHT }}>Consistency, not distance</b> is the biggest lever now. Gaps on Jun 6, 12, 14, 19–22, 26 and 28 keep resetting your streak — the four-day pause (Jun 19–22) alone cost a possible 3-week run. You've stacked two-a-day walks four times (Jun 11, 29, 30, Jul 1), and your current streak is <b style={{ color: GOLD_LIGHT }}>4 days</b> (Jun 29–Jul 2), the first to cross a month boundary. Here's how to build on it:
+                  <b style={{ color: GOLD_LIGHT }}>Consistency, not distance</b> is the biggest lever now. Gaps on Jun 6, 12, 14, 19–22, 26 and 28 keep resetting your streak — the four-day pause (Jun 19–22) alone cost a possible 3-week run. You've stacked two-a-day walks four times (Jun 11, 29, 30, Jul 1), and your current streak is <b style={{ color: GOLD_LIGHT }}>6 days</b> (Jun 27–Jul 2, bridging one rest day — streaks here allow one rest day per week, because rest is part of recovery), the first to cross a month boundary. Here's how to build on it:
                 </p>
                 <ul className="insight-list">
                   <li>

@@ -31,6 +31,11 @@ A single-page walking/recovery tracker for Tyler, built on React + Strava data, 
 - Collapsible sections use a `.section-toggle` header with a rotating `.chevron-icon`.
 - The Badges section: a "latest earned" spotlight card is always visible above the collapsible badge grid; the grid itself supports All/Earned/Unearned filter tabs and highlights the most recently earned badge with an outline + "Latest" pill.
 - All icons are hand-drawn inline SVG components in the `Icon` switch statement — no icon library/font dependency.
+- Hero section: a "Recovery Momentum" 0–100 score ring (weighted composite: consistency 40%, load ramp 30%, pace trend 30% — computed in `WalkTracker`) beside Apple-style "Today" goal rings (1 mi / 30 min / 2 walks). All rings are hand-rolled SVG (`ScoreRing`, `GoalRings`).
+- Streaks are forgiving: one rest day per rolling 7 can be bridged without resetting (`currentStreak` loop). The stat card notes "· N rest day bridged" when used.
+- Calendar cells have heatmap intensity: gold overlay tiers at fixed distance thresholds (0.5 / 1 / 2 mi) via an inline `backgroundImage` gradient over `.glass-gold`.
+- Activity Trends contains a "Weekly Load" chart with a dashed safe-ramp cap per week (≤1.3× the prior week, only once the baseline week ≥ 2 mi); over-cap bars use `.bar.is-hot` (orange) with a warning caption.
+- A "Pace Trend" SVG line chart (time-scaled x-axis, lower is better) sits at the bottom of Activity Trends with the best day marked in gold.
 
 ## Data
 
