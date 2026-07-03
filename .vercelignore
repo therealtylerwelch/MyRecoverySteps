@@ -1,0 +1,10 @@
+# Source images — not referenced by the site, keep them off the CDN
+icon-source.png
+icon-fixed.png
+favicon-flat-source.png
+
+# Project docs / Claude workspace files — not part of the site
+CLAUDE.md
+memory/
+.claude/
+.vscode/

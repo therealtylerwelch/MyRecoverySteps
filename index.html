@@ -34,18 +34,18 @@
   <meta property="og:title" content="My Recovery Steps">
   <meta property="og:description" content="Tracking my mountain bike accident recovery progress. Powered by the Strava MCP + Claude Sonnet 5.">
   <meta property="og:url" content="https://myrecoverysteps.com/">
-  <meta property="og:image" content="https://myrecoverysteps.com/og-image.png">
-  <meta property="og:image:secure_url" content="https://myrecoverysteps.com/og-image.png">
-  <meta property="og:image:type" content="image/png">
-  <meta property="og:image:width" content="1800">
-  <meta property="og:image:height" content="945">
+  <meta property="og:image" content="https://myrecoverysteps.com/og-image.jpg">
+  <meta property="og:image:secure_url" content="https://myrecoverysteps.com/og-image.jpg">
+  <meta property="og:image:type" content="image/jpeg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
   <meta property="og:image:alt" content="My Recovery Steps — tracking mountain bike accident recovery progress">
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="My Recovery Steps">
   <meta name="twitter:description" content="Tracking my mountain bike accident recovery progress. Powered by the Strava MCP + Claude Sonnet 5.">
-  <meta name="twitter:image" content="https://myrecoverysteps.com/og-image.png">
+  <meta name="twitter:image" content="https://myrecoverysteps.com/og-image.jpg">
 
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -599,12 +599,17 @@
       return `${m}:${String(s).padStart(2, '0')}`;
     };
 
-    const rollingAverage = (values, windowSize = 7) =>
-      values.map((_, i) => {
-        const start = Math.max(0, i - windowSize + 1);
-        const slice = values.slice(start, i + 1);
-        return slice.reduce((a, b) => a + b, 0) / slice.length;
+    const DAY_MS = 86400000;
+
+    /* True 7-calendar-day average: rest days count as 0, so gaps aren't hidden */
+    const calendarRollingAverage = (allDays, targetDays, key, windowDays = 7) => {
+      const byTime = new Map(allDays.map(d => [d.dateObj.getTime(), d[key]]));
+      return targetDays.map(d => {
+        let sum = 0;
+        for (let i = 0; i < windowDays; i++) sum += byTime.get(d.dateObj.getTime() - i * DAY_MS) || 0;
+        return sum / windowDays;
       });
+    };
 
     /* ── Activity Trends metric config ── */
     const METRICS = {
@@ -619,7 +624,7 @@
       return d;
     };
 
-    const bucketByWeek = (days) => {
+    const bucketByWeek = (days, anchorDate) => {
       const buckets = new Map();
       days.forEach(d => {
         const wk = getWeekStart(d.dateObj).getTime();
@@ -631,10 +636,12 @@
         .map(([wk, wDays]) => {
           const totalDistance = wDays.reduce((a, d) => a + d.distance, 0);
           const totalDuration = wDays.reduce((a, d) => a + (d.duration || 0), 0);
+          /* Divide by calendar days elapsed in the week (rest days included), not just active days */
+          const daysElapsed = Math.max(1, Math.min(7, Math.round((anchorDate - wk) / DAY_MS) + 1));
           return {
             weekStart: new Date(wk),
             days: wDays,
-            avgDistance: totalDistance / wDays.length,
+            avgDistance: totalDistance / daysElapsed,
             avgPace: totalDuration > 0 ? (totalDuration / 60) / totalDistance : null,
             totalDistance,
           };
@@ -979,16 +986,7 @@
     const WalkTracker = () => {
       const data = {
         year: 2026,
-        monthIndex: 6,
-        today: 2,
         updated: 'July 2, 2026',
-        currentStreak: 4,
-        longestStreak: 5,
-        longestStreakLabel: 'Jun 7–11',
-        totalWalks: 25,
-        activeDays: 21,
-        totalDistance: 18.2,
-        lastActivity: { date: '2026-07-02', distance: 1.18, duration: 1815, pace: 25.6 },
         dailyData: [
           { date: 'Jun 3',  distance: 0.33, duration: 713,  elevGain: 10, effort: 1, achievements: 0 },
           { date: 'Jun 4',  distance: 0.33, duration: 644,  elevGain: 20, effort: 1, achievements: 0 },
@@ -1030,10 +1028,35 @@
         ]
       };
 
+      /* ── Derived from the walk log — computed, not hand-maintained, so stats can't drift ── */
+      const dailyDataWithDate = data.dailyData
+        .map(d => ({ ...d, dateObj: parseDataDate(d.date, data.year), pace: d.duration ? (d.duration / 60) / d.distance : null }))
+        .sort((a, b) => a.dateObj - b.dateObj);
+
+      const totalDistance  = dailyDataWithDate.reduce((a, d) => a + d.distance, 0);
+      const totalWalks     = dailyDataWithDate.reduce((a, d) => a + (d.walks ? d.walks.length : 1), 0);
+      const lastActiveDate = dailyDataWithDate[dailyDataWithDate.length - 1].dateObj;
+
+      const now       = new Date();
+      const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      let currentStreak = 1;
+      for (let i = dailyDataWithDate.length - 1; i > 0; i--) {
+        if (Math.round((dailyDataWithDate[i].dateObj - dailyDataWithDate[i - 1].dateObj) / DAY_MS) === 1) currentStreak++;
+        else break;
+      }
+      if ((todayDate - lastActiveDate) / DAY_MS > 1) currentStreak = 0;
+
+      /* Calendar can browse up to the later of today / the newest logged month */
+      const newestMonth = new Date(Math.max(
+        new Date(todayDate.getFullYear(), todayDate.getMonth(), 1),
+        new Date(lastActiveDate.getFullYear(), lastActiveDate.getMonth(), 1)
+      ));
+
       const [badgesOpen, setBadgesOpen] = React.useState(false);
       const [badgeFilter, setBadgeFilter] = React.useState('all');
       const [insightsOpen, setInsightsOpen] = React.useState(false);
-      const [calendarMonth, setCalendarMonth] = React.useState({ year: data.year, monthIndex: data.monthIndex });
+      const [calendarMonth, setCalendarMonth] = React.useState({ year: newestMonth.getFullYear(), monthIndex: newestMonth.getMonth() });
       const [distanceRange, setDistanceRange] = React.useState('30d');
       const [metricKey, setMetricKey] = React.useState('distance');
       const [showConfetti, setShowConfetti] = React.useState(false);
@@ -1077,15 +1100,9 @@
         } catch (e) { /* localStorage unavailable — skip celebration, no harm done */ }
       }, [latestBadge?.id]);
 
-      const goalMiles = data.totalDistance >= 50 ? 100 : data.totalDistance >= 25 ? 50 : 25;
-      const pct = (data.totalDistance / goalMiles) * 100;
+      const goalMiles = totalDistance >= 50 ? 100 : totalDistance >= 25 ? 50 : 25;
+      const pct = Math.min(100, (totalDistance / goalMiles) * 100);
 
-      /* ── Dated daily data: real Date objects + derived per-day pace ── */
-      const dailyDataWithDate = data.dailyData
-        .map(d => ({ ...d, dateObj: parseDataDate(d.date, data.year), pace: d.duration ? (d.duration / 60) / d.distance : null }))
-        .sort((a, b) => a.dateObj - b.dateObj);
-
-      const todayDate      = new Date(data.year, data.monthIndex, data.today);
       const firstDataDate  = dailyDataWithDate[0].dateObj;
       const firstDataMonth = new Date(firstDataDate.getFullYear(), firstDataDate.getMonth(), 1);
 
@@ -1096,34 +1113,34 @@
           monthActiveMap[d.dateObj.getDate()] = d;
         }
       });
-      const monthIsCurrent = calendarMonth.year === data.year && calendarMonth.monthIndex === data.monthIndex;
+      const monthIsCurrent = calendarMonth.year === todayDate.getFullYear() && calendarMonth.monthIndex === todayDate.getMonth();
       const monthTwiceDays = dailyDataWithDate
         .filter(d => d.dateObj.getFullYear() === calendarMonth.year && d.dateObj.getMonth() === calendarMonth.monthIndex && d.walks && d.walks.length > 1)
         .map(d => d.dateObj.getDate());
-      const monthToday     = monthIsCurrent ? data.today : null;
+      const monthToday     = monthIsCurrent ? todayDate.getDate() : null;
 
       const canGoPrevMonth = new Date(calendarMonth.year, calendarMonth.monthIndex, 1) > firstDataMonth;
-      const canGoNextMonth = new Date(calendarMonth.year, calendarMonth.monthIndex, 1) < new Date(data.year, data.monthIndex, 1);
+      const canGoNextMonth = new Date(calendarMonth.year, calendarMonth.monthIndex, 1) < newestMonth;
       const goPrevMonth = () => setCalendarMonth(m => { const d = new Date(m.year, m.monthIndex - 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
       const goNextMonth = () => setCalendarMonth(m => { const d = new Date(m.year, m.monthIndex + 1, 1); return { year: d.getFullYear(), monthIndex: d.getMonth() }; });
 
       /* ── Activity Trends ── */
       const rangeDayCount = distanceRange === '7d' ? 7 : distanceRange === '30d' ? 30 : Infinity;
-      const rangeCutoff = new Date(todayDate);
+      /* Ranges anchor on the newest logged walk so the chart never goes empty between data updates */
+      const rangeCutoff = new Date(lastActiveDate);
       rangeCutoff.setDate(rangeCutoff.getDate() - (rangeDayCount - 1));
       const rangedData = dailyDataWithDate.filter(d => distanceRange === 'all' || d.dateObj >= rangeCutoff);
       const activeMetric = METRICS[metricKey];
       const rangeValues = rangedData.map(d => d[metricKey]);
       const rangeMaxValue = rangeValues.length ? Math.max(...rangeValues) : 1;
-      const rangeAvgLine = rollingAverage(rangeValues, 7);
+      const rangeAvgLine = calendarRollingAverage(dailyDataWithDate, rangedData, metricKey);
 
-      const totalDistanceAll = data.dailyData.reduce((a, d) => a + d.distance, 0);
-      const totalDurationAll = data.dailyData.reduce((a, d) => a + (d.duration || 0), 0);
-      const avgPaceAll      = totalDurationAll > 0 ? (totalDurationAll / 60) / totalDistanceAll : null;
-      const avgPerWalk      = totalDistanceAll / data.totalWalks;
+      const totalDuration = dailyDataWithDate.reduce((a, d) => a + (d.duration || 0), 0);
+      const avgPaceAll    = totalDuration > 0 ? (totalDuration / 60) / totalDistance : null;
+      const avgPerWalk    = totalDistance / totalWalks;
       const longestWalkDist = Math.max(...dailyDataWithDate.flatMap(d => d.walks ? d.walks.map(w => w.distance) : [d.distance]));
 
-      const weekBuckets = bucketByWeek(dailyDataWithDate);
+      const weekBuckets = bucketByWeek(dailyDataWithDate, todayDate);
       const thisWeek = weekBuckets[weekBuckets.length - 1];
       const lastWeek = weekBuckets.length > 1 ? weekBuckets[weekBuckets.length - 2] : null;
       const distanceDeltaPct = (lastWeek && lastWeek.avgDistance > 0)
@@ -1133,6 +1150,13 @@
         ? ((lastWeek.avgPace - thisWeek.avgPace) / lastWeek.avgPace) * 100 // positive = faster than last week
         : null;
       const deltaClass = (pct) => pct == null ? 'flat' : pct > 0.5 ? 'up' : pct < -0.5 ? 'down' : 'flat';
+
+      /* TL;DR numbers — computed so the headline can't go stale between copy updates */
+      const firstWeek = weekBuckets[0];
+      const paceImprovementPct = (firstWeek && firstWeek.avgPace && thisWeek && thisWeek.avgPace && firstWeek.avgPace > thisWeek.avgPace)
+        ? Math.round(((firstWeek.avgPace - thisWeek.avgPace) / firstWeek.avgPace) * 100)
+        : null;
+      const milesToGoal = goalMiles - totalDistance;
       const weekRangeLabel = (weekStart) => {
         const end = new Date(weekStart); end.setDate(end.getDate() + 6);
         const endLabel = end.getMonth() === weekStart.getMonth()
@@ -1148,7 +1172,7 @@
           <div style={{ marginBottom: 'clamp(20px, 4vw, 36px)' }}>
             <div className="wordmark">
               <div className="wordmark-badge">
-                <img src="android-chrome-192x192.png" alt="My Recovery Steps" style={{ width: '100%', height: '100%', display: 'block' }} />
+                <img src="data:image/jpeg;base64,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" alt="My Recovery Steps" style={{ width: '100%', height: '100%', display: 'block' }} />
               </div>
               <div>
                 <div className="wordmark-eyebrow">My Recovery</div>
@@ -1163,9 +1187,9 @@
 
           {/* ── Stats ── */}
           <div className="stat-grid" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
-            <StatCard label="Current Streak"  value={data.currentStreak}                   unit="days in a row"     variant="blue" />
-            <StatCard label="Total Distance"  value={data.totalDistance.toFixed(1)}         unit="miles since Jun 1" variant="blue" />
-            <StatCard label={`To ${goalMiles} Miles`} value={(goalMiles - data.totalDistance).toFixed(1)} unit="miles away" variant="gold" />
+            <StatCard label="Current Streak"  value={currentStreak}                   unit="days in a row"     variant="blue" />
+            <StatCard label="Total Distance"  value={totalDistance.toFixed(1)}         unit="miles since Jun 1" variant="blue" />
+            <StatCard label={`To ${goalMiles} Miles`} value={(goalMiles - totalDistance).toFixed(1)} unit="miles away" variant="gold" />
           </div>
 
           {/* ── Progress bar ── */}
@@ -1475,11 +1499,11 @@
                 <div className="tldr-headline">Consistency, not distance</div>
               </div>
               <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.7, fontWeight: 400 }}>
-                You're <b style={{ color: GOLD_LIGHT }}>40% faster</b> than week one — short gaps, not fitness, are resetting your streak.
+                {paceImprovementPct != null && (<>You're <b style={{ color: GOLD_LIGHT }}>{paceImprovementPct}% faster</b> than week one. </>)}Short gaps, not fitness, are resetting your streak.
               </p>
               <div className="tldr-action">
                 <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={15} sw={2} /></span>
-                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. The <b>25-Mile Club</b> is about 7 miles away.</span>
+                <span><b style={{ color: GOLD_LIGHT }}>Do this next:</b> Lock in a daily <b>1-mile floor</b>. The <b>{goalMiles}-Mile Club</b> is <b>{milesToGoal.toFixed(1)} miles</b> away.</span>
               </div>
             </div>
 
@@ -1589,7 +1613,33 @@
       );
     };
 
-    ReactDOM.createRoot(document.getElementById('root')).render(<WalkTracker />);
+    /* Guards against a bad hand-edit of the data object rendering a blank page */
+    class ErrorBoundary extends React.Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false };
+      }
+      static getDerivedStateFromError() { return { hasError: true }; }
+      render() {
+        if (this.state.hasError) {
+          return (
+            <div className="glass-shell" style={{ padding: '40px 24px', textAlign: 'center' }}>
+              <div style={{ fontSize: '15px', fontWeight: 600, color: BLUE_LIGHT, marginBottom: '8px' }}>
+                Something went wrong loading the tracker.
+              </div>
+              <div style={{ fontSize: '13px', color: BLUE_DIM }}>
+                The data may be mid-update — try refreshing in a minute.
+              </div>
+            </div>
+          );
+        }
+        return this.props.children;
+      }
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(
+      <ErrorBoundary><WalkTracker /></ErrorBoundary>
+    );
   </script>
 </body>
 </html>

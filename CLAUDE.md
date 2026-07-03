@@ -34,4 +34,6 @@ A single-page walking/recovery tracker for Tyler, built on React + Strava data, 
 
 ## Data
 
-`WalkTracker`'s `data` object is currently hardcoded test/demo data (manually updated walk logs, badges, streaks) — there is no live Strava API integration wired into the page yet, despite the "Powered by Strava MCP" tagline. Updating stats means hand-editing the `data` object in `index.html`.
+`WalkTracker`'s `data` object holds the raw walk log (manually updated from Strava) — there is no live Strava API integration wired into the page yet, despite the "Powered by Strava MCP" tagline. Updating the site means hand-editing only `data.dailyData` (one entry per active day), `data.badges` (unlocked flags), and `data.updated` in `index.html`.
+
+**All other stats are derived at render time — do not hand-maintain them.** Total distance, total walks, current streak, goal progress, week-over-week deltas, and the TL;DR headline numbers are computed from `dailyData`. "Today" comes from `new Date()`, not the data. The 7-day average line and weekly averages count calendar days (rest days = 0), not just active days. The hand-written Recovery Insights "Full Analysis" prose is the only place numbers still live in copy — refresh it when updating data.
