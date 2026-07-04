@@ -542,19 +542,6 @@
       border-radius: 16px;
       padding: clamp(14px, 3vw, 18px);
     }
-    .tldr-pill {
-      display: inline-block;
-      font-size: 9px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      background: rgba(116, 172, 223, 0.22);
-      border: 1px solid rgba(116, 172, 223, 0.45);
-      border-radius: 6px;
-      padding: 3px 9px;
-      color: #BEE1FF;
-      margin-bottom: 10px;
-    }
     .tldr-headline {
       font-size: clamp(21px, 4.6vw, 29px);
       font-weight: 800;
@@ -1460,7 +1447,6 @@
             {/* TL;DR — always visible */}
             {/* TL;DR is fully computed by the rule engine above — no hand-written numbers */}
             <div className="tldr-card">
-              <div className="tldr-pill">TL;DR</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '9px' }}>
                 <Icon name={tldr.icon} c={GOLD_LIGHT} size={26} sw={2} />
                 <div className="tldr-headline">{tldr.headline}</div>
