@@ -1,0 +1,41 @@
+name: Bug / data discrepancy
+description: Something looks wrong, broke, or doesn't match Strava
+title: "[Bug]: "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What's wrong?
+      description: Describe the bug, or the stat/number that doesn't match Strava.
+      placeholder: e.g. "Current streak shows 5 but I've walked 7 days in a row"
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where is this?
+      options:
+        - Momentum score / goal rings
+        - Stats cards (streak, total distance, this week)
+        - Activity calendar
+        - Activity trends (charts)
+        - Badges
+        - Recovery Insights prose
+        - Data (numbers don't match Strava)
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect instead?
+    validations:
+      required: false
+  - type: input
+    id: device
+    attributes:
+      label: Browser / device (if it's a visual bug)
+      placeholder: e.g. iPhone Safari, Chrome desktop
+    validations:
+      required: false
