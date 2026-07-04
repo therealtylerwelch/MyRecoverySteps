@@ -1051,7 +1051,7 @@
     const WalkTracker = () => {
       const data = {
         year: 2026,
-        updated: 'July 3, 2026',
+        updated: 'July 4, 2026',
         dailyData: [
           { date: 'Jun 3',  distance: 0.33, duration: 713,  elevGain: 10, effort: 1, achievements: 0 },
           { date: 'Jun 4',  distance: 0.33, duration: 644,  elevGain: 20, effort: 1, achievements: 0 },
@@ -1074,7 +1074,8 @@
           { date: 'Jun 30', distance: 3.72, duration: 4460, elevGain: 61, effort: 9, achievements: 0, walks: [{ distance: 1.04, duration: 1551 }, { distance: 2.68, duration: 2909 }] },
           { date: 'Jul 1',  distance: 2.16, duration: 2728, elevGain: 72, effort: 5, achievements: 0, walks: [{ distance: 0.90, duration: 1380 }, { distance: 1.26, duration: 1348 }] },
           { date: 'Jul 2',  distance: 1.82, duration: 2846, elevGain: 135, effort: 5, achievements: 0, walks: [{ distance: 1.18, duration: 1815 }, { distance: 0.63, duration: 1031 }] },
-          { date: 'Jul 3',  distance: 3.65, duration: 4408, elevGain: 102, effort: 9, achievements: 0, walks: [{ distance: 2.49, duration: 2586 }, { distance: 1.17, duration: 1822 }] }
+          { date: 'Jul 3',  distance: 3.65, duration: 4408, elevGain: 102, effort: 9, achievements: 0, walks: [{ distance: 2.49, duration: 2586 }, { distance: 1.17, duration: 1822 }] },
+          { date: 'Jul 4',  distance: 1.00, duration: 1659, elevGain: 59, effort: 2, achievements: 0 }
         ],
         badges: [
           { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true,  icon: 'footprints' },
@@ -1471,10 +1472,10 @@
             {insightsOpen && (
               <>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '8px' }}>
-                  Strong, steady recovery: <b style={{ color: GOLD_LIGHT }}>28 walks across 22 days</b> for <b style={{ color: GOLD_LIGHT }}>22.5 miles</b> since June 1. Your typical walk has grown from <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> to a <b style={{ color: GOLD_LIGHT }}>2.68 mi</b> peak on June 30, and pace has improved from ~38 to ~22 min/mi this week — about <b style={{ color: GOLD_LIGHT }}>43% faster</b>. Current records: longest walk 2.68 mi (Jun 30), fastest pace <b style={{ color: GOLD_LIGHT }}>17:19/mi — set this morning (Jul 3)</b> on a 2.49 mi walk, your strongest single outing yet.
+                  Strong, steady recovery: <b style={{ color: GOLD_LIGHT }}>29 walks across 23 days</b> for <b style={{ color: GOLD_LIGHT }}>23.5 miles</b> since June 1. Your typical walk has grown from <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> to a <b style={{ color: GOLD_LIGHT }}>2.68 mi</b> peak on June 30, and pace has improved from ~36 to ~22 min/mi this week — about <b style={{ color: GOLD_LIGHT }}>37% faster</b>. Current records: longest walk 2.68 mi (Jun 30), fastest pace <b style={{ color: GOLD_LIGHT }}>17:19/mi — set Jul 3</b> on a 2.49 mi walk, your strongest single outing yet.
                 </p>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
-                  <b style={{ color: GOLD_LIGHT }}>Consistency, not distance</b> is the biggest lever now. Gaps on Jun 6, 12, 14, 19–22, 26 and 28 keep resetting your streak — the four-day pause (Jun 19–22) alone cost a possible 3-week run. You've stacked two-a-day walks six times (Jun 11, 29, 30, Jul 1, 2, 3), and your current streak is <b style={{ color: GOLD_LIGHT }}>7 days</b> (Jun 27–Jul 3, bridging one rest day — streaks here allow one rest day per week, because rest is part of recovery), your longest yet. Here's how to build on it:
+                  <b style={{ color: GOLD_LIGHT }}>Consistency, not distance</b> is the biggest lever now. Gaps on Jun 6, 12, 14, 19–22, 26 and 28 keep resetting your streak — the four-day pause (Jun 19–22) alone cost a possible 3-week run. You've stacked two-a-day walks six times (Jun 11, 29, 30, Jul 1, 2, 3), and your current streak is <b style={{ color: GOLD_LIGHT }}>8 days</b> (Jun 27–Jul 4, bridging one rest day — streaks here allow one rest day per week, because rest is part of recovery), your longest yet. Here's how to build on it:
                 </p>
                 <ul className="insight-list">
                   <li>
@@ -1483,7 +1484,7 @@
                   </li>
                   <li>
                     <span className="ico"><Icon name="arrow" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Lock in 1 mile.</b> Your last three days (Jul 1–3) average <b>2.5 mi</b> — well past the floor. Treat big days as bonuses, not the baseline.</span>
+                    <span><b>Lock in 1 mile.</b> Your last three days (Jul 2–4) average <b>2.2 mi</b> — well past the floor. Treat big days as bonuses, not the baseline.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="layers" c={GOLD_LIGHT} size={14} sw={2} /></span>
@@ -1491,7 +1492,7 @@
                   </li>
                   <li>
                     <span className="ico"><Icon name="medal" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Next milestone: 25-Mile Club.</b> <b>2.5 miles away</b> — about 2–3 days at the 1-mile floor, sooner at your recent pace.</span>
+                    <span><b>Next milestone: 25-Mile Club.</b> <b>1.5 miles away</b> — about 1–2 days at the 1-mile floor, sooner at your recent pace.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="bolt" c={GOLD_LIGHT} size={14} sw={2} /></span>
