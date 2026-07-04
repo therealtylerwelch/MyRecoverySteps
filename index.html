@@ -161,12 +161,6 @@
     @media (max-width: 640px) { .hero-grid { grid-template-columns: 1fr; } }
 
     /* ── Responsive grids ── */
-    .stat-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: clamp(10px, 2vw, 16px);
-    }
-
     .badge-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -852,26 +846,6 @@
       </div>
     );
 
-    const StatCard = ({ label, value, unit, variant }) => {
-      const isGold = variant === 'gold';
-      return (
-        <div
-          className={isGold ? 'glass-gold' : 'glass-blue'}
-          style={{ padding: 'clamp(14px, 3vw, 22px)', textAlign: 'center', borderRadius: '18px' }}
-        >
-          <div style={{ fontSize: 'clamp(10px, 2vw, 12px)', color: isGold ? 'rgba(251,218,106,0.80)' : BLUE_DIM, fontWeight: 600, letterSpacing: '0.5px', marginBottom: '8px', textTransform: 'uppercase' }}>
-            {label}
-          </div>
-          <div style={{ fontSize: 'clamp(30px, 6vw, 40px)', fontWeight: 200, color: isGold ? GOLD_LIGHT : BLUE_LIGHT, letterSpacing: '-1.5px', lineHeight: 1, marginBottom: '6px' }}>
-            {value}
-          </div>
-          <div style={{ fontSize: 'clamp(10px, 1.8vw, 12px)', color: isGold ? 'rgba(251,218,106,0.90)' : BLUE_MID, fontWeight: 500 }}>
-            {unit}
-          </div>
-        </div>
-      );
-    };
-
     const SectionTitle = ({ icon, children, right }) => (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
@@ -1521,13 +1495,6 @@
             )}
           </div>
 
-          {/* ── Stats ── */}
-          <div className="stat-grid" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
-            <StatCard label="Current Streak"  value={currentStreak}
-              unit={currentStreak > 0 && streakRestDays > 0 ? `days · ${streakRestDays} rest day bridged` : 'days in a row'} variant="blue" />
-            <StatCard label="Total Distance"  value={totalDistance.toFixed(1)}         unit="miles since Jun 1" variant="blue" />
-          </div>
-
           {/* ── Activity Calendar: detailed month view, browse history via prev/next ── */}
           <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
             <div
@@ -1586,6 +1553,9 @@
                   <MiniStat icon="target" label="Avg / walk"   value={avgPerWalk.toFixed(2)}      unit="mi" />
                   <MiniStat icon="bolt"   label="Avg pace"     value={formatPace(avgPaceAll)}      unit="/mi" />
                   <MiniStat icon="flame"  label="Best pace"    value={formatPace(bestWalkPace)}    unit="/mi" />
+                  <MiniStat icon="calendar" label="Current streak" value={currentStreak}
+                    unit={currentStreak > 0 && streakRestDays > 0 ? `days · ${streakRestDays} rest bridged` : 'days'} />
+                  <MiniStat icon="footprints" label="Total distance" value={totalDistance.toFixed(1)} unit="mi since Jun 1" />
                 </div>
 
                 {thisWeek && (
