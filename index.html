@@ -55,30 +55,27 @@
 
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+      /* Full-bleed app canvas: the old shell's deep navy is now the page itself */
       background:
-        radial-gradient(ellipse 110% 20% at 50% 44%, rgba(255,255,255,0.16)   0%, transparent 100%),
-        radial-gradient(ellipse 80%  60% at 8%  30%, rgba(116,172,223,0.55)   0%, transparent 55%),
-        radial-gradient(ellipse 55%  70% at 90% 10%, rgba(100,165,220,0.40)   0%, transparent 50%),
-        radial-gradient(ellipse 70%  50% at 50% 90%, rgba(10, 40, 85, 0.90)   0%, transparent 65%),
-        linear-gradient(155deg, #0f3d6b 0%, #1a6cb5 30%, #3b8fd4 65%, #74ACDF 100%);
+        radial-gradient(ellipse 55% 38% at 12% -4%, rgba(116,172,223,0.14) 0%, transparent 60%),
+        radial-gradient(ellipse 48% 34% at 88% 6%,  rgba(59,143,212,0.10)  0%, transparent 55%),
+        linear-gradient(170deg, #071f3f 0%, #051a35 55%, #04142b 100%);
       min-height: 100vh;
-      padding: clamp(16px, 5vw, 44px) clamp(12px, 4vw, 32px);
+      padding: clamp(12px, 2.5vw, 28px);
     }
 
-    #root { max-width: 1040px; margin: 0 auto; }
+    #root { max-width: 1440px; margin: 0 auto; }
 
-    /* ── Liquid Glass layers ── */
-    .glass-shell {
-      background: rgba(5, 30, 65, 0.72);
-      backdrop-filter: blur(48px) saturate(190%) brightness(1.06);
-      -webkit-backdrop-filter: blur(48px) saturate(190%) brightness(1.06);
-      border: 1px solid rgba(116, 172, 223, 0.40);
-      border-radius: 32px;
-      box-shadow:
-        0 16px 56px rgba(0, 0, 0, 0.38),
-        0 3px 8px  rgba(0, 0, 0, 0.20),
-        inset 0 2px 0   rgba(255, 255, 255, 0.18),
-        inset 0 -1px 0  rgba(0, 0, 0, 0.10);
+    /* ── Responsive module rows: single column on mobile, split on desktop ── */
+    .split-a, .split-b {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(10px, 2vw, 16px);
+    }
+    .split-a > *, .split-b > * { min-width: 0; }
+    @media (min-width: 1024px) {
+      .split-a { grid-template-columns: 3fr 2fr; align-items: start; }
+      .split-b { grid-template-columns: 2fr 3fr; align-items: start; }
     }
 
     .glass-panel {
@@ -151,14 +148,6 @@
         0 2px 12px rgba(246, 180, 14, 0.35),
         inset 0 1px 0 rgba(255, 255, 255, 0.35);
     }
-
-    /* ── Hero: momentum score + today's rings ── */
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(10px, 2vw, 16px);
-    }
-    @media (max-width: 640px) { .hero-grid { grid-template-columns: 1fr; } }
 
     /* ── Responsive grids ── */
     .badge-grid {
@@ -535,8 +524,9 @@
       border-radius: 16px;
       padding: clamp(14px, 3vw, 18px);
     }
+    /* Shared headline scale — used by the momentum score band AND the TL;DR headline */
     .tldr-headline {
-      font-size: clamp(21px, 4.6vw, 29px);
+      font-size: clamp(19px, 3.6vw, 25px);
       font-weight: 800;
       letter-spacing: -0.4px;
       line-height: 1.15;
@@ -789,21 +779,31 @@
         : <Icon name={icon} c={color} size={size} />
     );
 
-    /* ── Recovery momentum score ring ── */
-    const ScoreRing = ({ score }) => {
+    /* ── Recovery momentum score ring — one arc per component, sequential from 12 o'clock ── */
+    const ScoreRing = ({ score, segments }) => {
       const r = 48, c = 2 * Math.PI * r;
+      const GAP = 3; // px of breathing room between segments along the circumference
+      let cursor = 0;
+      const arcs = segments.map(seg => {
+        const len = Math.max(0, (seg.pts / 100) * c);
+        const arc = { start: cursor, len, color: seg.color };
+        cursor += len;
+        return arc;
+      }).filter(a => a.len > GAP);
       return (
         <svg viewBox="0 0 116 116" style={{ width: 'clamp(96px, 22vw, 124px)', height: 'auto', flex: '0 0 auto', display: 'block' }}>
           <circle cx="58" cy="58" r={r} fill="none" stroke="rgba(116,172,223,0.18)" strokeWidth="10" />
-          {score > 0 && (
-            <circle
-              cx="58" cy="58" r={r} fill="none"
-              stroke={GOLD_LIGHT} strokeWidth="10" strokeLinecap="round"
-              strokeDasharray={`${(score / 100) * c} ${c}`}
-              transform="rotate(-90 58 58)"
-              style={{ filter: 'drop-shadow(0 0 6px rgba(246,180,14,0.45))' }}
-            />
-          )}
+          <g transform="rotate(-90 58 58)">
+            {arcs.map((a, i) => (
+              <circle
+                key={i}
+                cx="58" cy="58" r={r} fill="none"
+                stroke={a.color} strokeWidth="10" strokeLinecap="butt"
+                strokeDasharray={`${a.len - GAP} ${c}`}
+                strokeDashoffset={-a.start}
+              />
+            ))}
+          </g>
           <text x="58" y="62" textAnchor="middle" fontSize="32" fontWeight="200" fill={BLUE_LIGHT} letterSpacing="-1" fontFamily="-apple-system, sans-serif">{score}</text>
           <text x="58" y="78" textAnchor="middle" fontSize="8" fontWeight="700" fill="rgba(160,210,255,0.70)" letterSpacing="1.2" fontFamily="-apple-system, sans-serif">OF 100</text>
         </svg>
@@ -835,11 +835,10 @@
       );
     };
 
-    const HeroRow = ({ icon, label, value, tone }) => (
+    /* Swatch dot ties each row to its ring segment color */
+    const HeroRow = ({ swatch, label, value, tone }) => (
       <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-        <span style={{ width: '22px', height: '22px', flex: '0 0 auto', borderRadius: '7px', background: 'rgba(116,172,223,0.14)', border: '1px solid rgba(116,172,223,0.32)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon name={icon} c={tone || BLUE_LIGHT} size={13} sw={2.2} />
-        </span>
+        <span style={{ width: '10px', height: '10px', flex: '0 0 auto', borderRadius: '3px', background: swatch }} />
         <span style={{ fontSize: '10px', color: BLUE_DIM, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.4px' }}>{label}</span>
         <span style={{ fontSize: '12px', color: tone || BLUE_LIGHT, fontWeight: 700, marginLeft: 'auto', textAlign: 'right', whiteSpace: 'nowrap' }}>{value}</span>
       </div>
@@ -853,11 +852,12 @@
       </div>
     );
 
+    /* Compact overline module titles — the data is the hero, not the section name */
     const SectionTitle = ({ icon, children, right }) => (
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-          <Icon name={icon} c={BLUE_MID} size={18} sw={2} />
-          <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>{children}</h2>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+          <Icon name={icon} c={BLUE_MID} size={13} sw={2.2} />
+          <h2 style={{ fontSize: '11px', fontWeight: 600, color: BLUE_DIM, textTransform: 'uppercase', letterSpacing: '0.8px' }}>{children}</h2>
         </div>
         {right}
       </div>
@@ -1084,20 +1084,20 @@
           { date: 'Jul 10', distance: 0.89, duration: 1681, elevGain: 39, effort: 2, achievements: 0 }
         ],
         badges: [
-          { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true,  icon: 'footprints' },
-          { id: 2, name: '5-Day Warrior',   description: '5 consecutive days walked',     unlocked: true,  icon: 'shield' },
-          { id: 3, name: 'Twice Daily',     description: '2 walks in one day',            unlocked: true,  icon: 'sparkles' },
-          { id: 4, name: '10-Day Legend',   description: '10 consecutive days walked',    unlocked: true,  icon: 'crown' },
+          { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true, earned: 'Jun 3',  icon: 'footprints' },
+          { id: 2, name: '5-Day Warrior',   description: '5 consecutive days walked',     unlocked: true, earned: 'Jun 11',  icon: 'shield' },
+          { id: 3, name: 'Twice Daily',     description: '2 walks in one day',            unlocked: true, earned: 'Jun 11',  icon: 'sparkles' },
+          { id: 4, name: '10-Day Legend',   description: '10 consecutive days walked',    unlocked: true, earned: 'Jul 8',  icon: 'crown' },
           { id: 5, name: '14-Day Streak',   description: '14 consecutive days walked',    unlocked: false, icon: 'flame' },
-          { id: 6, name: '25 Mile Club',    description: 'Walk 25+ miles total',          unlocked: true,  mile: 25 },
+          { id: 6, name: '25 Mile Club',    description: 'Walk 25+ miles total',          unlocked: true, earned: 'Jul 5',  mile: 25 },
           { id: 7, name: '50 Mile Club',    description: 'Walk 50+ miles total',          unlocked: false, mile: 50 },
-          { id: 8, name: 'Marathon Master', description: 'Walk 26.2 miles total',         unlocked: true,  icon: 'flag' },
+          { id: 8, name: 'Marathon Master', description: 'Walk 26.2 miles total',         unlocked: true, earned: 'Jul 6',  icon: 'flag' },
           { id: 9, name: '100 Mile Club',   description: 'Walk 100+ miles total',         unlocked: false, mile: 100 },
           { id: 10, name: 'Send It',        description: 'Log a Mountain Bike activity',  unlocked: false, icon: 'mtb' },
-          { id: 11, name: 'Comeback',       description: 'Returned after a 3+ day break', unlocked: true,  icon: 'arrow' },
-          { id: 12, name: 'Hill Climber',   description: 'Climbed 500+ ft total',         unlocked: true,  icon: 'layers' },
-          { id: 13, name: 'Peak Bagger',    description: 'Climb 1,000+ ft total',         unlocked: true,  icon: 'layers' },
-          { id: 14, name: 'Brisk Walker',   description: 'Logged a walk under 20:00/mi',  unlocked: true,  icon: 'bolt' }
+          { id: 11, name: 'Comeback',       description: 'Returned after a 3+ day break', unlocked: true, earned: 'Jun 23',  icon: 'arrow' },
+          { id: 12, name: 'Hill Climber',   description: 'Climbed 500+ ft total',         unlocked: true, earned: 'Jun 30',  icon: 'layers' },
+          { id: 13, name: 'Peak Bagger',    description: 'Climb 1,000+ ft total',         unlocked: true, earned: 'Jul 5',  icon: 'layers' },
+          { id: 14, name: 'Brisk Walker',   description: 'Logged a walk under 20:00/mi',  unlocked: true, earned: 'Jun 30',  icon: 'bolt' }
         ]
       };
 
@@ -1173,7 +1173,7 @@
         new Date(lastActiveDate.getFullYear(), lastActiveDate.getMonth(), 1)
       ));
 
-      const [badgesOpen, setBadgesOpen] = React.useState(false);
+      const [badgesOpen, setBadgesOpen] = React.useState(true);
       const [badgeFilter, setBadgeFilter] = React.useState('all');
       const [insightsOpen, setInsightsOpen] = React.useState(false);
       const [methodologyOpen, setMethodologyOpen] = React.useState(false);
@@ -1202,7 +1202,12 @@
 
       const unlockedBadges = data.badges.filter(b => b.unlocked);
       const unlockedCount  = unlockedBadges.length;
-      const latestBadge    = unlockedBadges[unlockedBadges.length - 1];
+      /* Latest = most recently EARNED (by date), not last in array order */
+      const latestBadge    = unlockedBadges.length
+        ? [...unlockedBadges].sort((a, b) =>
+            (a.earned ? parseDataDate(a.earned, data.year) : 0) - (b.earned ? parseDataDate(b.earned, data.year) : 0)
+          )[unlockedBadges.length - 1]
+        : null;
       const filteredBadges = badgeFilter === 'earned'
         ? data.badges.filter(b => b.unlocked)
         : badgeFilter === 'unearned'
@@ -1342,7 +1347,7 @@
       };
 
       return (
-        <div className="glass-shell" style={{ padding: 'clamp(20px, 4vw, 40px)' }}>
+        <div>
 
           {/* ── Header ── */}
           <div style={{ marginBottom: 'clamp(20px, 4vw, 36px)' }}>
@@ -1358,41 +1363,25 @@
             </div>
           </div>
 
-          {/* ── Recovery Momentum + Today's rings ── */}
-          <div className="hero-grid" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
-            <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', borderRadius: '18px' }}>
-              <SectionTitle icon="flame">{`Today · ${MONTHS[todayDate.getMonth()]} ${todayDate.getDate()}`}</SectionTitle>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px, 3vw, 20px)' }}>
-                <GoalRings items={[
-                  { pct: todayMiles / GOAL_MILES, color: GOLD_LIGHT },
-                  { pct: todayMins  / GOAL_MINS,  color: BLUE_MID },
-                  { pct: todayWalks / GOAL_WALKS, color: BLUE_LIGHT },
-                ]} />
-                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                  <RingRow color={GOLD_LIGHT}  label="Distance" value={`${todayMiles.toFixed(2)} / ${GOAL_MILES.toFixed(0)} mi`} />
-                  <RingRow color={BLUE_MID}    label="Time"     value={`${Math.round(todayMins)} / ${GOAL_MINS} min`} />
-                  <RingRow color={BLUE_LIGHT}  label="Walks"    value={`${todayWalks} / ${GOAL_WALKS}`} />
-                  {todayWalks === 0 && (
-                    <div style={{ fontSize: '11px', color: BLUE_DIM, lineHeight: 1.5 }}>
-                      No walk logged yet — even 0.3 mi closes the ring.
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+          {/* ── Flagship module (Momentum + Insights) beside Today's rings ── */}
+          <div className="split-a" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
             <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', borderRadius: '18px' }}>
               <SectionTitle icon="target">Recovery Momentum</SectionTitle>
               <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px, 3vw, 20px)' }}>
-                <ScoreRing score={recoveryScore} />
+                <ScoreRing score={recoveryScore} segments={[
+                  { pts: consistencyPart * 40, color: GOLD_LIGHT },
+                  { pts: loadPart * 30,        color: BLUE_MID },
+                  { pts: pacePart * 30,        color: BLUE_LIGHT },
+                ]} />
                 <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '9px' }}>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: GOLD_LIGHT }}>{scoreBand}</div>
-                  <HeroRow icon="calendar" label="Consistency" value={`${acute.active} of 7 days`} />
-                  <HeroRow icon="layers" label="Load" tone={loadOver ? GOLD_LIGHT : undefined} value={loadOver ? (
+                  <div className="tldr-headline">{scoreBand}</div>
+                  <HeroRow swatch={GOLD_LIGHT} label="Consistency" value={`${acute.active} of 7 days`} />
+                  <HeroRow swatch={BLUE_MID} label="Load" tone={loadOver ? GOLD_LIGHT : undefined} value={loadOver ? (
                     <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
                       <Icon name="alert" c={GOLD_LIGHT} size={12} sw={2.4} />{loadLabel}
                     </span>
                   ) : loadLabel} />
-                  <HeroRow icon="bolt" label="Pace" value={paceLabel} tone={paceGain > 0.03 ? GOLD_LIGHT : undefined} />
+                  <HeroRow swatch={BLUE_LIGHT} label="Pace" value={paceLabel} tone={paceGain > 0.03 ? GOLD_LIGHT : undefined} />
                 </div>
               </div>
 
@@ -1418,21 +1407,16 @@
                   <div style={{ marginTop: '10px', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '12px', lineHeight: 1.6, color: 'rgba(220,238,255,0.92)' }}>
                     <p>The score measures how your recovery is trending — not how far you walked. Three signals, all computed from the walk log:</p>
                     <div><b style={{ color: GOLD_LIGHT }}>Consistency · {parts[0].earned} of 40 pts</b> — days active in the last 7 (currently {acute.active} of 7).</div>
-                    <div><b style={{ color: GOLD_LIGHT }}>Load · {parts[1].earned} of 30 pts</b> — this week's volume vs your 3-week baseline. You're at {loadRatio.toFixed(1)}×; the sweet spot is 0.8–1.3×. More isn't better here — ramping fast trims points because it raises re-injury risk.</div>
-                    <div><b style={{ color: GOLD_LIGHT }}>Pace · {parts[2].earned} of 30 pts</b> — recent pace vs your baseline{paceGain > 0.03 ? ` (currently ${Math.round(paceGain * 100)}% faster)` : ''}.</div>
+                    <div><b style={{ color: BLUE_MID }}>Load · {parts[1].earned} of 30 pts</b> — this week's volume vs your 3-week baseline. You're at {loadRatio.toFixed(1)}×; the sweet spot is 0.8–1.3×. More isn't better here — ramping fast trims points because it raises re-injury risk.</div>
+                    <div><b style={{ color: BLUE_LIGHT }}>Pace · {parts[2].earned} of 30 pts</b> — recent pace vs your baseline{paceGain > 0.03 ? ` (currently ${Math.round(paceGain * 100)}% faster)` : ''}.</div>
                     <div style={{ color: BLUE_DIM, fontSize: '11px' }}>Bands: 80+ Dialed in · 65–79 Building well · 50–64 Finding footing · under 50 Rebuild mode.</div>
                     <div><b style={{ color: GOLD_LIGHT }}>Biggest lever right now:</b> {lever.name.toLowerCase()} — {lever.fix}.</div>
                   </div>
                 );
               })()}
-            </div>
-          </div>
 
-          {/* ── Insights ── */}
-          <div className="glass-blue" style={{ padding: 'clamp(16px, 3vw, 24px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '20px' }}>
-            <SectionTitle icon="compass">Insights</SectionTitle>
-
-            {/* TL;DR — always visible */}
+              {/* ── Insights: momentum data first, then the computed TL;DR + full analysis ── */}
+              <div style={{ marginTop: '16px' }}>
             {/* TL;DR is fully computed by the rule engine above — no hand-written numbers */}
             <div className="tldr-card">
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '9px' }}>
@@ -1455,8 +1439,8 @@
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: insightsOpen ? '6px' : '0', padding: '4px 2px' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                <Icon name="layers" c={BLUE_MID} size={18} sw={2} />
-                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <Icon name="layers" c={BLUE_MID} size={13} sw={2.2} />
+                <h2 style={{ fontSize: '11px', fontWeight: 600, color: BLUE_DIM, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
                   Full Analysis
                 </h2>
               </div>
@@ -1470,7 +1454,7 @@
                   5 tips
                 </span>
                 <span className={'chevron-icon' + (insightsOpen ? ' open' : '')}>
-                  <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
+                  <Icon name="chevron" c={BLUE_MID} size={15} sw={2.2} />
                 </span>
               </div>
             </div>
@@ -1507,23 +1491,50 @@
                 </ul>
               </>
             )}
+              </div>
+            </div>
+
+            {/* ── Today's goal rings (right column on desktop) ── */}
+            <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', borderRadius: '18px' }}>
+              <SectionTitle icon="flame">{`Today · ${MONTHS[todayDate.getMonth()]} ${todayDate.getDate()}`}</SectionTitle>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(12px, 3vw, 20px)' }}>
+                <GoalRings items={[
+                  { pct: todayMiles / GOAL_MILES, color: GOLD_LIGHT },
+                  { pct: todayMins  / GOAL_MINS,  color: BLUE_MID },
+                  { pct: todayWalks / GOAL_WALKS, color: BLUE_LIGHT },
+                ]} />
+                <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: '9px' }}>
+                  <RingRow color={GOLD_LIGHT}  label="Distance" value={`${todayMiles.toFixed(2)} / ${GOAL_MILES.toFixed(0)} mi`} />
+                  <RingRow color={BLUE_MID}    label="Time"     value={`${Math.round(todayMins)} / ${GOAL_MINS} min`} />
+                  <RingRow color={BLUE_LIGHT}  label="Walks"    value={`${todayWalks} / ${GOAL_WALKS}`} />
+                  {todayWalks === 0 && (
+                    <div style={{ fontSize: '11px', color: BLUE_DIM, lineHeight: 1.5 }}>
+                      No walk logged yet — even 0.3 mi closes the ring.
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
+          {/* ── Calendar beside Trends on desktop ── */}
+          <div className="split-b" style={{ marginBottom: 'clamp(14px, 3vw, 22px)' }}>
+
           {/* ── Activity Calendar: detailed month view, browse history via prev/next ── */}
-          <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
+          <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', borderRadius: '18px' }}>
             <div
               className="section-toggle"
               onClick={() => setCalendarOpen(o => !o)}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: calendarOpen ? '16px' : '0', padding: '4px 2px' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                <Icon name="calendar" c={BLUE_MID} size={18} sw={2} />
-                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <Icon name="calendar" c={BLUE_MID} size={13} sw={2.2} />
+                <h2 style={{ fontSize: '11px', fontWeight: 600, color: BLUE_DIM, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
                   Activity Calendar
                 </h2>
               </div>
               <span className={'chevron-icon' + (calendarOpen ? ' open' : '')}>
-                <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
+                <Icon name="chevron" c={BLUE_MID} size={15} sw={2.2} />
               </span>
             </div>
 
@@ -1543,20 +1554,20 @@
           </div>
 
           {/* ── Activity Trends ── */}
-          <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
+          <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', borderRadius: '18px' }}>
             <div
               className="section-toggle"
               onClick={() => setTrendsOpen(o => !o)}
               style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: trendsOpen ? '16px' : '0', padding: '4px 2px' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                <Icon name="bolt" c={BLUE_MID} size={18} sw={2} />
-                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <Icon name="bolt" c={BLUE_MID} size={13} sw={2.2} />
+                <h2 style={{ fontSize: '11px', fontWeight: 600, color: BLUE_DIM, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
                   Activity Trends
                 </h2>
               </div>
               <span className={'chevron-icon' + (trendsOpen ? ' open' : '')}>
-                <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
+                <Icon name="chevron" c={BLUE_MID} size={15} sw={2.2} />
               </span>
             </div>
 
@@ -1758,13 +1769,39 @@
               </>
             )}
           </div>
+          </div>
 
           {/* ── Badges ── */}
           <div className="glass-panel" style={{ padding: 'clamp(14px, 3vw, 20px)', marginBottom: 'clamp(14px, 3vw, 22px)', borderRadius: '18px' }}>
-            <SectionTitle icon="crown">Badges</SectionTitle>
+            {/* One collapsible header for the whole module — same pattern as Calendar/Trends */}
+            <div
+              className="section-toggle"
+              onClick={() => setBadgesOpen(o => !o)}
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: badgesOpen ? '14px' : '0', padding: '4px 2px' }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                <Icon name="crown" c={BLUE_MID} size={13} sw={2.2} />
+                <h2 style={{ fontSize: '11px', fontWeight: 600, color: BLUE_DIM, textTransform: 'uppercase', letterSpacing: '0.8px' }}>
+                  Badges
+                </h2>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{
+                  fontSize: '12px', fontWeight: 500, color: GOLD,
+                  background: 'rgba(203,161,53,0.15)',
+                  border: '1px solid rgba(203,161,53,0.32)',
+                  borderRadius: '20px', padding: '3px 11px'
+                }}>
+                  {unlockedCount} / {data.badges.length}
+                </span>
+                <span className={'chevron-icon' + (badgesOpen ? ' open' : '')}>
+                  <Icon name="chevron" c={BLUE_MID} size={15} sw={2.2} />
+                </span>
+              </div>
+            </div>
 
-            {/* Latest badge spotlight — always visible */}
-            {latestBadge && (
+            {/* Latest badge spotlight */}
+            {badgesOpen && latestBadge && (
               <div className="latest-badge-spotlight" style={{ marginBottom: '14px' }}>
                 {showConfetti && (
                   <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
@@ -1786,38 +1823,12 @@
                   <BadgeArt icon={latestBadge.icon} value={latestBadge.mile} color={GOLD_LIGHT} size={28} />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
-                  <div className="badge-latest-pill">Latest earned</div>
+                  <div className="badge-latest-pill">Latest earned{latestBadge.earned ? ` · ${latestBadge.earned}` : ''}</div>
                   <div style={{ fontSize: 'clamp(13px, 2.5vw, 15px)', fontWeight: 700, color: GOLD_LIGHT, lineHeight: 1.2 }}>{latestBadge.name}</div>
                   <div style={{ fontSize: '11px', color: 'rgba(251,218,106,0.70)', marginTop: '2px' }}>{latestBadge.description}</div>
                 </div>
               </div>
             )}
-
-            {/* Collapsible header */}
-            <div
-              className="section-toggle"
-              onClick={() => setBadgesOpen(o => !o)}
-              style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: badgesOpen ? '14px' : '0', padding: '4px 2px' }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '9px' }}>
-                <h2 style={{ fontSize: 'clamp(12px, 2.5vw, 15px)', fontWeight: 600, color: BLUE_LIGHT, textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                  Badges Earned
-                </h2>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{
-                  fontSize: '12px', fontWeight: 500, color: GOLD,
-                  background: 'rgba(203,161,53,0.15)',
-                  border: '1px solid rgba(203,161,53,0.32)',
-                  borderRadius: '20px', padding: '3px 11px'
-                }}>
-                  {unlockedCount} / {data.badges.length}
-                </span>
-                <span className={'chevron-icon' + (badgesOpen ? ' open' : '')}>
-                  <Icon name="chevron" c={BLUE_MID} size={18} sw={2.2} />
-                </span>
-              </div>
-            </div>
 
             {/* Expanded: filter tabs + grid */}
             {badgesOpen && (
@@ -1866,7 +1877,7 @@
                         </div>
                         <div style={{ fontSize: '10px', color: badge.unlocked ? 'rgba(251,218,106,0.75)' : BLUE_DIM, lineHeight: 1.35 }}>{badge.description}</div>
                         {badge.unlocked && (
-                          <div style={{ marginTop: '7px', fontSize: '10px', color: GOLD, fontWeight: 600, letterSpacing: '0.3px' }}>✓ Unlocked</div>
+                          <div style={{ marginTop: '7px', fontSize: '10px', color: GOLD, fontWeight: 600, letterSpacing: '0.3px' }}>✓ {badge.earned || 'Unlocked'}</div>
                         )}
                       </div>
                     );
@@ -1931,7 +1942,7 @@
       render() {
         if (this.state.hasError) {
           return (
-            <div className="glass-shell" style={{ padding: '40px 24px', textAlign: 'center' }}>
+            <div className="glass-panel" style={{ padding: '40px 24px', textAlign: 'center', maxWidth: '520px', margin: '0 auto' }}>
               <div style={{ fontSize: '15px', fontWeight: 600, color: BLUE_LIGHT, marginBottom: '8px' }}>
                 Something went wrong loading the tracker.
               </div>
