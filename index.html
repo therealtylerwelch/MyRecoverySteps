@@ -1179,11 +1179,18 @@
             (a.earned ? parseDataDate(a.earned, data.year) : 0) - (b.earned ? parseDataDate(b.earned, data.year) : 0)
           )[unlockedBadges.length - 1]
         : null;
-      const filteredBadges = badgeFilter === 'earned'
+      /* Grid order: unearned goals first (array order), then earned newest → oldest by earned date */
+      const badgeSort = (a, b) => {
+        if (a.unlocked !== b.unlocked) return a.unlocked ? 1 : -1;
+        if (!a.unlocked) return 0;
+        return (b.earned ? parseDataDate(b.earned, data.year) : 0) - (a.earned ? parseDataDate(a.earned, data.year) : 0);
+      };
+      const filteredBadges = (badgeFilter === 'earned'
         ? data.badges.filter(b => b.unlocked)
         : badgeFilter === 'unearned'
         ? data.badges.filter(b => !b.unlocked)
-        : data.badges;
+        : data.badges
+      ).slice().sort(badgeSort);
 
       React.useEffect(() => {
         if (!latestBadge) return;
