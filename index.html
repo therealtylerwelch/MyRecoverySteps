@@ -198,45 +198,6 @@
       50%      { opacity: 1;   transform: translateX(2px); }
     }
 
-    /* ── Dancing flag ── */
-    .flag-icon {
-      animation: flag-sway 3.2s ease-in-out infinite;
-      transform-origin: 50% 90%;
-    }
-    .flag-label {
-      display: inline-block;
-    }
-    .flag-link:hover .flag-icon {
-      animation: flag-dance 0.6s ease-in-out infinite;
-    }
-    .flag-link:hover .flag-label {
-      animation: flag-bob 0.6s ease-in-out infinite;
-      animation-delay: 0.08s;
-    }
-    @keyframes flag-sway {
-      0%, 100% { transform: rotate(0deg); }
-      50%      { transform: rotate(3deg); }
-    }
-    @keyframes flag-dance {
-      0%   { transform: rotate(0deg)    translateY(0)    scale(1); }
-      15%  { transform: rotate(-12deg)  translateY(-4px) scale(1.06); }
-      30%  { transform: rotate(9deg)    translateY(0)    scale(0.95); }
-      45%  { transform: rotate(-8deg)   translateY(-3px) scale(1.05); }
-      60%  { transform: rotate(10deg)   translateY(1px)  scale(0.96); }
-      75%  { transform: rotate(-6deg)   translateY(-2px) scale(1.03); }
-      90%  { transform: rotate(4deg)    translateY(0)    scale(0.99); }
-      100% { transform: rotate(0deg)    translateY(0)    scale(1); }
-    }
-    @keyframes flag-bob {
-      0%, 100% { transform: translateY(0)    rotate(0deg); }
-      25%      { transform: translateY(-2px) rotate(-3deg); }
-      50%      { transform: translateY(0)    rotate(0deg); }
-      75%      { transform: translateY(-2px) rotate(3deg); }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      .flag-icon, .flag-label { animation: none !important; }
-    }
-
     /* ── Calendar ── */
     .cal-grid {
       display: grid;
@@ -1102,7 +1063,7 @@
           { id: 6, name: '25 Mile Club',    description: 'Walk 25+ miles total',          unlocked: true, earned: 'Jul 5',  mile: 25 },
           { id: 7, name: '50 Mile Club',    description: 'Walk 50+ miles total',          unlocked: true, earned: 'Jul 20',  mile: 50 },
           { id: 8, name: 'Marathon Master', description: 'Walk 26.2 miles total',         unlocked: true, earned: 'Jul 6',  icon: 'flag' },
-          { id: 9, name: '100 Mile Club',   description: 'Walk 100+ miles total',         unlocked: false, mile: 100 },
+          { id: 9, name: '30-Day Streak',   description: '30 consecutive days walked',    unlocked: false, icon: 'medal' },
           { id: 10, name: 'Send It',        description: 'Log a Mountain Bike activity',  unlocked: false, icon: 'mtb' },
           { id: 11, name: 'Comeback',       description: 'Returned after a 3+ day break', unlocked: true, earned: 'Jun 23',  icon: 'arrow' },
           { id: 12, name: 'Hill Climber',   description: 'Climbed 500+ ft total',         unlocked: true, earned: 'Jun 30',  icon: 'layers' },
@@ -1902,40 +1863,6 @@
             <span style={{ fontSize: '11px', color: 'rgba(116,172,223,0.55)', fontWeight: 400, letterSpacing: '0.3px' }}>
               Data updated · {data.updated}
             </span>
-          </div>
-
-          {/* ── Argentina flag footer ── */}
-          <div style={{ marginTop: 'clamp(12px, 2vw, 18px)', textAlign: 'center' }}>
-            <a
-              href="https://www.youtube.com/watch?v=q_q3hg7KXWM"
-              target="_blank"
-              rel="noopener noreferrer"
-              title="AFA Selección Argentina"
-              className="flag-link"
-              style={{ display: 'inline-flex', flexDirection: 'column', alignItems: 'center', gap: '6px', textDecoration: 'none', opacity: 0.85, transition: 'opacity 0.2s' }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '1'}
-              onMouseLeave={e => e.currentTarget.style.opacity = '0.85'}
-            >
-              <svg className="flag-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" width="48" height="32" style={{ display: 'block', borderRadius: '4px', boxShadow: '0 2px 8px rgba(0,0,0,0.35)' }}>
-                <rect width="900" height="600" fill="#74ACDF"/>
-                <rect y="200" width="900" height="200" fill="#fff"/>
-                <circle cx="450" cy="300" r="60" fill="#F6B40E"/>
-                <g fill="#F6B40E" stroke="#CD8B00" strokeWidth="2">
-                  {[0,30,60,90,120,150,180,210,240,270,300,330,360].map((deg, i) => {
-                    const rad = (deg * Math.PI) / 180;
-                    const x1 = 450 + 62 * Math.cos(rad);
-                    const y1 = 300 + 62 * Math.sin(rad);
-                    const x2 = 450 + 90 * Math.cos(rad);
-                    const y2 = 300 + 90 * Math.sin(rad);
-                    return <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} strokeWidth="6" stroke="#F6B40E"/>;
-                  })}
-                </g>
-                <circle cx="450" cy="300" r="42" fill="#F6B40E"/>
-                <circle cx="450" cy="300" r="30" fill="#CD8B00"/>
-                <circle cx="450" cy="300" r="22" fill="#F6B40E"/>
-              </svg>
-              <span className="flag-label" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', color: 'rgba(255,255,255,0.6)', fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}>Campeones Del Mundo</span>
-            </a>
           </div>
 
         </div>
