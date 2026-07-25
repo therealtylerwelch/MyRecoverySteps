@@ -1012,7 +1012,7 @@
     const WalkTracker = () => {
       const data = {
         year: 2026,
-        updated: 'July 23, 2026',
+        updated: 'July 25, 2026',
         dailyData: [
           { date: 'Jun 3',  distance: 0.33, duration: 713,  elevGain: 10, effort: 1, achievements: 0 },
           { date: 'Jun 4',  distance: 0.33, duration: 644,  elevGain: 20, effort: 1, achievements: 0 },
@@ -1055,7 +1055,8 @@
           { date: 'Jul 20', distance: 3.68, duration: 3748, elevGain: 43, effort: 11, achievements: 0, walks: [{ distance: 3.35, duration: 3305 }, { distance: 0.33, duration: 443 }] },
           { date: 'Jul 21', distance: 1.09, duration: 1265, elevGain: 72, effort: 2, achievements: 1 },
           { date: 'Jul 22', distance: 0.62, duration: 1028, elevGain: 36, effort: 1, achievements: 0 },
-          { date: 'Jul 23', distance: 0.83, duration: 1302, elevGain: 52, effort: 2, achievements: 0 }
+          { date: 'Jul 23', distance: 0.83, duration: 1302, elevGain: 52, effort: 2, achievements: 0 },
+          { date: 'Jul 24', distance: 1.76, duration: 2497, elevGain: 108, effort: 5, achievements: 0, walks: [{ distance: 0.78, duration: 1139 }, { distance: 0.98, duration: 1358 }] }
         ],
         badges: [
           { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true, earned: 'Jun 3',  icon: 'footprints' },
@@ -1443,10 +1444,10 @@
             {insightsOpen && (
               <>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '8px' }}>
-                  Strong, steady recovery: <b style={{ color: GOLD_LIGHT }}>60 walks across 42 days</b> for <b style={{ color: GOLD_LIGHT }}>52.98 miles</b> since June 1. Your typical walk has grown from <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> to a <b style={{ color: GOLD_LIGHT }}>3.35 mi</b> peak on July 20, and pace has improved from ~38 to ~19 min/mi — about <b style={{ color: GOLD_LIGHT }}>51% faster</b>. Current records: longest walk <b style={{ color: GOLD_LIGHT }}>3.35 mi — set Jul 20</b>, fastest pace <b style={{ color: GOLD_LIGHT }}>16:27/mi — also Jul 20</b>, on the same walk. A personal best in both, on one outing.
+                  Strong, steady recovery: <b style={{ color: GOLD_LIGHT }}>62 walks across 43 days</b> for <b style={{ color: GOLD_LIGHT }}>54.74 miles</b> since June 1. Your typical walk has grown from <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> to a <b style={{ color: GOLD_LIGHT }}>3.35 mi</b> peak on July 20, and pace has improved from ~38 to ~20 min/mi — about <b style={{ color: GOLD_LIGHT }}>49% faster</b>. Current records: longest walk <b style={{ color: GOLD_LIGHT }}>3.35 mi — set Jul 20</b>, fastest pace <b style={{ color: GOLD_LIGHT }}>16:27/mi — also Jul 20</b>, on the same walk. A personal best in both, on one outing.
                 </p>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
-                  <b style={{ color: GOLD_LIGHT }}>This is your strongest stretch yet</b> — seven days walked out of the last seven, load sitting right on your 3-week baseline (the sweet spot, no ramp risk), and pace running about 17% faster than your recent norm. Gaps on Jun 6, 12, 14, 19–22, 26 and 28 cost early momentum — the four-day pause (Jun 19–22) alone cost a possible 3-week run — but you haven't missed a day since Jun 29. You've now stacked two-plus walks sixteen times (Jun 11, 29, 30, Jul 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 14, 18, 20 — Jul 18 stacked three), and your current streak is <b style={{ color: GOLD_LIGHT }}>27 days</b> (Jun 27–Jul 23, bridging one rest day — streaks here allow one rest day per week, because rest is part of recovery), your longest yet. Here's where to focus next:
+                  <b style={{ color: GOLD_LIGHT }}>This is your strongest stretch yet</b> — six days walked out of the last seven, and pace running about 21% faster than your recent norm — though this week's volume has jumped to 1.5× last week's, above the safe-ramp guideline even as your smoothed 3-week baseline stays in the zone (0.9×). Gaps on Jun 6, 12, 14, 19–22, 26 and 28 cost early momentum — the four-day pause (Jun 19–22) alone cost a possible 3-week run — but you haven't missed a day since Jun 29. You've now stacked two-plus walks seventeen times (Jun 11, 29, 30, Jul 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 14, 18, 20, 24 — Jul 18 stacked three), and your current streak is <b style={{ color: GOLD_LIGHT }}>28 days</b> (Jun 27–Jul 24, bridging one rest day — streaks here allow one rest day per week, because rest is part of recovery), your longest yet. Here's where to focus next:
                 </p>
                 <ul className="insight-list">
                   <li>
@@ -1459,15 +1460,15 @@
                   </li>
                   <li>
                     <span className="ico"><Icon name="shield" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Load right in the zone.</b> Volume is sitting essentially at your 3-week baseline (1.0×) — the sweet spot, no ramp risk, and room to keep building steadily.</span>
+                    <span><b>Ease up on volume this week.</b> This week's mileage ran about 1.5× last week's — over the 1.3× safe-ramp guideline. Your smoothed 3-week baseline is still in the zone (0.9×), so a lighter, easier week now keeps that trend healthy.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="layers" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Two-a-days work.</b> You've done it sixteen times (Jun 11, 29, 30, Jul 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 14, 18, 20), and each doubles your daily progress. Keep stacking when energy is there.</span>
+                    <span><b>Two-a-days work.</b> You've done it seventeen times (Jun 11, 29, 30, Jul 1, 2, 3, 4, 5, 7, 8, 9, 10, 12, 14, 18, 20, 24), and each doubles your daily progress. Keep stacking when energy is there.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="crown" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Streak badges earned.</b> Both 10-Day Legend and 14-Day Streak are unlocked — twenty-five straight consecutive days (Jun 29–Jul 23) and counting, five short of 30-Day Streak.</span>
+                    <span><b>Streak badges earned.</b> Both 10-Day Legend and 14-Day Streak are unlocked — twenty-six straight consecutive days (Jun 29–Jul 24) and counting, four short of 30-Day Streak.</span>
                   </li>
                 </ul>
               </>
