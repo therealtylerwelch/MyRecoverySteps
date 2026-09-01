@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html{color-scheme:light dark}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>Shannon's Rabbit Run Pace Plan</title>
+<meta name="description" content="Interactive 2026 Run Rabbit Run 100 aid-station split planner for Shannon — 32-hour goal, editable rest, crew access.">
+<style>
+/* Self-hosted fonts (same-origin) — complies with the site CSP; no external font requests */
+@font-face{font-family:"Oswald";font-style:normal;font-weight:200 700;font-display:swap;src:url("/rrrr/fonts/oswald-latin-wght-normal.woff2") format("woff2")}
+@font-face{font-family:"Libre Franklin";font-style:normal;font-weight:100 900;font-display:swap;src:url("/rrrr/fonts/libre-franklin-latin-wght-normal.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/rrrr/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url("/rrrr/fonts/ibm-plex-mono-latin-600-normal.woff2") format("woff2")}
+</style>
+<style>
+  :root{
+    --paper:#F0F3EE; --paper-2:#FBFCFA; --card:#FFFFFF;
+    --ink:#1B231E; --ink-soft:#4C574F; --ink-faint:#7A857C;
+    --line:#D9DFD6; --line-strong:#C3CBBF;
+    --pine:#1E3A2D; --pine-2:#274A38; --pine-ink:#EAF1E7; --pine-ink-soft:#A9C0AE;
+    --amber:#CF7C22; --amber-ink:#8A4E10; --amber-soft:#F4E6D1;
+    --dusk:#3C5A86; --dusk-soft:#DEE6F1;
+    --good:#2F7D5B; --good-soft:#DCEEE4;
+    --warn:#B57A16; --warn-soft:#F6E9CF;
+    --danger:#B8412F; --danger-soft:#F4DCD6;
+    --night-band:rgba(40,58,110,0.13);
+    --shadow:0 1px 2px rgba(24,40,30,.06),0 6px 18px rgba(24,40,30,.05);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --paper:#121713; --paper-2:#1A211B; --card:#1D251F;
+      --ink:#E8EEE6; --ink-soft:#A2AEA4; --ink-faint:#7E8A80;
+      --line:#2B342C; --line-strong:#3A453B;
+      --pine:#0E1913; --pine-2:#16241A; --pine-ink:#E7F0E6; --pine-ink-soft:#8FAB95;
+      --amber:#E4A250; --amber-ink:#F0C489; --amber-soft:#3A2C18;
+      --dusk:#86A5D4; --dusk-soft:#212F45;
+      --good:#5CB088; --good-soft:#183527;
+      --warn:#D9A64A; --warn-soft:#352a13;
+      --danger:#E0705C; --danger-soft:#3a1f19;
+      --night-band:rgba(120,150,220,0.16);
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.28);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#121713; --paper-2:#1A211B; --card:#1D251F;
+    --ink:#E8EEE6; --ink-soft:#A2AEA4; --ink-faint:#7E8A80;
+    --line:#2B342C; --line-strong:#3A453B;
+    --pine:#0E1913; --pine-2:#16241A; --pine-ink:#E7F0E6; --pine-ink-soft:#8FAB95;
+    --amber:#E4A250; --amber-ink:#F0C489; --amber-soft:#3A2C18;
+    --dusk:#86A5D4; --dusk-soft:#212F45;
+    --good:#5CB088; --good-soft:#183527;
+    --warn:#D9A64A; --warn-soft:#352a13;
+    --danger:#E0705C; --danger-soft:#3a1f19;
+    --night-band:rgba(120,150,220,0.16);
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.28);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Libre Franklin",system-ui,-apple-system,Segoe UI,sans-serif;
+    line-height:1.5; margin:0; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1160px; margin:0 auto; padding:0 20px 72px}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace; font-variant-numeric:tabular-nums}
+  h1,h2,h3{font-family:"Oswald",system-ui,sans-serif; font-weight:600; margin:0; text-wrap:balance}
+
+  /* ---------- Masthead ---------- */
+  .mast{background:var(--pine); color:var(--pine-ink); border-radius:0 0 var(--radius) var(--radius); overflow:hidden; box-shadow:var(--shadow)}
+  .mast-inner{max-width:1160px; margin:0 auto; padding:26px 20px 8px}
+  .brow{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.16em; font-size:12px; color:var(--pine-ink-soft)}
+  .brow .dot{width:5px;height:5px;border-radius:50%;background:var(--amber);display:inline-block;transform:translateY(-2px)}
+  h1{font-size:clamp(30px,5.4vw,52px); line-height:.98; letter-spacing:.005em; margin:8px 0 2px; text-transform:uppercase}
+  h1 .amb{color:var(--amber)}
+  .subhead{color:var(--pine-ink-soft); font-size:15px; max-width:64ch}
+  .runner-row{display:flex; flex-wrap:wrap; gap:10px 26px; margin:16px 0 4px; align-items:baseline}
+  .runner-row .who{font-family:"Oswald",sans-serif; font-size:22px; font-weight:500; letter-spacing:.02em}
+  .runner-row .meta{font-size:13.5px; color:var(--pine-ink-soft)}
+  .runner-row .meta b{color:var(--pine-ink); font-weight:600}
+
+  /* ---------- Profile ---------- */
+  .profile-card{margin-top:14px}
+  svg.profile{display:block; width:100%; height:auto}
+  .prof-legend{display:flex; gap:14px 20px; flex-wrap:wrap; align-items:center; padding:8px 4px 18px; font-size:12px; color:var(--pine-ink-soft)}
+  .prof-legend .lg{display:inline-flex; align-items:center; gap:7px}
+  .prof-legend .sw{width:20px;height:11px;border-radius:3px;display:inline-block}
+  .prof-legend b{color:var(--pine-ink); font-weight:600}
+
+  /* ---------- Controls ---------- */
+  .controls{display:flex; flex-wrap:wrap; gap:18px 24px; align-items:flex-end; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px; box-shadow:var(--shadow); margin-top:22px}
+  .ctl label{display:block; font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.1em; font-size:11px; color:var(--ink-faint); margin-bottom:6px}
+  .goal-in{display:flex; align-items:center; gap:6px}
+  .goal-in input{width:64px; font-family:"IBM Plex Mono",monospace; font-size:26px; font-weight:600; text-align:center; color:var(--ink); background:var(--paper-2); border:1px solid var(--line-strong); border-radius:9px; padding:6px 4px}
+  .goal-in .colon{font-family:"IBM Plex Mono",monospace; font-size:24px; color:var(--ink-soft)}
+  input[type="time"]{font-family:"IBM Plex Mono",monospace; font-size:15px; color:var(--ink); background:var(--paper-2); border:1px solid var(--line-strong); border-radius:9px; padding:8px 10px}
+  input:focus-visible, button:focus-visible{outline:2.5px solid var(--amber); outline-offset:2px}
+  .presets{display:flex; gap:7px; flex-wrap:wrap}
+  .presets button{font-family:"Oswald",sans-serif; font-size:14px; letter-spacing:.03em; padding:8px 13px; border-radius:999px; border:1px solid var(--line-strong); background:var(--paper-2); color:var(--ink-soft); cursor:pointer; transition:.14s}
+  .presets button:hover{border-color:var(--amber); color:var(--ink)}
+  .presets button.active{background:var(--amber); border-color:var(--amber); color:#fff}
+  :root[data-theme="dark"] .presets button.active, :root:not([data-theme="light"]) .presets button.active{color:#1a130a}
+  .ctl-note{flex:1 1 200px; min-width:180px; font-size:12.5px; color:var(--ink-faint); line-height:1.45}
+  .btn-line{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
+
+  /* ---------- Summary tiles ---------- */
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:22px}
+  .tile{background:var(--card); border:1px solid var(--line); border-radius:12px; padding:14px 16px}
+  .tile.lead{background:linear-gradient(150deg,var(--pine),var(--pine-2)); border-color:transparent; color:var(--pine-ink)}
+  .tile .t-lab{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.11em; font-size:10.5px; color:var(--ink-faint)}
+  .tile.lead .t-lab{color:var(--pine-ink-soft)}
+  .tile .t-val{font-family:"Oswald",sans-serif; font-weight:600; font-size:27px; line-height:1.05; margin-top:4px; letter-spacing:.01em}
+  .tile .t-val .u{font-size:14px; color:var(--ink-faint); font-weight:500}
+  .tile.lead .t-val .u{color:var(--pine-ink-soft)}
+  .tile .t-sub{font-size:12px; color:var(--ink-faint); margin-top:2px}
+  .tile.lead .t-sub{color:var(--pine-ink-soft)}
+  .t-sub .over{color:var(--amber-ink)} .t-sub .under{color:var(--good)}
+  :root[data-theme="dark"] .t-sub .over,:root:not([data-theme="light"]) .t-sub .over{color:var(--amber)}
+
+  /* ---------- Section head ---------- */
+  .sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin:34px 0 12px; flex-wrap:wrap}
+  .sec-head h2{font-size:22px; text-transform:uppercase; letter-spacing:.03em}
+  .sec-head .hint{font-size:12.5px; color:var(--ink-faint)}
+
+  /* ---------- Table ---------- */
+  .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
+  table{border-collapse:collapse; width:100%; min-width:880px}
+  thead th{position:sticky; top:0; background:var(--pine); color:var(--pine-ink); font-family:"Oswald",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:.07em; font-size:11px; text-align:right; padding:11px 12px; white-space:nowrap; z-index:2}
+  thead th.l{text-align:left}
+  tbody td{padding:9px 12px; border-top:1px solid var(--line); text-align:right; white-space:nowrap; font-size:14px}
+  tbody td.l{text-align:left}
+  tbody tr:hover{background:var(--paper-2)}
+  .st-name{font-family:"Oswald",sans-serif; font-weight:500; font-size:15.5px; letter-spacing:.01em; display:flex; align-items:center; gap:8px}
+  .st-name .lap{font-family:"Libre Franklin",sans-serif; font-weight:600; font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-faint); border:1px solid var(--line-strong); border-radius:4px; padding:1px 5px}
+  .access{display:inline-flex; gap:4px; align-items:center}
+  .badge{font-size:9px; font-weight:700; letter-spacing:.03em; padding:1px 5px; border-radius:5px; font-family:"Libre Franklin",sans-serif; white-space:nowrap}
+  .badge.crew{background:var(--amber-soft); color:var(--amber-ink)}
+  .badge.pace{background:var(--dusk-soft); color:var(--dusk)}
+  .terr{font-size:12px; color:var(--ink-soft)}
+  .terr .tt{display:inline-block; width:8px;height:8px;border-radius:2px;margin-right:6px}
+  .arrive{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px}
+  .arrive .dy{font-size:11px; color:var(--ink-faint); margin-left:4px}
+  .elapsed{font-family:"IBM Plex Mono",monospace; color:var(--ink-soft)}
+  .rest-in{width:54px; font-family:"IBM Plex Mono",monospace; font-size:13px; text-align:right; padding:4px 7px; border:1px solid var(--line-strong); border-radius:7px; background:var(--paper-2); color:var(--ink); font-variant-numeric:tabular-nums}
+  .rest-in:hover{border-color:var(--amber)}
+  .rest-dash{color:var(--ink-faint)}
+  .buf{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:12.5px; padding:3px 8px; border-radius:999px; display:inline-block}
+  .buf.g{background:var(--good-soft); color:var(--good)}
+  .buf.w{background:var(--warn-soft); color:var(--warn)}
+  .buf.d{background:var(--danger-soft); color:var(--danger)}
+  .buf.n{color:var(--ink-faint)}
+  tr.finish td{border-top:2.5px solid var(--amber); background:var(--amber-soft)}
+  tr.finish .st-name{color:var(--amber-ink); font-size:17px}
+  :root[data-theme="dark"] tr.finish .st-name,:root:not([data-theme="light"]) tr.finish .st-name{color:var(--amber-ink)}
+  tr.start td{color:var(--ink-soft)}
+  .sun-emoji{font-size:12px}
+
+  /* ---------- read note + footer ---------- */
+  .note{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:10px; padding:16px 18px; margin-top:26px; font-size:13.5px; color:var(--ink-soft); line-height:1.6}
+  .note b{color:var(--ink)}
+  .note h3{font-size:14px; text-transform:uppercase; letter-spacing:.08em; margin-bottom:7px; color:var(--ink)}
+  .note p+p{margin-top:8px}
+  footer{margin-top:30px; font-size:12px; color:var(--ink-faint); line-height:1.6}
+  footer a{color:var(--dusk)}
+  .btn{font-family:"Oswald",sans-serif; letter-spacing:.04em; font-size:13px; border-radius:9px; padding:9px 16px; cursor:pointer; border:1px solid var(--line-strong); background:var(--paper-2); color:var(--ink-soft)}
+  .btn:hover{border-color:var(--amber); color:var(--ink)}
+  .btn.solid{background:var(--pine); color:var(--pine-ink); border-color:transparent}
+  .btn.solid:hover{background:var(--pine-2); color:var(--pine-ink)}
+
+  @media (max-width:560px){
+    .goal-in input{width:56px;font-size:22px}
+    .tile .t-val{font-size:23px}
+  }
+  @media print{
+    body{background:#fff}
+    .controls,.btn,.prof-legend,.btn-line{display:none}
+    .mast{border-radius:0}
+    .tbl-scroll{overflow:visible;box-shadow:none}
+    thead th{position:static}
+    tr:hover{background:none}
+    .rest-in{border:none;background:none;padding:0}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<header class="mast">
+  <div class="mast-inner">
+    <div class="brow"><span>Run Rabbit Run 100</span><span class="dot"></span><span>Steamboat Springs, CO</span><span class="dot"></span><span>Tortoise Wave · 2026</span></div>
+    <h1>Rabbit Run <span class="amb">Pace Plan</span></h1>
+    <p class="subhead">A living split sheet built from the official 2026 Runner's Manual — set the goal time, tune the rest at each aid station, and every arrival, finish time, and cutoff cushion recalculates.</p>
+    <div class="runner-row">
+      <span class="who">Shannon</span>
+      <span class="meta"><b id="rr-goal">32:00</b> goal</span>
+      <span class="meta">Start <b>Fri Sep 18, 9:00 AM</b></span>
+      <span class="meta">Proj. finish <b id="rr-finish">—</b></span>
+      <span class="meta"><b>101.8 mi</b> · <b>~20,391 ft</b> climb</span>
+    </div>
+  </div>
+  <div class="mast-inner profile-card">
+    <svg class="profile" id="profile" viewBox="0 0 1000 272" role="img" aria-label="Official 2026 elevation profile of the Run Rabbit Run 100 course, with every aid station labeled, crew-access stations marked, and a shaded night band."></svg>
+    <div class="prof-legend">
+      <span class="lg"><span class="sw" style="background:linear-gradient(var(--amber),transparent)"></span>Elevation (official 2026)</span>
+      <span class="lg"><b>◆</b> crew access allowed</span>
+      <span class="lg"><b>•</b> no crew</span>
+      <span class="lg"><span class="sw" style="background:var(--night-band)"></span>Projected darkness</span>
+      <span class="lg">☀ sunset · 🌙 sunrise</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="controls" aria-label="Pace controls">
+    <div class="ctl">
+      <label for="gh">Goal time</label>
+      <div class="goal-in">
+        <input id="gh" class="mono" type="number" min="18" max="40" step="1" value="32" aria-label="Goal hours" inputmode="numeric">
+        <span class="colon">:</span>
+        <input id="gm" class="mono" type="number" min="0" max="59" step="5" value="0" aria-label="Goal minutes" inputmode="numeric">
+      </div>
+    </div>
+    <div class="ctl">
+      <label>Quick set</label>
+      <div class="presets" id="presets">
+        <button data-h="30" data-m="0">30:00</button>
+        <button data-h="32" data-m="0" class="active">32:00</button>
+        <button data-h="34" data-m="0">34:00</button>
+        <button data-h="36" data-m="0">36:00 cutoff</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <label for="start">Start time</label>
+      <input id="start" type="time" value="09:00">
+    </div>
+    <div class="ctl-note">
+      The <b>Rest</b> column in the table is editable — change the minutes at any aid station and the arrivals, finish, and cushions all update. Moving pace is held to your goal, so extra rest pushes the finish later; trimming it brings you in sooner.
+      <div class="btn-line">
+        <button class="btn solid" onclick="window.print()">⎙ Print / Save PDF</button>
+        <button class="btn" id="resetRest">↺ Reset rest times</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tiles" id="tiles" aria-label="Summary"></section>
+
+  <div class="sec-head">
+    <h2>Aid-Station Splits</h2>
+    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> = crew allowed · <b style="color:var(--dusk)">◇ PACER</b> = pacer allowed · Rest is editable</span>
+  </div>
+  <div class="tbl-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th class="l">Aid Station</th>
+          <th>Mile</th>
+          <th>Leg</th>
+          <th class="l">Terrain</th>
+          <th>Move</th>
+          <th>Rest (min)</th>
+          <th>Arrive</th>
+          <th>Elapsed</th>
+          <th>Cutoff cushion</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+
+  <div class="note">
+    <h3>How to read this</h3>
+    <p><b>Move</b> is the running time for the leg into that aid station; <b>Rest</b> is the time spent there (type a new number to change it). <b>Arrive</b> is the clock time she reaches the station, <b>Elapsed</b> her total race time so far. Most stations appear twice — the <b>OUT</b> / <b>BACK</b> tag says which pass; <b>EMER</b> is the Emerald Mountain loop (Lane of Pain, out and back).</p>
+    <p><b>Crew access:</b> a <span class="badge crew">◆ CREW</span> badge means crew may meet her there; <span class="badge pace">◇ PACER</span> means a pacer may join or leave. Fish Creek Falls allows crew <b>on foot or bike only</b> (no vehicles); Billy's Rabbit Hole and Lane of Pain are minimal aid with no crew.</p>
+    <p><b>Cutoff cushion</b> is how far ahead of the official time limit she is — <span class="buf g" style="padding:1px 7px">green</span> comfortable, <span class="buf w" style="padding:1px 7px">amber</span> tight, <span class="buf d" style="padding:1px 7px">red</span> at or behind. A dash means no cutoff at that stop. This is a planning estimate; use the cushion, not the exact minute, to make calls on the day.</p>
+  </div>
+
+  <footer>
+    <p><b>Source.</b> All aid stations, mileages, elevations, cutoff times, and crew/pacer access are taken directly from the <b>2026 Run Rabbit Run Runner's Manual</b> (100-Mile Aid Stations, Mileage, Crews & Cutoffs table; updated 29 July 2026). The pacing shape is calibrated to the manual's own Tortoise split predictions and scaled to Shannon's goal. Sunset ~7:07 PM Fri and sunrise ~6:47 AM Sat are for Steamboat Springs. Split times are a planning model, not official predictions.</p>
+    <p style="margin-top:6px">Built for Shannon · Run Rabbit Run 100 · Sep 18–19, 2026</p>
+  </footer>
+</div>
+
+<script>
+/* ---------------- Course data — 2026 Runner's Manual ---------------- */
+const T = {
+  climb:{c:'var(--danger)',l:'Big climb'}, descent:{c:'var(--good)',l:'Descent'},
+  bigclimb:{c:'var(--danger)',l:'Big climb'}, hipt:{c:'var(--danger)',l:'Climb to high pt'},
+  hiroll:{c:'var(--dusk)',l:'High rolling'}, longdesc:{c:'var(--good)',l:'Long descent'},
+  town:{c:'var(--good)',l:'Descent to town'}, emclimb:{c:'var(--dusk)',l:'Climb · night'},
+  emloop:{c:'var(--dusk)',l:'Emerald loop · night'}, emdesc:{c:'var(--dusk)',l:'Descent · night'},
+  outclimb:{c:'var(--danger)',l:'Climb from town · night'}, longclimb:{c:'var(--danger)',l:'Long climb · night'},
+  climb2:{c:'var(--danger)',l:'Climb to Werner'}, finish:{c:'var(--good)',l:'Descent to base'}
+};
+// legMin = official 2026 Tortoise 36-hr leg time (minutes) — the pacing SHAPE, scaled to goal.
+// rest   = default minutes at station (editable). cut = official cutoff, minutes after 9:00 AM start.
+// crew/pacer from the manual's Crew/Pacer column. lbelow = draw profile label below the marker.
+const STATIONS = [
+  {name:'Steamboat Base', short:'Start',  lap:'',    mi:0.0,   elev:6886,  legMin:null, rest:0,  crew:true,  pacer:false, cut:null, terr:null,       lbelow:false, anc:'start'},
+  {name:'Mt. Werner',     short:'Werner', lap:'OUT', mi:5.4,   elev:10372, legMin:105,  rest:2,  crew:false, pacer:false, cut:390,  terr:'climb',    lbelow:true},
+  {name:'Fish Creek Falls',short:'Fish Ck',lap:'OUT',mi:17.7,  elev:6952,  legMin:180,  rest:4,  crew:true,  pacer:false, cut:540,  terr:'descent',  lbelow:false},
+  {name:'Long Lake',      short:'Long Lk',lap:'OUT', mi:24.3,  elev:9850,  legMin:240,  rest:3,  crew:false, pacer:false, cut:null, terr:'bigclimb', lbelow:false},
+  {name:'Summit Lake',    short:'Summit', lap:'OUT', mi:30.1,  elev:10316, legMin:165,  rest:6,  crew:true,  pacer:false, cut:null, terr:'hipt',     lbelow:true},
+  {name:"Billy's Rabbit Hole",short:"Billy's",lap:'OUT',mi:34.3,elev:10040,legMin:80,  rest:2,  crew:false, pacer:false, cut:null, terr:'hiroll',   lbelow:false},
+  {name:'Dry Lake',       short:'Dry Lk', lap:'OUT', mi:44.5,  elev:8272,  legMin:160,  rest:8,  crew:true,  pacer:true,  cut:null, terr:'longdesc', lbelow:false},
+  {name:'Olympian Hall',  short:'Olympian',lap:'OUT',mi:51.2,  elev:6669,  legMin:120,  rest:12, crew:true,  pacer:true,  cut:1050, terr:'town',     lbelow:false},
+  {name:'Lane of Pain',   short:'Lane of Pain',lap:'EMER',mi:54.4,elev:8180,legMin:57, rest:1,  crew:false, pacer:false, cut:null, terr:'emclimb',  lbelow:false},
+  {name:'Lane of Pain',   short:'LoP',    lap:'EMER',mi:58.1,  elev:8180,  legMin:65,   rest:1,  crew:false, pacer:false, cut:null, terr:'emloop',   lbelow:true},
+  {name:'Olympian Hall',  short:'Olympian',lap:'BACK',mi:63.9, elev:6669,  legMin:103,  rest:10, crew:true,  pacer:true,  cut:1365, terr:'emdesc',   lbelow:false},
+  {name:'Dry Lake',       short:'Dry Lk', lap:'BACK',mi:70.8,  elev:8272,  legMin:180,  rest:8,  crew:true,  pacer:true,  cut:1500, terr:'outclimb', lbelow:true},
+  {name:"Billy's Rabbit Hole",short:"Billy's",lap:'BACK',mi:76.6,elev:10040,legMin:148, rest:3,  crew:false, pacer:false, cut:null, terr:'longclimb',lbelow:false},
+  {name:'Summit Lake',    short:'Summit', lap:'BACK',mi:80.8,  elev:10316, legMin:122,  rest:6,  crew:true,  pacer:true,  cut:1800, terr:'hipt',     lbelow:true},
+  {name:'Long Lake',      short:'Long Lk',lap:'BACK',mi:89.0,  elev:9850,  legMin:180,  rest:3,  crew:false, pacer:false, cut:1950, terr:'hiroll',   lbelow:false},
+  {name:'Mt. Werner',     short:'Werner', lap:'BACK',mi:95.8,  elev:10372, legMin:165,  rest:2,  crew:false, pacer:false, cut:2100, terr:'climb2',   lbelow:true},
+  {name:'FINISH',         short:'Finish', lap:'',    mi:101.8, elev:6886,  legMin:90,   rest:0,  crew:true,  pacer:false, cut:2160, terr:'finish',   lbelow:false, anc:'end'}
+];
+const WEIGHT_SUM = STATIONS.reduce((s,x)=>s+(x.legMin||0),0);          // 2160
+const DEFAULT_REST = STATIONS.map(s=>s.rest);
+const DEFAULT_REST_TOTAL = DEFAULT_REST.reduce((a,b)=>a+b,0);          // 71
+const MI_MAX = 101.8;
+
+/* Solar times, minutes after a 9:00 AM start (Steamboat, Sep 18–19) */
+const SUNSET_FRI = 10*60+7;    // ~7:07 PM Fri
+const SUNRISE_SAT = 21*60+47;  // ~6:47 AM Sat
+const SUNSET_SAT = 34*60+5;    // ~7:05 PM Sat
+
+/* live state: editable rest per station */
+const state = { rest: DEFAULT_REST.slice() };
+
+/* ---------------- Helpers ---------------- */
+function pad(n){return String(n).padStart(2,'0');}
+function fmtHM(mins){ mins=Math.round(mins); const s=mins<0?'-':''; mins=Math.abs(mins); return s+Math.floor(mins/60)+':'+pad(mins%60); }
+function fmtClock(minsFromStart, startMin){
+  let tot=Math.round(startMin+minsFromStart);
+  const dayIdx=Math.floor(tot/1440); tot=((tot%1440)+1440)%1440;
+  let h=Math.floor(tot/60), m=tot%60; const ap=h>=12?'PM':'AM'; let hh=h%12; if(hh===0)hh=12;
+  const day=['Fri','Sat','Sun','Mon'][dayIdx]||'';
+  return {t:hh+':'+pad(m)+' '+ap, day:day};
+}
+function isNight(el){ return (el>=SUNSET_FRI && el<SUNRISE_SAT) || (el>=SUNSET_SAT); }
+
+/* ---------------- Core compute (model: moving fixed by goal, rest shifts finish) ---------------- */
+function compute(goalMin){
+  const movingScale = (goalMin - DEFAULT_REST_TOTAL) / WEIGHT_SUM;    // pace set by goal at default rest
+  let elapsed=0; const rows=[{...STATIONS[0], leg:0, legTime:0, arriveElapsed:0}];
+  let movingTotal=0;
+  for(let i=1;i<STATIONS.length;i++){
+    const leg = STATIONS[i].mi - STATIONS[i-1].mi;
+    const legTime = STATIONS[i].legMin * movingScale;
+    movingTotal += legTime;
+    elapsed += legTime;
+    rows.push({...STATIONS[i], leg, legTime, arriveElapsed:elapsed});
+    elapsed += state.rest[i];
+  }
+  const restTotal = state.rest.reduce((a,b)=>a+b,0);
+  return {rows, movingTotal, restTotal, finish:rows[rows.length-1].arriveElapsed, movingScale};
+}
+function mileAtElapsed(rows, target){
+  for(let i=1;i<rows.length;i++){
+    const a=rows[i-1].arriveElapsed, b=rows[i].arriveElapsed;
+    if(target>=a && target<=b){ const f=(b-a)?(target-a)/(b-a):0; return rows[i-1].mi + f*(rows[i].mi-rows[i-1].mi); }
+  }
+  return null;
+}
+function goalMinutes(){
+  const gh=parseInt(document.getElementById('gh').value)||32;
+  const gm=parseInt(document.getElementById('gm').value)||0;
+  return gh*60+gm;
+}
+function startMinutes(){
+  const [sh,sm]=(document.getElementById('start').value||'09:00').split(':').map(Number);
+  return sh*60+sm;
+}
+
+/* ---------------- Build table once (inputs stay stable across recompute) ---------------- */
+function buildTable(){
+  const tb=document.getElementById('tbody'); tb.innerHTML='';
+  STATIONS.forEach((r,i)=>{
+    const tr=document.createElement('tr');
+    if(i===0) tr.className='start';
+    if(r.name==='FINISH') tr.className='finish';
+    const lap = r.lap ? `<span class="lap">${r.lap}</span>` : '';
+    let badges='';
+    if(r.crew) badges+='<span class="badge crew">◆ CREW</span>';
+    if(r.pacer) badges+='<span class="badge pace">◇ PACER</span>';
+    const access = badges? `<span class="access">${badges}</span>` : '';
+    const terr = r.terr ? `<span class="terr"><span class="tt" style="background:${T[r.terr].c}"></span>${T[r.terr].l}</span>` : '';
+    const restCell = (i===0 || r.name==='FINISH')
+      ? `<span class="rest-dash">—</span>`
+      : `<input class="rest-in mono" type="number" min="0" max="120" step="1" value="${r.rest}" data-i="${i}" aria-label="Rest minutes at ${r.name}">`;
+    tr.innerHTML=`
+      <td class="l"><span class="st-name">${r.name}${i>0?' ':''}${lap} ${access}</span></td>
+      <td class="mono">${r.mi.toFixed(1)}</td>
+      <td class="mono">${i===0?'—':(STATIONS[i].mi-STATIONS[i-1].mi).toFixed(1)}</td>
+      <td class="l">${terr}</td>
+      <td class="mono" id="move-${i}">—</td>
+      <td>${restCell}</td>
+      <td id="arr-${i}"></td>
+      <td class="elapsed" id="el-${i}"></td>
+      <td id="buf-${i}"></td>`;
+    tb.appendChild(tr);
+  });
+  tb.querySelectorAll('.rest-in').forEach(inp=>{
+    inp.addEventListener('input',e=>{
+      const i=+e.target.dataset.i;
+      let v=parseInt(e.target.value); if(isNaN(v)) v=0; v=Math.max(0,Math.min(120,v));
+      state.rest[i]=v; recompute();
+    });
+  });
+}
+
+/* ---------------- Recompute: update dynamic cells, tiles, profile ---------------- */
+function recompute(){
+  const goalMin=goalMinutes(), startMin=startMinutes();
+  const {rows, movingTotal, restTotal, finish} = compute(goalMin);
+
+  document.getElementById('rr-goal').textContent = fmtHM(goalMin);
+  const fc=fmtClock(finish, startMin);
+  document.getElementById('rr-finish').textContent = fc.day+' '+fc.t;
+
+  // tiles
+  const avgPace = movingTotal/MI_MAX;
+  const paceStr = Math.floor(avgPace)+':'+pad(Math.round((avgPace%1)*60));
+  const nightHrs = Math.max(0,(Math.min(SUNRISE_SAT,finish)-SUNSET_FRI))/60;
+  const cushion = 2160 - finish;                 // vs 36:00 (9 PM Sat) final cutoff
+  const delta = finish - goalMin;
+  const deltaTxt = Math.abs(delta)<1 ? 'right on your 32:00 goal'
+        : (delta>0 ? `<span class="over">+${fmtHM(delta)} over goal</span>` : `<span class="under">${fmtHM(delta)} under goal</span>`);
+  document.getElementById('tiles').innerHTML = `
+    <div class="tile lead"><div class="t-lab">Projected finish</div><div class="t-val">${fc.t}<span class="u"> ${fc.day}</span></div><div class="t-sub">total ${fmtHM(finish)} · ${deltaTxt}</div></div>
+    <div class="tile"><div class="t-lab">Avg moving pace</div><div class="t-val">${paceStr}<span class="u"> /mi</span></div><div class="t-sub">${fmtHM(movingTotal)} moving</div></div>
+    <div class="tile"><div class="t-lab">Time resting</div><div class="t-val">${restTotal}<span class="u"> min</span></div><div class="t-sub">across 15 aid stations</div></div>
+    <div class="tile"><div class="t-lab">Running in the dark</div><div class="t-val">${nightHrs.toFixed(1)}<span class="u"> hrs</span></div><div class="t-sub">sunset 7:07p → sunrise 6:47a</div></div>
+    <div class="tile"><div class="t-lab">Cushion at finish</div><div class="t-val">${cushion>=0?'+':''}${fmtHM(cushion)}</div><div class="t-sub">before the 9 PM (36 hr) cutoff</div></div>
+  `;
+
+  // table cells
+  rows.forEach((r,i)=>{
+    if(i>0) document.getElementById('move-'+i).textContent = fmtHM(r.legTime);
+    const clock=fmtClock(r.arriveElapsed, startMin);
+    const night=isNight(r.arriveElapsed);
+    const sun = i===0 ? '' : `<span class="sun-emoji">${night?'🌙':'☀️'}</span>`;
+    document.getElementById('arr-'+i).innerHTML =
+      `<span class="arrive">${i===0?'9:00 AM':clock.t}<span class="dy"> ${clock.day}</span></span> ${sun}`;
+    document.getElementById('el-'+i).textContent = fmtHM(r.arriveElapsed);
+    let buf='<span class="buf n">—</span>';
+    if(r.cut!=null){
+      const margin=r.cut-r.arriveElapsed;
+      const cls=margin<=15?'d':(margin<75?'w':'g');
+      buf=`<span class="buf ${cls}">${margin<0?'−':'+'}${fmtHM(Math.abs(margin))}</span>`;
+    }
+    document.getElementById('buf-'+i).innerHTML=buf;
+  });
+
+  drawProfile(rows, startMin);
+}
+
+/* ---------------- Elevation profile with crew markers + all labels ---------------- */
+function drawProfile(rows, startMin){
+  const svg=document.getElementById('profile');
+  const W=1000,H=272, padL=10,padR=10,padT=30,padB=32, base=H-padB;
+  const eMin=6500, eMax=10850;
+  const x=mi=> padL + (mi/MI_MAX)*(W-padL-padR);
+  const y=e=> padT + (1-(e-eMin)/(eMax-eMin))*(base-padT);
+
+  let d=`M ${x(0)} ${base} `;
+  STATIONS.forEach(s=> d+=`L ${x(s.mi).toFixed(1)} ${y(s.elev).toFixed(1)} `);
+  d+=`L ${x(MI_MAX)} ${base} Z`;
+  let rl='M '+STATIONS.map(s=>`${x(s.mi).toFixed(1)} ${y(s.elev).toFixed(1)}`).join(' L ');
+
+  // night band + solar markers
+  const nA=mileAtElapsed(rows,SUNSET_FRI), nB=mileAtElapsed(rows,SUNRISE_SAT);
+  let band='';
+  if(nA!=null){
+    const bx=x(nA), bw=x(nB==null?MI_MAX:nB)-bx;
+    band+=`<rect x="${bx.toFixed(1)}" y="${padT-6}" width="${bw.toFixed(1)}" height="${base-padT+6}" fill="var(--night-band)"/>`;
+    band+=`<text x="${(bx+3).toFixed(1)}" y="${padT+6}" font-size="14">☀️</text>`;
+    if(nB!=null) band+=`<text x="${(x(nB)-17).toFixed(1)}" y="${padT+6}" font-size="14">🌙</text>`;
+  }
+
+  // markers + labels for every aid station
+  let marks='', labels='';
+  STATIONS.forEach((s,i)=>{
+    const cx=x(s.mi), cy=y(s.elev);
+    if(s.crew){
+      const r=5;
+      marks+=`<path d="M ${cx.toFixed(1)} ${(cy-r).toFixed(1)} L ${(cx+r).toFixed(1)} ${cy.toFixed(1)} L ${cx.toFixed(1)} ${(cy+r).toFixed(1)} L ${(cx-r).toFixed(1)} ${cy.toFixed(1)} Z" fill="var(--amber)" stroke="var(--pine)" stroke-width="1.2"/>`;
+    } else {
+      marks+=`<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="2.6" fill="var(--pine-ink-soft)"/>`;
+    }
+    const anc = s.anc || 'middle';
+    const ly = s.lbelow ? cy+15 : cy-9;
+    const col = s.crew ? 'var(--pine-ink)' : 'var(--pine-ink-soft)';
+    const wt = s.crew ? '600' : '400';
+    labels+=`<text x="${cx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anc}" font-size="9.5" font-family="Oswald,sans-serif" font-weight="${wt}" fill="${col}" stroke="var(--pine)" stroke-width="2.4" paint-order="stroke" stroke-linejoin="round" opacity="0.96">${s.short}</text>`;
+  });
+
+  // mile axis
+  let axis='';
+  [0,25,50,75,100].forEach(m=>{
+    const cx=x(m); const anc=m===0?'start':(m===100?'end':'middle');
+    axis+=`<line x1="${cx}" y1="${base}" x2="${cx}" y2="${base+4}" stroke="var(--pine-ink-soft)" stroke-width="1"/>`;
+    axis+=`<text x="${cx}" y="${base+16}" text-anchor="${anc}" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--pine-ink-soft)">${m===0?'0 mi':m}</text>`;
+  });
+
+  svg.innerHTML=`
+    <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--amber)" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="var(--amber)" stop-opacity="0.05"/>
+    </linearGradient></defs>
+    ${band}
+    <path d="${d}" fill="url(#fill)"/>
+    <path d="${rl}" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linejoin="round"/>
+    ${marks}${labels}${axis}`;
+}
+
+/* ---------------- Wire up ---------------- */
+function syncPresets(){
+  const gh=document.getElementById('gh').value, gm=document.getElementById('gm').value;
+  document.querySelectorAll('#presets button').forEach(b=>b.classList.toggle('active', b.dataset.h===gh && b.dataset.m===gm));
+}
+document.getElementById('presets').addEventListener('click',e=>{
+  const b=e.target.closest('button'); if(!b)return;
+  document.getElementById('gh').value=b.dataset.h; document.getElementById('gm').value=b.dataset.m;
+  syncPresets(); recompute();
+});
+['gh','gm','start'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{syncPresets();recompute();}));
+document.getElementById('resetRest').addEventListener('click',()=>{
+  state.rest=DEFAULT_REST.slice();
+  document.querySelectorAll('.rest-in').forEach(inp=>{ inp.value=DEFAULT_REST[+inp.dataset.i]; });
+  recompute();
+});
+buildTable();
+recompute();
+</script>
+
+</body>
+</html>
