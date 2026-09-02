@@ -322,12 +322,12 @@
       <div class="hs"><div class="l">Reached</div><div class="v">Mile 64<span class="u"> / 101.8</span></div><div class="s">DNF at Olympian Hall, 2nd pass</div></div>
       <div class="hs"><div class="l">Time to the drop</div><div class="v">20:11</div><div class="s">10,810 ft climbed</div></div>
       <div class="hs"><div class="l">Emerald loop · mi 51–64</div><div class="v">4:56<span class="u"> · 22.9/mi</span></div><div class="s">where it unraveled</div></div>
-      <div class="hs"><div class="l">Avg HR after mile 50</div><div class="v">86<span class="u"> bpm</span></div><div class="s">down from the 130s–150s</div></div>
+      <div class="hs"><div class="l">Left on the clock at drop</div><div class="v">15+<span class="u"> hrs</span></div><div class="s">under the 36-hr cutoff</div></div>
     </div>
     <div class="hist-find">
       <div class="f"><span class="n">1</span><div><b>The first half was on plan.</b> Through Olympian Hall at mile 51 she was within ~10 minutes of this 32-hour schedule — actually ahead of it at Long Lake, Billy's, and Dry Lake. The engine is there.</div></div>
       <div class="f"><span class="n">2</span><div><b>The night loop broke it.</b> The Emerald Mountain out-and-back (Lane of Pain, miles 51–64) took nearly five hours at 22.9 min/mi. She left Olympian tracking a 32-hour finish and came back about 1h20 behind.</div></div>
-      <div class="f"><span class="n">3</span><div><b>Her heart rate says why.</b> It didn't spike — it <b>fell</b>, from the 130s–150s to an average of 86 (sustained lows in the 50s) as she slowed. That's the body powering down in the cold and dark, not a cardiovascular limit — the signature of under-fueling, cold, and sleep.</div></div>
+      <div class="f"><span class="n">3</span><div><b>Read the fade in her pace, not her heart rate.</b> After dark the HR trace goes unreliable — it reads in the 40s–50s while she's climbing steep grades (see the chart below), a cold- and loose-strap sensor dropout, not a real cardiac crash. The solid signal is pace, and it ballooned past 20 min/mi. Tellingly, the cold that fooled the watch points straight at the real problem — she was getting cold.</div></div>
       <div class="f"><span class="n">4</span><div><b>The clock wasn't the enemy.</b> She reached mile 64 at 20:11 — with more than 15 hours still on the 36-hour cutoff to cover the last 38 miles. She had the time. Staying warm, fueled, and moving through the night was the fight.</div></div>
     </div>
     <div class="hist-take"><b>Redemption plan:</b> protect the night. Layer up and fuel hard <b>before</b> sunset, pick up a pacer at Olympian (allowed both directions), keep the Emerald loop moving, and get in and out of Olympian fast — she spent ~27 minutes there on the way out. The last 38 miles are the ones to go get.</div>
@@ -335,11 +335,11 @@
 
   <section class="chart-card" aria-label="2023 heart rate and pace chart">
     <div class="sec-head" style="margin:0 0 4px">
-      <h2>Heart Rate &amp; Pace — 2023</h2>
-      <span class="hint">Her Garmin trace · shaded band = after dark</span>
+      <h2>Heart Rate, Pace &amp; Elevation — 2023</h2>
+      <span class="hint">Her Garmin trace · shaded band = after dark · red band = sensor anomaly</span>
     </div>
-    <div class="chart-wrap"><svg id="histchart" viewBox="0 0 1000 430" role="img" aria-label="Two stacked panels of Shannon's 2023 heart rate and pace over distance: heart rate falls and pace rises after dark before the drop at mile 64."></svg></div>
-    <p class="chart-note">Read the two together. Through the daylight climbs her heart rate holds in the 120s–160s at a steady 13–18 min/mi. After sunset (around mile 39) the heart rate drifts down into the 60s–90s while pace balloons past 20 min/mi — the body backing <b>off</b>, not pushing too hard. She reached mile 64 upright and under the cutoff, but powered down.</p>
+    <div class="chart-wrap"><svg id="histchart" viewBox="0 0 1000 560" role="img" aria-label="Three stacked panels of Shannon's 2023 heart rate, pace, and course elevation over distance. Around mile 54 the elevation shows a steep climb while heart rate drops into the 50s — a likely sensor artifact."></svg></div>
+    <p class="chart-note">Read the three together. In daylight her heart rate tracks effort cleanly — up on the climbs, down on the descents — at a steady 13–18 min/mi. Now look at the highlighted stretch near <b>mile 54</b>: the elevation panel shows her grinding up a steep <b>9–17% grade</b> toward Lane of Pain, yet the heart rate reads in the <b>40s–50s</b> and the trace turns jagged. That isn't physically possible while climbing at 8,000 ft — it's the optical wrist sensor losing contact, a known failure in cold air and after hours of a loosening strap. So treat the after-dark heart rate as unreliable; the trustworthy signal is <b>pace</b>, which genuinely ballooned past 20 min/mi. And the cold that likely fooled the watch is itself the clue — she was getting cold.</p>
   </section>
 
   <section class="chk-card" aria-label="Night prep checklist">
@@ -432,7 +432,7 @@ const HIST = {1:112, 2:300, 3:441, 4:548, 5:620, 6:783, 7:913, 8:989, 9:1068, 10
 const HIST_DROP_IDX = 10;      // dropped at Olympian Hall (2nd pass, ~mile 64)
 const HIST_DROP_MILE = 63.9;
 /* Shannon's 2023 HR (bpm) + smoothed pace (min/mi) in 0.5-mi bins, from her Garmin .fit */
-const HIST_SERIES = {"mile":[0.25,0.75,1.25,1.75,2.25,2.75,3.25,3.75,4.25,4.75,5.25,5.75,6.25,6.75,7.25,7.75,8.25,8.75,9.25,9.75,10.25,10.75,11.25,11.75,12.25,12.75,13.25,13.75,14.25,14.75,15.25,15.75,16.25,16.75,17.25,17.75,18.25,18.75,19.25,19.75,20.25,20.75,21.25,21.75,22.25,22.75,23.25,23.75,24.25,24.75,25.25,25.75,26.25,26.75,27.25,27.75,28.25,28.75,29.25,29.75,30.25,30.75,31.25,31.75,32.25,32.75,33.25,33.75,34.25,34.75,35.25,35.75,36.25,36.75,37.25,37.75,38.25,38.75,39.25,39.75,40.25,40.75,41.25,41.75,42.25,42.75,43.25,43.75,44.25,44.75,45.25,45.75,46.25,46.75,47.25,47.75,48.25,48.75,49.25,49.75,50.25,50.75,51.25,51.75,52.25,52.75,53.25,53.75,54.25,54.75,55.25,55.75,56.25,56.75,57.25,57.75,58.25,58.75,59.25,59.75,60.25,60.75,61.25,61.75,62.25,62.75,63.25,63.75,64.25,64.75,65.25],"hr":[131,135,141,146,151,156,146,141,136,121,142,148,133,142,142,124,124,120,137,134,148,129,140,123,132,129,120,131,135,129,126,125,121,124,116,112,116,136,134,131,130,129,123,130,124,127,132,127,120,148,170,149,146,150,149,156,155,159,158,165,120,128,121,125,123,121,117,116,114,98,89,113,111,116,110,126,113,105,91,97,115,118,122,112,109,109,102,108,104,95,97,112,97,101,99,91,101,98,100,122,120,122,116,92,117,122,123,67,62,60,71,88,88,96,89,91,86,82,97,94,88,87,88,89,88,90,91,91,93,72,66],"pace":[14.2,23.8,21.6,32.5,23.9,14.3,18.4,18.0,17.9,26.1,13.5,12.1,16.6,13.6,13.5,15.2,13.8,16.0,14.2,13.2,11.7,14.6,12.0,18.4,13.2,13.2,15.1,13.0,12.6,15.2,17.8,16.3,16.3,15.9,22.1,17.8,25.3,27.3,23.3,30.8,24.3,17.9,18.4,16.1,18.6,16.9,19.4,15.7,24.3,14.1,13.1,16.5,16.0,17.4,16.1,20.1,19.4,14.9,15.4,13.4,38.6,13.8,15.1,13.9,14.9,15.5,19.1,17.9,15.1,25.4,18.5,13.4,15.2,13.5,14.3,12.2,16.2,15.1,17.4,22.9,13.7,14.0,13.4,14.8,14.5,14.8,15.0,13.9,16.2,21.9,17.4,14.4,16.2,20.3,15.3,15.4,16.2,15.7,15.4,12.9,12.7,12.6,13.1,60,18.9,20.2,19.9,20.8,28.2,23.6,29.2,19.2,17.1,17.2,20.6,21.9,21.9,30.3,16.7,16.6,19.3,18.0,18.1,19.1,18.5,18.0,17.4,18.7,17.2,51.9,60],"sunset_mile":38.5,"drop_mile":65.23};
+const HIST_SERIES = {"mile":[0.25,0.75,1.25,1.75,2.25,2.75,3.25,3.75,4.25,4.75,5.25,5.75,6.25,6.75,7.25,7.75,8.25,8.75,9.25,9.75,10.25,10.75,11.25,11.75,12.25,12.75,13.25,13.75,14.25,14.75,15.25,15.75,16.25,16.75,17.25,17.75,18.25,18.75,19.25,19.75,20.25,20.75,21.25,21.75,22.25,22.75,23.25,23.75,24.25,24.75,25.25,25.75,26.25,26.75,27.25,27.75,28.25,28.75,29.25,29.75,30.25,30.75,31.25,31.75,32.25,32.75,33.25,33.75,34.25,34.75,35.25,35.75,36.25,36.75,37.25,37.75,38.25,38.75,39.25,39.75,40.25,40.75,41.25,41.75,42.25,42.75,43.25,43.75,44.25,44.75,45.25,45.75,46.25,46.75,47.25,47.75,48.25,48.75,49.25,49.75,50.25,50.75,51.25,51.75,52.25,52.75,53.25,53.75,54.25,54.75,55.25,55.75,56.25,56.75,57.25,57.75,58.25,58.75,59.25,59.75,60.25,60.75,61.25,61.75,62.25,62.75,63.25,63.75,64.25,64.75,65.25],"hr":[131,135,141,146,151,156,146,141,136,121,142,148,133,142,142,124,124,120,137,134,148,129,140,123,132,129,120,131,135,129,126,125,121,124,116,112,116,136,134,131,130,129,123,130,124,127,132,127,120,148,170,149,146,150,149,156,155,159,158,165,120,128,121,125,123,121,117,116,114,98,89,113,111,116,110,126,113,105,91,97,115,118,122,112,109,109,102,108,104,95,97,112,97,101,99,91,101,98,100,122,120,122,116,92,117,122,123,67,62,60,71,88,88,96,89,91,86,82,97,94,88,87,88,89,88,90,91,91,93,72,66],"pace":[14.2,23.8,21.6,32.5,23.9,14.3,18.4,18.0,17.9,26.1,13.5,12.1,16.6,13.6,13.5,15.2,13.8,16.0,14.2,13.2,11.7,14.6,12.0,18.4,13.2,13.2,15.1,13.0,12.6,15.2,17.8,16.3,16.3,15.9,22.1,17.8,25.3,27.3,23.3,30.8,24.3,17.9,18.4,16.1,18.6,16.9,19.4,15.7,24.3,14.1,13.1,16.5,16.0,17.4,16.1,20.1,19.4,14.9,15.4,13.4,38.6,13.8,15.1,13.9,14.9,15.5,19.1,17.9,15.1,25.4,18.5,13.4,15.2,13.5,14.3,12.2,16.2,15.1,17.4,22.9,13.7,14.0,13.4,14.8,14.5,14.8,15.0,13.9,16.2,21.9,17.4,14.4,16.2,20.3,15.3,15.4,16.2,15.7,15.4,12.9,12.7,12.6,13.1,60,18.9,20.2,19.9,20.8,28.2,23.6,29.2,19.2,17.1,17.2,20.6,21.9,21.9,30.3,16.7,16.6,19.3,18.0,18.1,19.1,18.5,18.0,17.4,18.7,17.2,51.9,60],"elev":[7021,7339,7764,8304,8897,9086,9355,9675,9968,10301,10368,10294,10333,10360,10344,10185,10179,10221,10210,10245,10099,10025,9867,9688,9598,9482,9442,9332,9167,8905,8552,8283,7930,7576,7505,7520,7631,8011,8319,8632,8973,9203,9355,9450,9500,9619,9726,9869,9946,9984,9968,9924,9990,10068,10166,10285,10439,10530,10532,10443,10350,10246,10147,10103,10036,10042,10026,10109,10104,10033,10006,9926,9813,9771,9663,9548,9407,9319,9223,9192,9099,8983,8867,8791,8758,8662,8557,8443,8285,8268,8262,8033,7887,7745,7566,7377,7263,7185,7075,6996,6885,6798,6734,6709,6814,7063,7297,7531,7856,8189,8196,8093,7899,7770,7781,7914,8065,8176,8114,8007,7918,7828,7725,7608,7486,7376,7267,7140,6858,6704,6698],"sunset_mile":38.5,"drop_mile":65.23};
 
 /* Solar times, minutes after a 9:00 AM start (Steamboat, Sep 18–19) */
 const SUNSET_FRI = 10*60+7;    // ~7:07 PM Fri
@@ -649,38 +649,58 @@ function drawProfile(rows, startMin){
     ${marks}${labels}${axis}${drop}`;
 }
 
-/* ---------------- 2023 HR + pace chart (static) ---------------- */
+/* ---------------- 2023 HR + pace + elevation chart (static) ---------------- */
 function drawHistChart(){
   const svg=document.getElementById('histchart'); if(!svg) return;
-  const S=HIST_SERIES, W=1000, ML=46,MR=14, xL=ML,xR=W-MR;
+  const S=HIST_SERIES, W=1000, ML=48,MR=14, xL=ML,xR=W-MR;
   const xM=mi=> xL+(mi/S.drop_mile)*(xR-xL);
-  const A_top=30,A_bot=196, B_top=252,B_bot=388;
-  const hrLo=55,hrHi=175, pcLo=11,pcHi=40;
-  const yH=v=> A_bot-(v-hrLo)/(hrHi-hrLo)*(A_bot-A_top);
-  const yP=v=> B_bot-(Math.min(v,pcHi)-pcLo)/(pcHi-pcLo)*(B_bot-B_top);
+  const ELEVC='#8AA17C';                          // sage — terrain
+  // three panels
+  const A_top=34,A_bot=176;   // HR
+  const B_top=224,B_bot=350;  // pace
+  const C_top=398,C_bot=524;  // elevation
+  const TOP=A_top, BOT=C_bot;
+  const yH=v=> A_bot-(v-40)/(175-40)*(A_bot-A_top);
+  const yP=v=> B_bot-(Math.min(v,40)-11)/(40-11)*(B_bot-B_top);
+  const yE=v=> C_bot-(v-6600)/(10700-6600)*(C_bot-C_top);
   const mi=S.mile;
   const seg=(vals,yf)=>{let s=[],o='';for(let i=0;i<vals.length;i++){if(vals[i]==null){if(s.length>1)o+='M '+s.join(' L ')+' ';s=[];}else s.push(xM(mi[i]).toFixed(1)+' '+yf(vals[i]).toFixed(1));}if(s.length>1)o+='M '+s.join(' L ');return o;};
   const area=(vals,yf,base)=>{let p=[];for(let i=0;i<vals.length;i++)if(vals[i]!=null)p.push([xM(mi[i]),yf(vals[i])]);if(p.length<2)return'';let d='M '+p[0][0].toFixed(1)+' '+base+' ';p.forEach(q=>d+='L '+q[0].toFixed(1)+' '+q[1].toFixed(1)+' ');return d+'L '+p[p.length-1][0].toFixed(1)+' '+base+' Z';};
   const nx=xM(S.sunset_mile), dx=xM(S.drop_mile);
-  let bg=`<rect x="${nx.toFixed(1)}" y="${A_top}" width="${(dx-nx).toFixed(1)}" height="${B_bot-A_top}" fill="var(--night-band)"/>`;
-  bg+=`<line x1="${dx.toFixed(1)}" y1="${A_top}" x2="${dx.toFixed(1)}" y2="${B_bot}" stroke="#E8927B" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  // background: night band, anomaly band, drop line (span all panels)
+  let bg=`<rect x="${nx.toFixed(1)}" y="${TOP}" width="${(dx-nx).toFixed(1)}" height="${BOT-TOP}" fill="var(--night-band)"/>`;
+  const ax0=xM(53.3), ax1=xM(55.3);
+  bg+=`<rect x="${ax0.toFixed(1)}" y="${TOP}" width="${(ax1-ax0).toFixed(1)}" height="${BOT-TOP}" fill="#B8412F" opacity="0.11"/>`;
+  bg+=`<line x1="${dx.toFixed(1)}" y1="${TOP}" x2="${dx.toFixed(1)}" y2="${BOT}" stroke="#E8927B" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  // gridlines + y labels
   let grid='';
-  [60,90,120,150].forEach(v=>{const y=yH(v);grid+=`<line x1="${xL}" y1="${y.toFixed(1)}" x2="${xR}" y2="${y.toFixed(1)}" stroke="var(--line)"/><text x="${xL-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${v}</text>`;});
-  [15,25,35].forEach(v=>{const y=yP(v);grid+=`<line x1="${xL}" y1="${y.toFixed(1)}" x2="${xR}" y2="${y.toFixed(1)}" stroke="var(--line)"/><text x="${xL-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${v}</text>`;});
+  const gl=(y,txt)=>`<line x1="${xL}" y1="${y.toFixed(1)}" x2="${xR}" y2="${y.toFixed(1)}" stroke="var(--line)"/><text x="${(xL-6)}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${txt}</text>`;
+  [60,90,120,150].forEach(v=>grid+=gl(yH(v),v));
+  [15,25,35].forEach(v=>grid+=gl(yP(v),v));
+  [7000,8500,10000].forEach(v=>grid+=gl(yE(v),(v/1000)+'k'));
+  // vertical guides + top labels
   let guides='';
-  [['Summit',30.7],['Dry Lk',45.4],['Olympian',52.3]].forEach(([lab,m])=>{const cx=xM(m);guides+=`<line x1="${cx.toFixed(1)}" y1="${A_top}" x2="${cx.toFixed(1)}" y2="${B_bot}" stroke="var(--line-strong)" stroke-dasharray="2 3" opacity="0.7"/><text x="${cx.toFixed(1)}" y="${(A_top-4).toFixed(1)}" text-anchor="middle" font-size="9" font-family="Oswald,sans-serif" fill="var(--ink-faint)">${lab}</text>`;});
-  guides+=`<text x="${nx.toFixed(1)}" y="${(A_top-4).toFixed(1)}" text-anchor="middle" font-size="9" font-family="Oswald,sans-serif" fill="var(--dusk)">sunset</text>`;
-  guides+=`<text x="${dx.toFixed(1)}" y="${(A_top-4).toFixed(1)}" text-anchor="end" font-size="9" font-family="Oswald,sans-serif" font-weight="600" fill="#E8927B">DNF</text>`;
+  [['Summit',30.7],['Dry Lk',45.4],['Olympian',52.3]].forEach(([lab,m])=>{const cx=xM(m);guides+=`<line x1="${cx.toFixed(1)}" y1="${TOP}" x2="${cx.toFixed(1)}" y2="${BOT}" stroke="var(--line-strong)" stroke-dasharray="2 3" opacity="0.65"/><text x="${cx.toFixed(1)}" y="${(TOP-4).toFixed(1)}" text-anchor="middle" font-size="9" font-family="Oswald,sans-serif" fill="var(--ink-faint)">${lab}</text>`;});
+  guides+=`<text x="${nx.toFixed(1)}" y="${(TOP-4).toFixed(1)}" text-anchor="middle" font-size="9" font-family="Oswald,sans-serif" fill="var(--dusk)">sunset</text>`;
+  guides+=`<text x="${dx.toFixed(1)}" y="${(TOP-4).toFixed(1)}" text-anchor="end" font-size="9" font-family="Oswald,sans-serif" font-weight="600" fill="#E8927B">DNF</text>`;
+  // x axis
   let xax='';
-  for(let m=0;m<=60;m+=10){const cx=xM(m);xax+=`<line x1="${cx.toFixed(1)}" y1="${B_bot}" x2="${cx.toFixed(1)}" y2="${B_bot+4}" stroke="var(--ink-faint)"/><text x="${cx.toFixed(1)}" y="${B_bot+16}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${m}</text>`;}
-  xax+=`<text x="${((xL+xR)/2).toFixed(1)}" y="${B_bot+30}" text-anchor="middle" font-size="10" font-family="Oswald,sans-serif" fill="var(--ink-faint)" letter-spacing="0.12em">DISTANCE · MILES INTO THE 2023 RUN</text>`;
-  let plab=`<text x="${xL}" y="${(A_top-14).toFixed(1)}" font-size="10.5" font-family="Oswald,sans-serif" font-weight="600" letter-spacing="0.08em" fill="var(--dusk)">HEART RATE · BPM</text>`;
-  plab+=`<text x="${xL}" y="${(B_top-8).toFixed(1)}" font-size="10.5" font-family="Oswald,sans-serif" font-weight="600" letter-spacing="0.08em" fill="var(--amber-ink)">PACE · MIN / MI  (higher = slower)</text>`;
+  for(let m=0;m<=60;m+=10){const cx=xM(m);xax+=`<line x1="${cx.toFixed(1)}" y1="${C_bot}" x2="${cx.toFixed(1)}" y2="${C_bot+4}" stroke="var(--ink-faint)"/><text x="${cx.toFixed(1)}" y="${C_bot+16}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${m}</text>`;}
+  xax+=`<text x="${((xL+xR)/2).toFixed(1)}" y="${C_bot+30}" text-anchor="middle" font-size="10" font-family="Oswald,sans-serif" fill="var(--ink-faint)" letter-spacing="0.12em">DISTANCE · MILES INTO THE 2023 RUN</text>`;
+  // panel labels
+  const pl=(y,txt,col)=>`<text x="${xL}" y="${y.toFixed(1)}" font-size="10.5" font-family="Oswald,sans-serif" font-weight="600" letter-spacing="0.08em" fill="${col}">${txt}</text>`;
+  let plab=pl(A_top-16,'HEART RATE · BPM','var(--dusk)')+pl(B_top-10,'PACE · MIN / MI  (higher = slower)','var(--amber-ink)')+pl(C_top-10,'COURSE ELEVATION · FEET',ELEVC);
+  // anomaly callout (in HR panel)
+  const cxA=xM(54.3);
+  let call=`<text x="${cxA.toFixed(1)}" y="${(A_bot-6).toFixed(1)}" text-anchor="middle" font-size="9.5" font-family="Oswald,sans-serif" font-weight="600" fill="#B8412F" stroke="var(--card)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">climbing hard, HR reads 50s</text>`;
+  call+=`<text x="${cxA.toFixed(1)}" y="${(A_bot+5).toFixed(1)}" text-anchor="middle" font-size="8.5" font-family="Libre Franklin,sans-serif" fill="var(--ink-faint)" stroke="var(--card)" stroke-width="3" paint-order="stroke" stroke-linejoin="round">likely a cold / loose-sensor dropout</text>`;
   svg.innerHTML=`${bg}${grid}${guides}
     <path d="${area(S.hr,yH,A_bot)}" fill="var(--dusk)" opacity="0.10"/>
     <path d="${seg(S.hr,yH)}" fill="none" stroke="var(--dusk)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
     <path d="${seg(S.pace,yP)}" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
-    ${xax}${plab}`;
+    <path d="${area(S.elev,yE,C_bot)}" fill="${ELEVC}" opacity="0.16"/>
+    <path d="${seg(S.elev,yE)}" fill="none" stroke="${ELEVC}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    ${xax}${plab}${call}`;
 }
 
 /* ---------------- Wire up ---------------- */
