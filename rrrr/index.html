@@ -7,7 +7,6 @@
 <title>Run Rabbit Run Redemption Race Plan</title>
 <meta name="description" content="Run Rabbit Run Redemption Race Plan — interactive 2026 aid-station splits for Shannon's Run Rabbit Run 100, with a 32-hour goal, editable rest, and crew access.">
 <style>
-/* Self-hosted fonts (same-origin) — complies with the site CSP; no external font requests */
 @font-face{font-family:"Oswald";font-style:normal;font-weight:200 700;font-display:swap;src:url("/rrrr/fonts/oswald-latin-wght-normal.woff2") format("woff2")}
 @font-face{font-family:"Libre Franklin";font-style:normal;font-weight:100 900;font-display:swap;src:url("/rrrr/fonts/libre-franklin-latin-wght-normal.woff2") format("woff2")}
 @font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/rrrr/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2")}
@@ -126,9 +125,9 @@
   /* ---------- Table ---------- */
   .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
   table{border-collapse:collapse; width:100%; min-width:880px}
-  thead th{position:sticky; top:0; background:var(--pine); color:var(--pine-ink); font-family:"Oswald",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:.07em; font-size:11px; text-align:right; padding:11px 12px; white-space:nowrap; z-index:2}
+  thead th{position:sticky; top:0; background:var(--pine); color:var(--pine-ink); font-family:"Oswald",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:11px; text-align:right; padding:11px 8px; white-space:nowrap; z-index:2}
   thead th.l{text-align:left}
-  tbody td{padding:9px 12px; border-top:1px solid var(--line); text-align:right; white-space:nowrap; font-size:14px}
+  tbody td{padding:9px 8px; border-top:1px solid var(--line); text-align:right; white-space:nowrap; font-size:14px}
   tbody td.l{text-align:left}
   tbody tr:hover{background:var(--paper-2)}
   .st-name{font-family:"Oswald",sans-serif; font-weight:500; font-size:15.5px; letter-spacing:.01em; display:flex; align-items:center; gap:8px}
@@ -155,6 +154,50 @@
   :root[data-theme="dark"] tr.finish .st-name,:root:not([data-theme="light"]) tr.finish .st-name{color:var(--amber-ink)}
   tr.start td{color:var(--ink-soft)}
   .sun-emoji{font-size:12px}
+  tr.hist-dropped td{background:color-mix(in srgb, var(--danger-soft) 55%, transparent)}
+  .hist{display:inline-flex; align-items:center; white-space:nowrap}
+  .hist .he{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:13.5px}
+  .hist .hd{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; padding:2px 6px; border-radius:999px; margin-left:6px}
+  .hist .hd.g{background:var(--good-soft); color:var(--good)}
+  .hist .hd.w{background:var(--warn-soft); color:var(--warn)}
+  .hist .hd.d{background:var(--danger-soft); color:var(--danger)}
+  .hist .dnf{font-family:"Libre Franklin",sans-serif; font-size:9px; font-weight:700; letter-spacing:.05em; background:var(--danger); color:#fff; padding:2px 6px; border-radius:5px; margin-left:6px}
+  :root[data-theme="dark"] .hist .dnf,:root:not([data-theme="light"]) .hist .dnf{color:#1a0f0c}
+  .hist-none{color:var(--ink-faint)}
+  /* 2023 insights panel */
+  .hist-panel{margin-top:30px; background:linear-gradient(150deg,var(--pine),var(--pine-2)); color:var(--pine-ink); border-radius:var(--radius); padding:24px 24px 26px; box-shadow:var(--shadow)}
+  .hist-panel .eyebrow{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.14em; font-size:11px; color:var(--pine-ink-soft)}
+  .hist-panel h2{font-size:24px; text-transform:uppercase; letter-spacing:.02em; margin:6px 0 4px; color:var(--pine-ink)}
+  .hist-panel .lead{color:var(--pine-ink-soft); font-size:14.5px; line-height:1.55; max-width:76ch; margin:0 0 18px}
+  .hist-stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:12px; margin-bottom:20px}
+  .hist-stats .hs{background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.10); border-radius:11px; padding:12px 14px}
+  .hist-stats .hs .l{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.09em; font-size:10px; color:var(--pine-ink-soft)}
+  .hist-stats .hs .v{font-family:"Oswald",sans-serif; font-weight:600; font-size:24px; line-height:1.05; margin-top:3px; color:var(--pine-ink)}
+  .hist-stats .hs .v .u{font-size:13px; color:var(--pine-ink-soft); font-weight:500}
+  .hist-stats .hs .s{font-size:11.5px; color:var(--pine-ink-soft); margin-top:2px}
+  .hist-find{display:grid; gap:11px}
+  .hist-find .f{display:flex; gap:12px; align-items:flex-start; font-size:13.5px; line-height:1.55; color:var(--pine-ink)}
+  .hist-find .f .n{font-family:"Oswald",sans-serif; font-weight:600; color:var(--amber); font-size:16px; flex:0 0 auto; width:20px; text-align:center}
+  .hist-find .f b{color:#fff}
+  :root[data-theme="light"] .hist-find .f b{color:#fff}
+  .hist-take{margin-top:18px; padding:14px 16px; background:var(--amber-soft); color:var(--amber-ink); border-radius:11px; font-size:13.5px; line-height:1.55}
+  .hist-take b{color:var(--amber-ink)}
+  /* 2023 chart + checklist cards */
+  .chart-card,.chk-card{margin-top:26px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px 22px 22px; box-shadow:var(--shadow)}
+  .chart-wrap{overflow-x:auto}
+  svg#histchart{display:block; width:100%; min-width:560px; height:auto}
+  .chart-note{font-size:13px; color:var(--ink-soft); line-height:1.6; margin:14px 0 0; max-width:82ch}
+  .chart-note b{color:var(--ink)}
+  .chk-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(258px,1fr)); gap:18px 28px; margin-top:6px}
+  .chk-group h4{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.05em; font-size:12.5px; color:var(--amber-ink); margin:0 0 4px; padding-bottom:7px; border-bottom:1px solid var(--line)}
+  :root[data-theme="dark"] .chk-group h4,:root:not([data-theme="light"]) .chk-group h4{color:var(--amber)}
+  .chk{display:flex; gap:10px; align-items:flex-start; padding:7px 0; font-size:13px; line-height:1.5; cursor:pointer}
+  .chk input{appearance:none;-webkit-appearance:none; width:18px;height:18px;min-width:18px; margin-top:1px; border:1.6px solid var(--line-strong); border-radius:5px; background:var(--paper-2); cursor:pointer; position:relative; transition:.12s}
+  .chk input:checked{background:var(--good); border-color:var(--good)}
+  .chk input:checked::after{content:"✓"; position:absolute; color:#fff; font-size:12px; font-weight:700; left:3px; top:-1px}
+  .chk input:checked ~ span{color:var(--ink-faint); text-decoration:line-through}
+  .chk span{color:var(--ink-soft)}
+  .chk span b{color:var(--ink)}
 
   /* ---------- read note + footer ---------- */
   .note{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:10px; padding:16px 18px; margin-top:26px; font-size:13.5px; color:var(--ink-soft); line-height:1.6}
@@ -263,6 +306,7 @@
           <th>Rest (min)</th>
           <th>Arrive</th>
           <th>Elapsed</th>
+          <th>1st Attempt ’23</th>
           <th>Cutoff cushion</th>
         </tr>
       </thead>
@@ -270,11 +314,73 @@
     </table>
   </div>
 
+  <section class="hist-panel" aria-label="2023 first attempt analysis">
+    <div class="eyebrow">First Attempt · Sep 15–16, 2023</div>
+    <h2>What the 2023 Data Says</h2>
+    <p class="lead">Read from Shannon's Garmin track. The encouraging headline: this wasn't a fitness or a speed problem — she ran the first half on 32-hour pace. The race turned in the cold and the dark on Emerald Mountain.</p>
+    <div class="hist-stats">
+      <div class="hs"><div class="l">Reached</div><div class="v">Mile 64<span class="u"> / 101.8</span></div><div class="s">DNF at Olympian Hall, 2nd pass</div></div>
+      <div class="hs"><div class="l">Time to the drop</div><div class="v">20:11</div><div class="s">10,810 ft climbed</div></div>
+      <div class="hs"><div class="l">Emerald loop · mi 51–64</div><div class="v">4:56<span class="u"> · 22.9/mi</span></div><div class="s">where it unraveled</div></div>
+      <div class="hs"><div class="l">Avg HR after mile 50</div><div class="v">86<span class="u"> bpm</span></div><div class="s">down from the 130s–150s</div></div>
+    </div>
+    <div class="hist-find">
+      <div class="f"><span class="n">1</span><div><b>The first half was on plan.</b> Through Olympian Hall at mile 51 she was within ~10 minutes of this 32-hour schedule — actually ahead of it at Long Lake, Billy's, and Dry Lake. The engine is there.</div></div>
+      <div class="f"><span class="n">2</span><div><b>The night loop broke it.</b> The Emerald Mountain out-and-back (Lane of Pain, miles 51–64) took nearly five hours at 22.9 min/mi. She left Olympian tracking a 32-hour finish and came back about 1h20 behind.</div></div>
+      <div class="f"><span class="n">3</span><div><b>Her heart rate says why.</b> It didn't spike — it <b>fell</b>, from the 130s–150s to an average of 86 (sustained lows in the 50s) as she slowed. That's the body powering down in the cold and dark, not a cardiovascular limit — the signature of under-fueling, cold, and sleep.</div></div>
+      <div class="f"><span class="n">4</span><div><b>The clock wasn't the enemy.</b> She reached mile 64 at 20:11 — with more than 15 hours still on the 36-hour cutoff to cover the last 38 miles. She had the time. Staying warm, fueled, and moving through the night was the fight.</div></div>
+    </div>
+    <div class="hist-take"><b>Redemption plan:</b> protect the night. Layer up and fuel hard <b>before</b> sunset, pick up a pacer at Olympian (allowed both directions), keep the Emerald loop moving, and get in and out of Olympian fast — she spent ~27 minutes there on the way out. The last 38 miles are the ones to go get.</div>
+  </section>
+
+  <section class="chart-card" aria-label="2023 heart rate and pace chart">
+    <div class="sec-head" style="margin:0 0 4px">
+      <h2>Heart Rate &amp; Pace — 2023</h2>
+      <span class="hint">Her Garmin trace · shaded band = after dark</span>
+    </div>
+    <div class="chart-wrap"><svg id="histchart" viewBox="0 0 1000 430" role="img" aria-label="Two stacked panels of Shannon's 2023 heart rate and pace over distance: heart rate falls and pace rises after dark before the drop at mile 64."></svg></div>
+    <p class="chart-note">Read the two together. Through the daylight climbs her heart rate holds in the 120s–160s at a steady 13–18 min/mi. After sunset (around mile 39) the heart rate drifts down into the 60s–90s while pace balloons past 20 min/mi — the body backing <b>off</b>, not pushing too hard. She reached mile 64 upright and under the cutoff, but powered down.</p>
+  </section>
+
+  <section class="chk-card" aria-label="Night prep checklist">
+    <div class="sec-head" style="margin:0 0 4px">
+      <h2>Race the Night — Prep Checklist</h2>
+      <span class="hint">Drawn from what the 2023 data showed · tap to check off</span>
+    </div>
+    <div class="chk-grid">
+      <div class="chk-group">
+        <h4>Before the sun drops · Olympian Hall (mi 51)</h4>
+        <label class="chk"><input type="checkbox"><span>Put warm layers <b>on</b> before leaving — jacket, hat, gloves (mandatory gear check here anyway: headlamp + backup, space blanket, raincoat)</span></label>
+        <label class="chk"><input type="checkbox"><span>Eat a real, warm meal — soup, broth, potatoes — not just gels</span></label>
+        <label class="chk"><input type="checkbox"><span>Take caffeine here, and pocket more for the 2–4 AM low</span></label>
+        <label class="chk"><input type="checkbox"><span>Pick up the pacer — don't head into the Emerald loop alone (2023 she was solo)</span></label>
+        <label class="chk"><input type="checkbox"><span>In and out fast: target under 10 minutes (2023 was ~27)</span></label>
+      </div>
+      <div class="chk-group">
+        <h4>Through the night · Emerald loop + climb home</h4>
+        <label class="chk"><input type="checkbox"><span>Eat on a timer — ~200–250 cal every 30–40 min, whether or not you feel like it</span></label>
+        <label class="chk"><input type="checkbox"><span>Keep drinking (Tailwind at aid) even without thirst</span></label>
+        <label class="chk"><input type="checkbox"><span>Power-hike the climbs, jog the flats and downs — keep forward motion, don't sit</span></label>
+        <label class="chk"><input type="checkbox"><span>Hot broth or soup at every staffed aid — warmth, salt, and calories in one</span></label>
+        <label class="chk"><input type="checkbox"><span>Use poles on the climbs (allowed this year) to save the legs</span></label>
+      </div>
+      <div class="chk-group">
+        <h4>If the wheels start to come off</h4>
+        <label class="chk"><input type="checkbox"><span>Sugar + caffeine <b>now</b> — the energy and heart-rate crash is fuelable, not fatal</span></label>
+        <label class="chk"><input type="checkbox"><span>Add a layer <b>before</b> you're cold, not after</span></label>
+        <label class="chk"><input type="checkbox"><span>Reset, don't nest: 5 minutes to eat and warm up, then move</span></label>
+        <label class="chk"><input type="checkbox"><span>Remember the math — in 2023 she reached mile 64 with 15+ hrs of cushion. Forward motion beats the clock</span></label>
+        <label class="chk"><input type="checkbox"><span>Tell the crew and pacer the truth so they can actually help</span></label>
+      </div>
+    </div>
+  </section>
+
   <div class="note">
     <h3>How to read this</h3>
     <p><b>Move</b> is the running time for the leg into that aid station; <b>Rest</b> is the time spent there (type a new number to change it). <b>Arrive</b> is the clock time she reaches the station, <b>Elapsed</b> her total race time so far. Most stations appear twice — the <b>OUT</b> / <b>BACK</b> tag says which pass; <b>EMER</b> is the Emerald Mountain loop (Lane of Pain, out and back).</p>
     <p><b>Crew access:</b> a <span class="badge crew">◆ CREW</span> badge means crew may meet her there; <span class="badge pace">◇ PACER</span> means a pacer may join or leave. Fish Creek Falls allows crew <b>on foot or bike only</b> (no vehicles); Billy's Rabbit Hole and Lane of Pain are minimal aid with no crew.</p>
     <p><b>Cutoff cushion</b> is how far ahead of the official time limit she is — <span class="buf g" style="padding:1px 7px">green</span> comfortable, <span class="buf w" style="padding:1px 7px">amber</span> tight, <span class="buf d" style="padding:1px 7px">red</span> at or behind. A dash means no cutoff at that stop. This is a planning estimate; use the cushion, not the exact minute, to make calls on the day.</p>
+    <p><b>1st Attempt ’23</b> is Shannon's actual elapsed time at each aid station from her 2023 Garmin file, with a chip showing how it compared to this plan (<span class="hist"><span class="hd g" style="margin:0">−</span></span> ahead, <span class="hist"><span class="hd w" style="margin:0">+</span></span> / <span class="hist"><span class="hd d" style="margin:0">+</span></span> behind). Her run ended at Olympian Hall on the second pass (mile 64), so there's no data beyond it — those are the miles the Redemption run goes to claim.</p>
   </div>
 
   <footer>
@@ -320,6 +426,13 @@ const WEIGHT_SUM = STATIONS.reduce((s,x)=>s+(x.legMin||0),0);          // 2160
 const DEFAULT_REST = STATIONS.map(s=>s.rest);
 const DEFAULT_REST_TOTAL = DEFAULT_REST.reduce((a,b)=>a+b,0);          // 71
 const MI_MAX = 101.8;
+
+/* ---- Shannon's 1st attempt (2023), from her Garmin .fit — actual elapsed minutes at each aid station ---- */
+const HIST = {1:112, 2:300, 3:441, 4:548, 5:620, 6:783, 7:913, 8:989, 9:1068, 10:1165};
+const HIST_DROP_IDX = 10;      // dropped at Olympian Hall (2nd pass, ~mile 64)
+const HIST_DROP_MILE = 63.9;
+/* Shannon's 2023 HR (bpm) + smoothed pace (min/mi) in 0.5-mi bins, from her Garmin .fit */
+const HIST_SERIES = {"mile":[0.25,0.75,1.25,1.75,2.25,2.75,3.25,3.75,4.25,4.75,5.25,5.75,6.25,6.75,7.25,7.75,8.25,8.75,9.25,9.75,10.25,10.75,11.25,11.75,12.25,12.75,13.25,13.75,14.25,14.75,15.25,15.75,16.25,16.75,17.25,17.75,18.25,18.75,19.25,19.75,20.25,20.75,21.25,21.75,22.25,22.75,23.25,23.75,24.25,24.75,25.25,25.75,26.25,26.75,27.25,27.75,28.25,28.75,29.25,29.75,30.25,30.75,31.25,31.75,32.25,32.75,33.25,33.75,34.25,34.75,35.25,35.75,36.25,36.75,37.25,37.75,38.25,38.75,39.25,39.75,40.25,40.75,41.25,41.75,42.25,42.75,43.25,43.75,44.25,44.75,45.25,45.75,46.25,46.75,47.25,47.75,48.25,48.75,49.25,49.75,50.25,50.75,51.25,51.75,52.25,52.75,53.25,53.75,54.25,54.75,55.25,55.75,56.25,56.75,57.25,57.75,58.25,58.75,59.25,59.75,60.25,60.75,61.25,61.75,62.25,62.75,63.25,63.75,64.25,64.75,65.25],"hr":[131,135,141,146,151,156,146,141,136,121,142,148,133,142,142,124,124,120,137,134,148,129,140,123,132,129,120,131,135,129,126,125,121,124,116,112,116,136,134,131,130,129,123,130,124,127,132,127,120,148,170,149,146,150,149,156,155,159,158,165,120,128,121,125,123,121,117,116,114,98,89,113,111,116,110,126,113,105,91,97,115,118,122,112,109,109,102,108,104,95,97,112,97,101,99,91,101,98,100,122,120,122,116,92,117,122,123,67,62,60,71,88,88,96,89,91,86,82,97,94,88,87,88,89,88,90,91,91,93,72,66],"pace":[14.2,23.8,21.6,32.5,23.9,14.3,18.4,18.0,17.9,26.1,13.5,12.1,16.6,13.6,13.5,15.2,13.8,16.0,14.2,13.2,11.7,14.6,12.0,18.4,13.2,13.2,15.1,13.0,12.6,15.2,17.8,16.3,16.3,15.9,22.1,17.8,25.3,27.3,23.3,30.8,24.3,17.9,18.4,16.1,18.6,16.9,19.4,15.7,24.3,14.1,13.1,16.5,16.0,17.4,16.1,20.1,19.4,14.9,15.4,13.4,38.6,13.8,15.1,13.9,14.9,15.5,19.1,17.9,15.1,25.4,18.5,13.4,15.2,13.5,14.3,12.2,16.2,15.1,17.4,22.9,13.7,14.0,13.4,14.8,14.5,14.8,15.0,13.9,16.2,21.9,17.4,14.4,16.2,20.3,15.3,15.4,16.2,15.7,15.4,12.9,12.7,12.6,13.1,60,18.9,20.2,19.9,20.8,28.2,23.6,29.2,19.2,17.1,17.2,20.6,21.9,21.9,30.3,16.7,16.6,19.3,18.0,18.1,19.1,18.5,18.0,17.4,18.7,17.2,51.9,60],"sunset_mile":38.5,"drop_mile":65.23};
 
 /* Solar times, minutes after a 9:00 AM start (Steamboat, Sep 18–19) */
 const SUNSET_FRI = 10*60+7;    // ~7:07 PM Fri
@@ -380,6 +493,7 @@ function buildTable(){
   STATIONS.forEach((r,i)=>{
     const tr=document.createElement('tr');
     if(i===0) tr.className='start';
+    if(i===HIST_DROP_IDX) tr.className='hist-dropped';
     if(r.name==='FINISH') tr.className='finish';
     const lap = r.lap ? `<span class="lap">${r.lap}</span>` : '';
     let badges='';
@@ -399,6 +513,7 @@ function buildTable(){
       <td>${restCell}</td>
       <td id="arr-${i}"></td>
       <td class="elapsed" id="el-${i}"></td>
+      <td id="hist-${i}"></td>
       <td id="buf-${i}"></td>`;
     tb.appendChild(tr);
   });
@@ -445,6 +560,18 @@ function recompute(){
     document.getElementById('arr-'+i).innerHTML =
       `<span class="arrive">${i===0?'9:00 AM':clock.t}<span class="dy"> ${clock.day}</span></span> ${sun}`;
     document.getElementById('el-'+i).textContent = fmtHM(r.arriveElapsed);
+    // 2023 first-attempt actual vs the current plan
+    const he=document.getElementById('hist-'+i);
+    if(he){
+      if(HIST[i]!=null){
+        const d=HIST[i]-r.arriveElapsed;
+        const cls=d<=15?'g':(d<=60?'w':'d');
+        const dnf=(i===HIST_DROP_IDX)?'<span class="dnf">DNF ↓</span>':'';
+        he.innerHTML=`<span class="hist"><span class="he">${fmtHM(HIST[i])}</span><span class="hd ${cls}">${d<0?'−':'+'}${fmtHM(Math.abs(d))}</span>${dnf}</span>`;
+      } else {
+        he.innerHTML='<span class="hist-none">—</span>';
+      }
+    }
     let buf='<span class="buf n">—</span>';
     if(r.cut!=null){
       const margin=r.cut-r.arriveElapsed;
@@ -505,6 +632,12 @@ function drawProfile(rows, startMin){
     axis+=`<text x="${cx}" y="${base+16}" text-anchor="${anc}" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--pine-ink-soft)">${m===0?'0 mi':m}</text>`;
   });
 
+  // 2023 first-attempt drop marker (dashed line + flag)
+  const dxp=x(HIST_DROP_MILE);
+  const DNFC='#E8927B';
+  let drop=`<line x1="${dxp.toFixed(1)}" y1="${(padT-2).toFixed(1)}" x2="${dxp.toFixed(1)}" y2="${base}" stroke="${DNFC}" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.9"/>`;
+  drop+=`<text x="${dxp.toFixed(1)}" y="${(padT+9).toFixed(1)}" text-anchor="middle" font-size="9.5" font-family="Oswald,sans-serif" font-weight="600" fill="${DNFC}" stroke="var(--pine)" stroke-width="2.6" paint-order="stroke" stroke-linejoin="round">2023 DNF · 20:11</text>`;
+
   svg.innerHTML=`
     <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="var(--amber)" stop-opacity="0.5"/>
@@ -513,7 +646,41 @@ function drawProfile(rows, startMin){
     ${band}
     <path d="${d}" fill="url(#fill)"/>
     <path d="${rl}" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linejoin="round"/>
-    ${marks}${labels}${axis}`;
+    ${marks}${labels}${axis}${drop}`;
+}
+
+/* ---------------- 2023 HR + pace chart (static) ---------------- */
+function drawHistChart(){
+  const svg=document.getElementById('histchart'); if(!svg) return;
+  const S=HIST_SERIES, W=1000, ML=46,MR=14, xL=ML,xR=W-MR;
+  const xM=mi=> xL+(mi/S.drop_mile)*(xR-xL);
+  const A_top=30,A_bot=196, B_top=252,B_bot=388;
+  const hrLo=55,hrHi=175, pcLo=11,pcHi=40;
+  const yH=v=> A_bot-(v-hrLo)/(hrHi-hrLo)*(A_bot-A_top);
+  const yP=v=> B_bot-(Math.min(v,pcHi)-pcLo)/(pcHi-pcLo)*(B_bot-B_top);
+  const mi=S.mile;
+  const seg=(vals,yf)=>{let s=[],o='';for(let i=0;i<vals.length;i++){if(vals[i]==null){if(s.length>1)o+='M '+s.join(' L ')+' ';s=[];}else s.push(xM(mi[i]).toFixed(1)+' '+yf(vals[i]).toFixed(1));}if(s.length>1)o+='M '+s.join(' L ');return o;};
+  const area=(vals,yf,base)=>{let p=[];for(let i=0;i<vals.length;i++)if(vals[i]!=null)p.push([xM(mi[i]),yf(vals[i])]);if(p.length<2)return'';let d='M '+p[0][0].toFixed(1)+' '+base+' ';p.forEach(q=>d+='L '+q[0].toFixed(1)+' '+q[1].toFixed(1)+' ');return d+'L '+p[p.length-1][0].toFixed(1)+' '+base+' Z';};
+  const nx=xM(S.sunset_mile), dx=xM(S.drop_mile);
+  let bg=`<rect x="${nx.toFixed(1)}" y="${A_top}" width="${(dx-nx).toFixed(1)}" height="${B_bot-A_top}" fill="var(--night-band)"/>`;
+  bg+=`<line x1="${dx.toFixed(1)}" y1="${A_top}" x2="${dx.toFixed(1)}" y2="${B_bot}" stroke="#E8927B" stroke-width="1.5" stroke-dasharray="4 3"/>`;
+  let grid='';
+  [60,90,120,150].forEach(v=>{const y=yH(v);grid+=`<line x1="${xL}" y1="${y.toFixed(1)}" x2="${xR}" y2="${y.toFixed(1)}" stroke="var(--line)"/><text x="${xL-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${v}</text>`;});
+  [15,25,35].forEach(v=>{const y=yP(v);grid+=`<line x1="${xL}" y1="${y.toFixed(1)}" x2="${xR}" y2="${y.toFixed(1)}" stroke="var(--line)"/><text x="${xL-6}" y="${(y+3).toFixed(1)}" text-anchor="end" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${v}</text>`;});
+  let guides='';
+  [['Summit',30.7],['Dry Lk',45.4],['Olympian',52.3]].forEach(([lab,m])=>{const cx=xM(m);guides+=`<line x1="${cx.toFixed(1)}" y1="${A_top}" x2="${cx.toFixed(1)}" y2="${B_bot}" stroke="var(--line-strong)" stroke-dasharray="2 3" opacity="0.7"/><text x="${cx.toFixed(1)}" y="${(A_top-4).toFixed(1)}" text-anchor="middle" font-size="9" font-family="Oswald,sans-serif" fill="var(--ink-faint)">${lab}</text>`;});
+  guides+=`<text x="${nx.toFixed(1)}" y="${(A_top-4).toFixed(1)}" text-anchor="middle" font-size="9" font-family="Oswald,sans-serif" fill="var(--dusk)">sunset</text>`;
+  guides+=`<text x="${dx.toFixed(1)}" y="${(A_top-4).toFixed(1)}" text-anchor="end" font-size="9" font-family="Oswald,sans-serif" font-weight="600" fill="#E8927B">DNF</text>`;
+  let xax='';
+  for(let m=0;m<=60;m+=10){const cx=xM(m);xax+=`<line x1="${cx.toFixed(1)}" y1="${B_bot}" x2="${cx.toFixed(1)}" y2="${B_bot+4}" stroke="var(--ink-faint)"/><text x="${cx.toFixed(1)}" y="${B_bot+16}" text-anchor="middle" font-size="10" font-family="IBM Plex Mono,monospace" fill="var(--ink-faint)">${m}</text>`;}
+  xax+=`<text x="${((xL+xR)/2).toFixed(1)}" y="${B_bot+30}" text-anchor="middle" font-size="10" font-family="Oswald,sans-serif" fill="var(--ink-faint)" letter-spacing="0.12em">DISTANCE · MILES INTO THE 2023 RUN</text>`;
+  let plab=`<text x="${xL}" y="${(A_top-14).toFixed(1)}" font-size="10.5" font-family="Oswald,sans-serif" font-weight="600" letter-spacing="0.08em" fill="var(--dusk)">HEART RATE · BPM</text>`;
+  plab+=`<text x="${xL}" y="${(B_top-8).toFixed(1)}" font-size="10.5" font-family="Oswald,sans-serif" font-weight="600" letter-spacing="0.08em" fill="var(--amber-ink)">PACE · MIN / MI  (higher = slower)</text>`;
+  svg.innerHTML=`${bg}${grid}${guides}
+    <path d="${area(S.hr,yH,A_bot)}" fill="var(--dusk)" opacity="0.10"/>
+    <path d="${seg(S.hr,yH)}" fill="none" stroke="var(--dusk)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="${seg(S.pace,yP)}" fill="none" stroke="var(--amber)" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/>
+    ${xax}${plab}`;
 }
 
 /* ---------------- Wire up ---------------- */
@@ -534,6 +701,7 @@ document.getElementById('resetRest').addEventListener('click',()=>{
 });
 buildTable();
 recompute();
+drawHistChart();
 </script>
 
 </body>
