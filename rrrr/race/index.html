@@ -83,6 +83,10 @@
   .who{display:inline-flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:6px 13px; font-size:13px}
   .who b{font-family:"Oswald",sans-serif; font-weight:600}
   .who .role{color:var(--ink-faint); font-size:11px; text-transform:uppercase; letter-spacing:.06em}
+  .dl-btn{display:flex; align-items:center; gap:10px; margin-top:14px; text-decoration:none; background:var(--amber); color:#231403; font-family:"Oswald",sans-serif; font-weight:600; font-size:15px; letter-spacing:.02em; padding:12px 16px; border-radius:11px; box-shadow:var(--shadow)}
+  .dl-btn span{font-family:"Libre Franklin",sans-serif; font-weight:500; font-size:11px; letter-spacing:0; opacity:.85; margin-left:auto; text-align:right}
+  .dl-btn:hover{filter:brightness(1.05)}
+  :root[data-theme="dark"] .dl-btn,:root:not([data-theme="light"]) .dl-btn{color:#1a130a}
 
   /* ---------- Callout ---------- */
   .callout{margin-top:16px; background:var(--danger-soft); border:1px solid transparent; border-left:3px solid var(--danger); border-radius:11px; padding:14px 16px; font-size:13.5px; line-height:1.55; color:var(--ink)}
@@ -187,6 +191,8 @@
       <span class="who"><span class="role">Pacer</span> <b>Jason Welch</b></span>
       <span class="who"><span class="role">Goal</span> <b class="mono">32:00</b></span>
     </div>
+
+    <a class="dl-btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Print the pocket card <span>PDF · 3.5×5.5″<br>double-sided · laminate for the field</span></a>
 
     <div class="callout">
       <h3>⚠ The one thing that decides this race: protect the night</h3>
