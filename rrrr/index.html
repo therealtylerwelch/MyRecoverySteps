@@ -198,6 +198,28 @@
   .chk input:checked ~ span{color:var(--ink-faint); text-decoration:line-through}
   .chk span{color:var(--ink-soft)}
   .chk span b{color:var(--ink)}
+  /* live weather panel */
+  .wx-card{margin-top:12px; background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px 20px; box-shadow:var(--shadow)}
+  .wx-msg{color:var(--ink-soft); font-size:13.5px; margin:6px 0}
+  .wx-conf{font-size:12.5px; line-height:1.5; padding:10px 13px; border-radius:9px; margin-bottom:14px; border:1px solid transparent}
+  .wx-conf.g{background:var(--good-soft); color:var(--good); border-color:color-mix(in srgb,var(--good) 30%,transparent)}
+  .wx-conf.w{background:var(--warn-soft); color:var(--warn); border-color:color-mix(in srgb,var(--warn) 30%,transparent)}
+  .wx-tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px}
+  .wx-tile{background:var(--paper-2); border:1px solid var(--line); border-radius:11px; padding:12px 14px}
+  .wx-tile.lead{background:linear-gradient(150deg,var(--pine),var(--pine-2)); border-color:transparent; color:var(--pine-ink)}
+  .wx-tile .l{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.09em; font-size:10px; color:var(--ink-faint)}
+  .wx-tile.lead .l{color:var(--pine-ink-soft)}
+  .wx-tile .v{font-family:"Oswald",sans-serif; font-weight:600; font-size:25px; line-height:1.05; margin-top:3px}
+  .wx-tile .v .u{font-size:12px; color:var(--ink-faint); font-weight:500}
+  .wx-tile.lead .v .u{color:var(--pine-ink-soft)}
+  .wx-tile .s{font-size:11.5px; color:var(--ink-faint); margin-top:2px}
+  .wx-tile.lead .s{color:var(--pine-ink-soft)}
+  .wx-st{font-family:"Oswald",sans-serif; font-weight:500; font-size:14.5px; display:inline-flex; align-items:center; gap:6px}
+  .wx-feels{font-weight:600; color:var(--dusk)}
+  .wx-g{color:var(--ink-faint); font-size:12px}
+  tr.wx-cold td{background:var(--dusk-soft)}
+  .wx-attr{font-size:11.5px; color:var(--ink-faint); margin:12px 0 0; line-height:1.5}
+  .wx-attr a{color:var(--dusk)}
 
   /* ---------- read note + footer ---------- */
   .note{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:10px; padding:16px 18px; margin-top:26px; font-size:13.5px; color:var(--ink-soft); line-height:1.6}
@@ -313,6 +335,12 @@
       <tbody id="tbody"></tbody>
     </table>
   </div>
+
+  <div class="sec-head">
+    <h2>Course Weather — Race-Day Forecast</h2>
+    <span class="hint">Elevation-correct per aid station · follows your live plan</span>
+  </div>
+  <div class="wx-card" id="wx-body" aria-live="polite"></div>
 
   <section class="hist-panel" aria-label="2023 first attempt analysis">
     <div class="eyebrow">First Attempt · Sep 15–16, 2023</div>
@@ -442,6 +470,32 @@ const SUNSET_SAT = 34*60+5;    // ~7:05 PM Sat
 
 /* live state: editable rest per station */
 const state = { rest: DEFAULT_REST.slice() };
+
+/* ---- Live course weather (Open-Meteo, elevation-correct) — per RRR_WEATHER_BRIEF ---- */
+/* One entry per STATIONS index (same order). lat/lon + elevation in METERS from the course GPX. exp = exposed ridge. */
+const WX = [
+  {lat:40.45954,lon:-106.80069,em:2154,exp:false}, // Start
+  {lat:40.45322,lon:-106.74687,em:3157,exp:true},  // Mt Werner OUT
+  {lat:40.48242,lon:-106.78127,em:2285,exp:false}, // Fish Creek OUT
+  {lat:40.47656,lon:-106.68395,em:3022,exp:true},  // Long Lake OUT
+  {lat:40.54174,lon:-106.68400,em:3153,exp:true},  // Summit OUT
+  {lat:40.52056,lon:-106.72641,em:3067,exp:true},  // Billy's OUT
+  {lat:40.53480,lon:-106.78423,em:2537,exp:false}, // Dry Lake OUT
+  {lat:40.48324,lon:-106.83818,em:2052,exp:false}, // Olympian OUT
+  {lat:40.46074,lon:-106.85557,em:2503,exp:false}, // Lane of Pain 1
+  {lat:40.46085,lon:-106.85584,em:2494,exp:false}, // Lane of Pain 2
+  {lat:40.48344,lon:-106.83812,em:2051,exp:false}, // Olympian BACK
+  {lat:40.53448,lon:-106.78444,em:2532,exp:false}, // Dry Lake BACK
+  {lat:40.52082,lon:-106.72644,em:3057,exp:true},  // Billy's BACK
+  {lat:40.54174,lon:-106.68394,em:3154,exp:true},  // Summit BACK
+  {lat:40.47644,lon:-106.68385,em:3021,exp:true},  // Long Lake BACK
+  {lat:40.45317,lon:-106.74669,em:3156,exp:true},  // Mt Werner BACK
+  {lat:40.45969,lon:-106.79994,em:2177,exp:false}  // Finish
+];
+const RACE_START_ISO = "2026-09-18T09:00:00-06:00";  // Tortoise gun, Fri (MDT)
+const COURSE_HIGH_FT = 10587;
+const WX_TTL = 45*60*1000;                            // 45-min cache
+let wxData=null, wxStatus='idle', wxTimes=null;       // wxTimes = minutes since Sep 18 00:00 MDT
 
 /* ---------------- Helpers ---------------- */
 function pad(n){return String(n).padStart(2,'0');}
@@ -583,6 +637,7 @@ function recompute(){
   });
 
   drawProfile(rows, startMin);
+  renderWeather();
 }
 
 /* ---------------- Elevation profile with crew markers + all labels ---------------- */
@@ -712,6 +767,98 @@ function drawHistChart(){
     ${xax}${plab}${call}`;
 }
 
+/* ---------------- Live weather module ---------------- */
+function wxURL(){
+  const lat=WX.map(w=>w.lat).join(','), lon=WX.map(w=>w.lon).join(','), el=WX.map(w=>w.em).join(',');
+  const hourly='temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,wind_gusts_10m,wind_direction_10m,precipitation_probability,precipitation,snowfall,freezing_level_height,weather_code';
+  return 'https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&elevation='+el+
+    '&hourly='+hourly+'&daily=sunrise,sunset&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch&timezone=America%2FDenver&start_date=2026-09-18&end_date=2026-09-19';
+}
+function prepWx(){
+  if(!wxData||!wxData[0]||!wxData[0].hourly){wxTimes=null;return;}
+  wxTimes=wxData[0].hourly.time.map(s=>{const day=s.slice(8,10)==='19'?1:0;return day*1440+(+s.slice(11,13))*60+(+s.slice(14,16));});
+}
+async function loadWeather(){
+  try{const c=JSON.parse(localStorage.getItem('rrr_wx')||'null'); if(c&&Date.now()-c.t<WX_TTL){wxData=c.d;wxStatus='ok';prepWx();renderWeather();return;}}catch(e){}
+  wxStatus='loading'; renderWeather();
+  try{
+    const r=await fetch(wxURL());
+    if(!r.ok){wxStatus=(r.status===400?'range':'error');renderWeather();return;}
+    const d=await r.json(); wxData=Array.isArray(d)?d:[d]; wxStatus='ok';
+    try{localStorage.setItem('rrr_wx',JSON.stringify({t:Date.now(),d:wxData}));}catch(e){}
+    prepWx(); renderWeather();
+  }catch(e){ wxStatus='error'; renderWeather(); }
+}
+function wxAt(i,arrMin){
+  if(!wxData||!wxTimes||!wxData[i])return null;
+  let best=0,bd=1e9; for(let k=0;k<wxTimes.length;k++){const dd=Math.abs(wxTimes[k]-arrMin); if(dd<bd){bd=dd;best=k;}}
+  const h=wxData[i].hourly, g=f=>h[f]?h[f][best]:null;
+  return {temp:g('temperature_2m'),feels:g('apparent_temperature'),wind:g('wind_speed_10m'),gust:g('wind_gusts_10m'),pop:g('precipitation_probability'),precip:g('precipitation'),snow:g('snowfall'),code:g('weather_code'),fz:g('freezing_level_height')};
+}
+function wxIcon(c){ if(c==null)return'';
+  if(c===0)return'☀️'; if(c<=2)return'🌤️'; if(c===3)return'☁️'; if(c===45||c===48)return'🌫️';
+  if(c>=51&&c<=57)return'🌦️'; if(c>=61&&c<=67)return'🌧️'; if(c>=71&&c<=77)return'🌨️';
+  if(c>=80&&c<=82)return'🌦️'; if(c>=85&&c<=86)return'🌨️'; if(c>=95)return'⛈️'; return''; }
+function daysToRace(){ return Math.max(0,Math.ceil((Date.parse(RACE_START_ISO)-Date.now())/86400000)); }
+
+function renderWeather(){
+  const host=document.getElementById('wx-body'); if(!host) return;
+  if(wxStatus==='loading'||wxStatus==='idle'){host.innerHTML='<p class="wx-msg">Loading the elevation-correct forecast…</p>';return;}
+  if(wxStatus==='range'){host.innerHTML='<p class="wx-msg">Race day isn’t inside the 16-day forecast horizon yet — this fills in automatically closer to the race.</p>';return;}
+  if(wxStatus==='error'){host.innerHTML='<p class="wx-msg">Couldn’t reach the weather service just now — it retries on your next visit. (The live forecast runs on the published site.)</p>';return;}
+
+  const R=Math.round, d2r=daysToRace();
+  let conf;
+  if(d2r>10) conf={cls:'w',txt:`Pattern-level outlook only — about ${d2r} days out (GFS model). Read it for trends, not as hourly fact; sharp HRRR detail arrives ~Sept 16.`};
+  else if(d2r>6) conf={cls:'w',txt:`Medium range (${d2r} days out) — temperature and precipitation windows are becoming meaningful.`};
+  else if(d2r>1) conf={cls:'g',txt:`Short range (${d2r} days out) — the detail is meaningful; good for drop-bag and layering calls.`};
+  else conf={cls:'g',txt:`HRRR 3 km — hourly detail is reliable now, refreshed on load.`};
+
+  const {rows}=compute(goalMinutes());
+  const startMin=startMinutes();
+  const clk=arrMin=>fmtClock(arrMin-startMin, startMin);
+  const cells=rows.map((r,i)=>({i,arrMin:startMin+r.arriveElapsed,wx:wxAt(i,startMin+r.arriveElapsed)}));
+
+  let cold=null,gust=null;
+  cells.forEach(c=>{ if(c.i===0||!c.wx)return;
+    if(c.wx.feels!=null && (!cold||c.wx.feels<cold.v)) cold={v:c.wx.feels,i:c.i,arrMin:c.arrMin};
+    if(WX[c.i].exp && c.wx.gust!=null && (!gust||c.wx.gust>gust.v)) gust={v:c.wx.gust,i:c.i,arrMin:c.arrMin};
+  });
+  let fzMin=1e9,spread=0;
+  if(wxTimes) for(let k=0;k<wxTimes.length;k++){ let fmin=1e9,fmax=-1e9;
+    for(let i=0;i<wxData.length;i++){const h=wxData[i].hourly;
+      const fz=h.freezing_level_height?h.freezing_level_height[k]:null; if(fz!=null&&fz<fzMin)fzMin=fz;
+      const fl=h.apparent_temperature?h.apparent_temperature[k]:null; if(fl!=null){if(fl<fmin)fmin=fl; if(fl>fmax)fmax=fl;}}
+    if(fmax-fmin>spread)spread=fmax-fmin; }
+  const snowFlag=isFinite(fzMin)&&fzMin<COURSE_HIGH_FT+300;
+  const subC=cold?`${STATIONS[cold.i].short}${STATIONS[cold.i].lap?' '+STATIONS[cold.i].lap:''} · ${clk(cold.arrMin).t} ${clk(cold.arrMin).day}`:'';
+  const subG=gust?`${STATIONS[gust.i].short} · ${clk(gust.arrMin).t} ${clk(gust.arrMin).day}`:'';
+
+  const tiles=`
+    <div class="wx-tile lead"><div class="l">Coldest on her schedule</div><div class="v">${cold?R(cold.v)+'°':'—'}<span class="u"> feels-like</span></div><div class="s">${subC}</div></div>
+    <div class="wx-tile"><div class="l">Max ridge gust</div><div class="v">${gust?R(gust.v):'—'}<span class="u"> mph</span></div><div class="s">${subG}</div></div>
+    <div class="wx-tile"><div class="l">Freezing level (lowest)</div><div class="v">${isFinite(fzMin)?(fzMin/1000).toFixed(1)+'k':'—'}<span class="u"> ft</span></div><div class="s">${snowFlag?'⚠ snow possible up high':'stays above the 10,587 ft high point'}</div></div>
+    <div class="wx-tile"><div class="l">Valley ↔ ridge spread</div><div class="v">${R(spread)}°<span class="u"> feels-like</span></div><div class="s">why town weather misleads</div></div>`;
+
+  const trs=cells.map(c=>{ if(!c.wx)return'';
+    const w=c.wx, cl=clk(c.arrMin), S=STATIONS[c.i];
+    const feels=w.feels!=null?R(w.feels)+'°':'—';
+    const prec=(w.snow>0.02)?('❄ '+w.snow.toFixed(2)+'"'):(w.precip>0.02?(w.precip.toFixed(2)+'"'):(w.pop!=null?w.pop+'%':'—'));
+    return `<tr${cold&&c.i===cold.i?' class="wx-cold"':''}>
+      <td class="l"><span class="wx-st">${wxIcon(w.code)} ${S.name}${S.lap?' <span class="lap">'+S.lap+'</span>':''}${S.crew&&c.i!==0?' <span class="badge crew" style="font-size:8px">◆</span>':''}</span></td>
+      <td class="mono">${cl.t}<span class="dy"> ${cl.day}</span></td>
+      <td class="mono wx-feels">${feels}</td>
+      <td class="mono">${w.temp!=null?R(w.temp)+'°':'—'}</td>
+      <td class="mono">${w.wind!=null?R(w.wind):'—'}<span class="wx-g"> g${w.gust!=null?R(w.gust):'—'}</span></td>
+      <td class="mono">${prec}</td></tr>`; }).join('');
+
+  host.innerHTML=
+    `<div class="wx-conf ${conf.cls}">${conf.txt}</div>`+
+    `<div class="wx-tiles">${tiles}</div>`+
+    `<div class="tbl-scroll" style="margin-top:16px"><table><thead><tr><th class="l">Aid Station</th><th>Arrive</th><th>Feels</th><th>Temp</th><th>Wind · gust</th><th>Precip</th></tr></thead><tbody>${trs}</tbody></table></div>`+
+    `<p class="wx-attr">Each aid station forecast at its true elevation, mapped to Shannon's live ${fmtHM(goalMinutes())} plan — change the goal or rest and these times shift with it. Weather data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</p>`;
+}
+
 /* ---------------- Wire up ---------------- */
 function syncPresets(){
   const gh=document.getElementById('gh').value, gm=document.getElementById('gm').value;
@@ -731,6 +878,7 @@ document.getElementById('resetRest').addEventListener('click',()=>{
 buildTable();
 recompute();
 drawHistChart();
+loadWeather();
 </script>
 
 </body>
