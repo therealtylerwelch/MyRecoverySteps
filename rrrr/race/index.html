@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html{color-scheme:light dark}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>RRR Crew &amp; Pacer Guide</title>
+<meta name="description" content="Mobile-first crew and pacer field guide for Shannon's Run Rabbit Run 100 — per-station jobs, checklists, ETAs, and handoffs.">
+<style>
+@font-face{font-family:"Oswald";font-style:normal;font-weight:200 700;font-display:swap;src:url("/rrrr/fonts/oswald-latin-wght-normal.woff2") format("woff2")}
+@font-face{font-family:"Libre Franklin";font-style:normal;font-weight:100 900;font-display:swap;src:url("/rrrr/fonts/libre-franklin-latin-wght-normal.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/rrrr/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url("/rrrr/fonts/ibm-plex-mono-latin-600-normal.woff2") format("woff2")}
+</style>
+<style>
+  :root{
+    --paper:#F0F3EE; --paper-2:#FBFCFA; --card:#FFFFFF;
+    --ink:#1B231E; --ink-soft:#4C574F; --ink-faint:#7A857C;
+    --line:#D9DFD6; --line-strong:#C3CBBF;
+    --pine:#1E3A2D; --pine-2:#274A38; --pine-ink:#EAF1E7; --pine-ink-soft:#A9C0AE;
+    --amber:#CF7C22; --amber-ink:#8A4E10; --amber-soft:#F4E6D1;
+    --dusk:#3C5A86; --dusk-soft:#DEE6F1;
+    --good:#2F7D5B; --good-soft:#DCEEE4;
+    --warn:#B57A16; --warn-soft:#F6E9CF;
+    --danger:#B8412F; --danger-soft:#F4DCD6;
+    --plum:#6E4A82; --plum-soft:#E9DFF1;
+    --shadow:0 1px 2px rgba(24,40,30,.06),0 6px 18px rgba(24,40,30,.05);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --paper:#121713; --paper-2:#1A211B; --card:#1D251F;
+    --ink:#E8EEE6; --ink-soft:#A2AEA4; --ink-faint:#7E8A80;
+    --line:#2B342C; --line-strong:#3A453B;
+    --pine:#0E1913; --pine-2:#16241A; --pine-ink:#E7F0E6; --pine-ink-soft:#8FAB95;
+    --amber:#E4A250; --amber-ink:#F0C489; --amber-soft:#3A2C18;
+    --dusk:#86A5D4; --dusk-soft:#212F45;
+    --good:#5CB088; --good-soft:#183527;
+    --warn:#D9A64A; --warn-soft:#352a13;
+    --danger:#E0705C; --danger-soft:#3a1f19;
+    --plum:#B79AD0; --plum-soft:#2C2138;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.28);
+  }}
+  :root[data-theme="dark"]{
+    --paper:#121713; --paper-2:#1A211B; --card:#1D251F;
+    --ink:#E8EEE6; --ink-soft:#A2AEA4; --ink-faint:#7E8A80;
+    --line:#2B342C; --line-strong:#3A453B;
+    --pine:#0E1913; --pine-2:#16241A; --pine-ink:#E7F0E6; --pine-ink-soft:#8FAB95;
+    --amber:#E4A250; --amber-ink:#F0C489; --amber-soft:#3A2C18;
+    --dusk:#86A5D4; --dusk-soft:#212F45;
+    --good:#5CB088; --good-soft:#183527;
+    --warn:#D9A64A; --warn-soft:#352a13;
+    --danger:#E0705C; --danger-soft:#3a1f19;
+    --plum:#B79AD0; --plum-soft:#2C2138;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.28);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--paper); color:var(--ink); font-family:"Libre Franklin",system-ui,-apple-system,Segoe UI,sans-serif; line-height:1.5; margin:0; -webkit-font-smoothing:antialiased}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums}
+  h1,h2,h3,h4{font-family:"Oswald",system-ui,sans-serif; font-weight:600; margin:0; text-wrap:balance}
+  a{color:var(--dusk)}
+
+  /* ---------- Shared nav shell (Plan · Race · Track) ---------- */
+  .nav{position:sticky; top:0; z-index:20; background:var(--pine); color:var(--pine-ink); box-shadow:var(--shadow)}
+  .nav-in{max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 16px}
+  .brand{display:flex; align-items:baseline; gap:9px; font-family:"Oswald",sans-serif; font-weight:600; letter-spacing:.02em; font-size:17px}
+  .brand .yr{font-size:12px; color:var(--pine-ink-soft); font-weight:500; letter-spacing:.12em}
+  .tabs{display:flex; gap:6px}
+  .tabs a{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.06em; font-size:13px; color:var(--pine-ink-soft); text-decoration:none; padding:7px 13px; border-radius:999px; transition:.14s}
+  .tabs a:hover{color:var(--pine-ink); background:rgba(255,255,255,.06)}
+  .tabs a.active{background:var(--amber); color:#231403}
+  :root[data-theme="dark"] .tabs a.active,:root:not([data-theme="light"]) .tabs a.active{color:#1a130a}
+  .tabs a .sub{display:block; font-size:8.5px; letter-spacing:.08em; font-weight:400; opacity:.85; text-transform:none; margin-top:1px}
+
+  .wrap{max-width:900px; margin:0 auto; padding:0 16px 72px}
+
+  /* ---------- Header ---------- */
+  .head{padding:22px 2px 4px}
+  .eyebrow{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.14em; font-size:11px; color:var(--ink-faint)}
+  h1{font-size:clamp(26px,7vw,40px); text-transform:uppercase; line-height:1; margin:6px 0 2px}
+  h1 .amb{color:var(--amber)}
+  .subline{color:var(--ink-soft); font-size:14.5px; max-width:60ch}
+  .roster{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px}
+  .who{display:inline-flex; align-items:center; gap:7px; background:var(--card); border:1px solid var(--line); border-radius:999px; padding:6px 13px; font-size:13px}
+  .who b{font-family:"Oswald",sans-serif; font-weight:600}
+  .who .role{color:var(--ink-faint); font-size:11px; text-transform:uppercase; letter-spacing:.06em}
+
+  /* ---------- Callout ---------- */
+  .callout{margin-top:16px; background:var(--danger-soft); border:1px solid transparent; border-left:3px solid var(--danger); border-radius:11px; padding:14px 16px; font-size:13.5px; line-height:1.55; color:var(--ink)}
+  .callout h3{font-size:13px; text-transform:uppercase; letter-spacing:.06em; color:var(--danger); margin-bottom:5px}
+  .callout b{color:var(--ink)}
+  .rules{margin-top:12px; background:var(--card); border:1px solid var(--line); border-radius:11px; padding:13px 16px; font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  .rules b{color:var(--ink)}
+  .rules .r{display:flex; gap:9px; padding:3px 0}
+  .rules .r .k{color:var(--amber-ink); font-weight:700}
+  :root[data-theme="dark"] .rules .r .k,:root:not([data-theme="light"]) .rules .r .k{color:var(--amber)}
+
+  /* ---------- Section head ---------- */
+  .sec{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:30px 2px 6px; flex-wrap:wrap}
+  .sec h2{font-size:20px; text-transform:uppercase; letter-spacing:.03em}
+  .sec .hint{font-size:12px; color:var(--ink-faint)}
+  .legend{display:flex; flex-wrap:wrap; gap:8px 14px; margin:8px 2px 14px; font-size:11.5px; color:var(--ink-soft)}
+  .legend span{display:inline-flex; align-items:center; gap:6px}
+  .dotc{width:10px; height:10px; border-radius:3px; display:inline-block}
+
+  /* ---------- Station timeline ---------- */
+  #stations{display:flex; flex-direction:column; gap:10px}
+  .st{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+  .st.none{box-shadow:none; background:transparent; border-style:dashed}
+  .st-top{display:flex; align-items:center; gap:12px; padding:13px 15px}
+  .st.none .st-top{padding:9px 15px}
+  .st-num{font-family:"Oswald",sans-serif; font-weight:600; font-size:13px; color:var(--ink-faint); min-width:20px; text-align:center}
+  .st-id{flex:1; min-width:0}
+  .st-name{font-family:"Oswald",sans-serif; font-weight:600; font-size:17px; letter-spacing:.01em; display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .st.none .st-name{font-size:15px; color:var(--ink-soft)}
+  .st-name .lap{font-family:"Libre Franklin",sans-serif; font-weight:700; font-size:9px; letter-spacing:.06em; color:var(--ink-faint); border:1px solid var(--line-strong); border-radius:4px; padding:1px 5px}
+  .st-meta{font-size:12px; color:var(--ink-faint); margin-top:2px; display:flex; gap:12px; flex-wrap:wrap}
+  .st-meta .mono{color:var(--ink-soft)}
+  .role-chip{font-family:"Oswald",sans-serif; font-weight:600; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; padding:4px 9px; border-radius:999px; white-space:nowrap; align-self:flex-start}
+  .role-mobile{background:var(--amber-soft); color:var(--amber-ink)}
+  .role-drop{background:var(--dusk-soft); color:var(--dusk)}
+  .role-crew{background:var(--good-soft); color:var(--good)}
+  .role-pacer{background:var(--plum-soft); color:var(--plum)}
+  .role-none{background:transparent; color:var(--ink-faint); border:1px solid var(--line-strong)}
+
+  .st-body{padding:0 15px 15px; border-top:1px solid var(--line)}
+  .eta{display:flex; gap:8px; flex-wrap:wrap; margin:13px 0 4px}
+  .eta .pill{background:var(--paper-2); border:1px solid var(--line); border-radius:9px; padding:7px 11px; font-size:12px}
+  .eta .pill .k{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.06em; font-size:9px; color:var(--ink-faint); display:block}
+  .eta .pill .v{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:14px}
+  .eta .pill.target{background:var(--pine); border-color:transparent; color:var(--pine-ink)}
+  .eta .pill.target .k{color:var(--pine-ink-soft)}
+  .access{font-size:12.5px; color:var(--ink-soft); margin:10px 0; padding:9px 12px; background:var(--paper-2); border-radius:9px; line-height:1.5}
+  .access b{color:var(--ink)}
+  .tasks{margin:12px 0 0}
+  .tasks h4,.cl h4{font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--amber-ink); margin:14px 0 6px; padding-bottom:5px; border-bottom:1px solid var(--line)}
+  :root[data-theme="dark"] .tasks h4,:root[data-theme="dark"] .cl h4,:root:not([data-theme="light"]) .tasks h4,:root:not([data-theme="light"]) .cl h4{color:var(--amber)}
+  .task{display:flex; gap:9px; align-items:flex-start; font-size:14px; line-height:1.5; padding:5px 0; color:var(--ink-soft)}
+  .task .b{color:var(--amber); font-weight:700; flex:0 0 auto}
+  .task b{color:var(--ink)}
+  /* checklists */
+  .cl label{display:flex; gap:11px; align-items:flex-start; padding:8px 0; font-size:14px; line-height:1.45; cursor:pointer; border-bottom:1px solid var(--line)}
+  .cl label:last-child{border-bottom:none}
+  .cl input{appearance:none;-webkit-appearance:none; width:22px;height:22px;min-width:22px; margin-top:0; border:1.6px solid var(--line-strong); border-radius:6px; background:var(--paper-2); cursor:pointer; position:relative; transition:.12s}
+  .cl input:checked{background:var(--good); border-color:var(--good)}
+  .cl input:checked::after{content:"✓"; position:absolute; color:#fff; font-size:15px; font-weight:700; left:4px; top:-1px}
+  .cl input:checked ~ span{color:var(--ink-faint); text-decoration:line-through}
+  .cl span{color:var(--ink-soft)}
+  .cl span b{color:var(--ink)}
+  .tbd{font-size:12.5px; color:var(--ink-faint); font-style:italic; padding:8px 0 2px}
+  .mand{background:var(--warn-soft); border-radius:9px; padding:11px 13px; margin-top:12px; font-size:12.5px; color:var(--warn); line-height:1.5}
+  .mand b{color:var(--ink)}
+
+  footer{margin-top:34px; font-size:12px; color:var(--ink-faint); line-height:1.6}
+  .tmpl-note{margin-top:22px; background:var(--dusk-soft); border-radius:11px; padding:14px 16px; font-size:12.5px; color:var(--ink-soft); line-height:1.6}
+  .tmpl-note b{color:var(--ink)}
+  @media (max-width:560px){
+    .tabs a{padding:7px 10px; font-size:12px}
+    .brand{font-size:15px}
+    .eta .pill{flex:1 1 40%}
+  }
+  @media print{.nav{position:static} .st{break-inside:avoid} .callout{break-inside:avoid}}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<nav class="nav">
+  <div class="nav-in">
+    <div class="brand">🐇 RRRR <span class="yr">2026</span></div>
+    <div class="tabs">
+      <a href="https://myrecoverysteps.com/rrrr">Plan<span class="sub">Race planner</span></a>
+      <a href="#" class="active" aria-current="page">Race<span class="sub">Crew guide</span></a>
+      <a href="https://www.mytrailhead.tax/rrr2026/">Track<span class="sub">Live tracker</span></a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow">Run Rabbit Run 100 · Redemption · Sep 18–19, 2026</div>
+    <h1>Crew &amp; Pacer <span class="amb">Guide</span></h1>
+    <p class="subline">The field playbook — what happens at each stop, who does it, and what goes in the bag. Built to be read on a phone, in the dark, when you're tired. Tap a checklist item to tick it off.</p>
+    <div class="roster">
+      <span class="who"><span class="role">Runner</span> <b>Shannon</b></span>
+      <span class="who"><span class="role">Crew lead</span> <b>Tyler</b></span>
+      <span class="who"><span class="role">Pacer</span> <b>Jason Welch</b></span>
+      <span class="who"><span class="role">Goal</span> <b class="mono">32:00</b></span>
+    </div>
+
+    <div class="callout">
+      <h3>⚠ The one thing that decides this race: protect the night</h3>
+      In 2023 Shannon was on 32-hour pace to halfway, then the <b>Emerald Mountain loop (miles 51–64) unraveled it — solo, in 29°F feels-like cold.</b> This year Jason joins at Olympian on the <b>return (mile 64)</b>, so she runs that same loop solo again.
+      <div style="margin-top:9px; padding-top:9px; border-top:1px solid rgba(0,0,0,.08)">
+        That makes the <b>mile-51 Olympian stop the most important crew stop of the race:</b> send her into the loop fully warm, fueled, caffeinated, and lit — nobody is with her until she climbs back to Olympian at mile 64. Warm her <b>before</b> she's cold, not after.
+      </div>
+    </div>
+
+    <div class="rules">
+      <div class="r"><span class="k">CREW ACCESS</span><span>No crew vehicles on Buffalo Pass Rd above Dry Lake. <b>Fish Creek Falls is foot/bike pack-in only</b> — no driving. Summit Lake is carpool/drop-off only.</span></div>
+      <div class="r"><span class="k">MANDATORY GEAR</span><span>New for 2026 — Shannon <b>may not leave Olympian Hall</b> without: headlamp + backup light, warm jacket, space blanket, raincoat, gloves. Crew verifies this at both Olympian stops.</span></div>
+      <div class="r"><span class="k">PACER</span><span>As a Tortoise, Shannon may have one pacer from Olympian (mile 51) to the finish. Jason paces until <b>Summit Lake return (mile 80.8)</b>, where Tyler takes over crew.</span></div>
+    </div>
+  </header>
+
+  <div class="sec"><h2>Station-by-Station</h2><span class="hint">Course order · times are the 32:00 plan</span></div>
+  <div class="legend">
+    <span><span class="dotc" style="background:var(--amber)"></span>Mobile crew</span>
+    <span><span class="dotc" style="background:var(--dusk)"></span>Drop bag</span>
+    <span><span class="dotc" style="background:var(--good)"></span>Crew station</span>
+    <span><span class="dotc" style="background:var(--plum)"></span>Pacer exchange</span>
+    <span><span class="dotc" style="background:var(--line-strong)"></span>Self-supported</span>
+  </div>
+  <div id="stations"></div>
+
+  <div class="tmpl-note">
+    <b>This is a reusable template.</b> Each station is a data block (role, ETA window, tasks, checklists) — future races drop in their own aid stations and it re-renders. Sections marked <i>"pending Shannon's input"</i> are placeholders to fill once her nutrition, gear, and drop-bag specifics are confirmed.
+  </div>
+
+  <footer>
+    <p>Crew &amp; Pacer Guide · part of the RRRR 2026 race hub (Plan · Race · Track). ETA windows are the 30–34 hr span around the 32:00 plan; confirm against the live Plan on race day. Aid-station access and gear rules from the 2026 Run Rabbit Run Runner's Manual.</p>
+    <p style="margin-top:6px">Built for Shannon · Crew: Tyler · Pacer: Jason Welch</p>
+  </footer>
+</div>
+
+<script>
+// role: mobile | drop | crew | crewpacer | none | minimal | finish
+const S=[
+  {n:1,name:"Mt. Werner",lap:"OUT",mi:5.4,t:"10:30 AM Fri",role:"none",access:"No crew, no drop bags. Top of the gondola climb."},
+  {n:2,name:"Fish Creek Falls",lap:"OUT",mi:17.7,t:"1:06 PM Fri",role:"mobile",
+   eta:["12:50 PM","1:06 PM","1:22 PM"],
+   access:"<b>Mobile crew — foot/bike pack-in from Steamboat.</b> No vehicle access; pack in everything you need and pack it out. This is the first crew touch, ~4 hours in.",
+   tasks:["<b>Swap bottles</b> — hand off fresh, take her empties","<b>Hand off the food bag</b> — all items she needs for the next leg","Quick blister/hot-spot check — she's got 12 mi to Long Lake"],
+   cls:[{title:"Pack-in kit (crew carries)",items:["Fresh bottles / soft flasks (filled)","Food bag — <i>contents pending Shannon's input</i>","Blister kit (tape, needle, alcohol wipes)","Sunscreen","Extra layer (in case of a weather turn)","Trash bag for her empties"]}]},
+  {n:3,name:"Long Lake",lap:"OUT",mi:24.3,t:"4:35 PM Fri",role:"none",access:"No crew. Self-supported; aid station stocked."},
+  {n:4,name:"Summit Lake",lap:"OUT",mi:30.1,t:"7:00 PM Fri",role:"drop",
+   eta:["6:21 PM","7:00 PM","7:38 PM"],
+   access:"<b>Drop bag only — no crew here on the way out.</b> This bag is placed pre-race and is her lifeline into the first night. Tyler collects it on the return (mile 80.8).",
+   note:"Sunset is ~7:11 PM — she likely leaves Summit into the dark. This bag must set her up for night + the high country.",
+   cls:[{title:"Summit Lake drop bag",items:["Headlamp + <b>backup light</b> + spare batteries","Warm layer (jacket) + hat + gloves","Buff / neck gaiter","Night nutrition — <i>quantity pending Shannon's input</i>","Caffeine (gels/chews/pills)","Blister + chafe kit (spare)","Dry socks","Hand warmers","Ziploc for trash / swap-outs"]}]},
+  {n:5,name:"Billy's Rabbit Hole",lap:"OUT",mi:34.3,t:"8:14 PM Fri",role:"minimal",access:"No crew · minimal aid station. She's self-supported through the high country."},
+  {n:6,name:"Dry Lake",lap:"OUT",mi:44.5,t:"10:33 PM Fri",role:"none",access:"No crew support planned. Aid station stocked; pacers could be picked up here but per the plan Jason joins at Olympian."},
+  {n:7,name:"Olympian Hall",lap:"OUT",mi:51.2,t:"12:24 AM Sat",role:"crew",
+   eta:["11:26 PM","12:24 AM","1:22 AM"],
+   access:"<b>First major crew station — the most important stop of the race.</b> Halfway, in town, full access. She heads into the Emerald loop <b>solo</b> (Jason joins on the return at mile 64), so this stop has to carry her through the exact stretch that ended 2023.",
+   tasks:["Full food + fluid resupply — she's on her own for ~13 mi / 3+ hrs","<b>Warm her before she's cold</b> — jacket on, hat + gloves, dry layers now","<b>Mandatory gear check</b> before she leaves","Caffeine for the 2–4 AM low, in-hand for the loop","Update her on the race plan / cushion vs cutoffs","Gut check: is she eating and warm enough to go alone? If not, fix it here"],
+   mand:true,
+   cls:[
+    {title:"Food & fluids",items:["Hot food / broth / real calories","Refill bottles + hand off next leg's nutrition","Caffeine top-up for the 2–4 AM low","<i>Specific menu pending Shannon's input</i>"]},
+    {title:"Clothing & gear",items:["Warm jacket on / packed","Hat + gloves","Dry socks","Headlamp battery swap + confirm backup light","<i>Additional items pending Shannon's input</i>"]}]},
+  {n:8,name:"Lane of Pain",lap:"EMER",mi:54.4,t:"1:25 AM Sat",role:"minimal",access:"No crew · minimal aid. Emerald Mountain loop — the 2023 crux. If Jason is aboard, this is where he earns it."},
+  {n:9,name:"Lane of Pain",lap:"EMER",mi:58.1,t:"2:21 AM Sat",role:"minimal",access:"No crew · minimal aid. Coldest point of the 2023 run (29°F feels-like). Keep moving, keep fueling."},
+  {n:10,name:"Olympian Hall",lap:"BACK",mi:63.9,t:"3:50 AM Sat",role:"crewpacer",
+   eta:["2:40 AM","3:50 AM","5:01 AM"],
+   access:"<b>Major crew station + pacer exchange.</b> She's through the loop and turning for home. Big reset before the long climb back up to the high country.",
+   pacer:"<b>Shannon picks up pacer Jason Welch here.</b> He paces her from here to Summit Lake (mile 80.8). Get him briefed and moving fast — she's cold and it's the pre-dawn low.",
+   tasks:["Full food + fluid resupply — she's been out ~15 hrs","Warm, dry layers — pre-dawn is the coldest stretch ahead","<b>Mandatory gear check</b> before she leaves","Brief Jason: pace plan, her state, cutoffs","Update race plan / cushion","Feet + blister care"],
+   mand:true,
+   cls:[
+    {title:"Food & fluids",items:["Hot food / broth","Refill bottles + next-leg nutrition","Caffeine — the pre-dawn low is coming","<i>Specific menu pending Shannon's input</i>"]},
+    {title:"Clothing & gear (pre-dawn = coldest)",items:["Warmest layer — she climbs 3,300 ft to 10,000 ft into the dawn low","Hat + gloves (fresh/dry)","Dry socks","Confirm both lights + batteries","<i>Additional items pending Shannon's input</i>"]},
+    {title:"Pacer handoff — Jason",items:["Jason's own layers, light, food, water","Pace plan + cutoff cushion briefed","Phone / comms with crew","Any meds / notes from Shannon"]}]},
+  {n:11,name:"Dry Lake",lap:"BACK",mi:70.8,t:"6:35 AM Sat",role:"none",access:"No crew support planned. Jason is pacing; aid station stocked. Last staffed stop before the big climb to Summit."},
+  {n:12,name:"Billy's Rabbit Hole",lap:"BACK",mi:76.6,t:"8:49 AM Sat",role:"minimal",access:"No crew · minimal aid. High country, day 2. Jason pacing."},
+  {n:13,name:"Summit Lake",lap:"BACK",mi:80.8,t:"10:37 AM Sat",role:"crew",
+   eta:["9:01 AM","10:37 AM","12:12 PM"],
+   access:"<b>Full crew station — Tyler.</b> Carpool/drop-off access only (no driving above Dry Lake). The high point of the course is just past here.",
+   pacer:"<b>Jason completes his pacing duties here.</b> Tyler picks up Jason and takes over crew.",
+   tasks:["Full food + fluid resupply for the final ~21 mi","<b>Tyler collects the Summit Lake drop bag</b> (placed on the 1st pass)","Shed night layers → day layers; sunscreen back on","Assess her feet / hydration for the long descent home","Update plan: time in hand to the finish"],
+   cls:[
+    {title:"Food & fluids",items:["Real food + refill for the run home","Electrolytes — midday exposure ahead","<i>Specific menu pending Shannon's input</i>"]},
+    {title:"Clothing & gear",items:["Day layers / sun protection","Sunscreen, hat, sunglasses","Retrieve &amp; pack out the 1st-pass drop bag","<i>Additional items pending Shannon's input</i>"]}]},
+  {n:14,name:"Long Lake",lap:"BACK",mi:89.0,t:"1:17 PM Sat",role:"none",access:"No crew. Self-supported. On the way home."},
+  {n:15,name:"Mt. Werner",lap:"BACK",mi:95.8,t:"3:41 PM Sat",role:"none",access:"No crew. Last aid before the descent to the finish — it's all downhill from here."},
+  {n:16,name:"FINISH",lap:"",mi:101.8,t:"5:00 PM Sat",role:"finish",access:"<b>Base of the ski area.</b> Crew + anyone may run her in the last stretch from the top of the gondola. Bring the buckle-worthy welcome. 🐇"}
+];
+
+const roleLabel={mobile:"Mobile crew",drop:"Drop bag",crew:"Crew station",crewpacer:"Crew + pacer",none:"Self-supported",minimal:"Self-supported",finish:"Finish"};
+const roleClass={mobile:"role-mobile",drop:"role-drop",crew:"role-crew",crewpacer:"role-pacer",none:"role-none",minimal:"role-none",finish:"role-crew"};
+const full=r=>["mobile","drop","crew","crewpacer","finish"].includes(r);
+
+const host=document.getElementById('stations');
+S.forEach(s=>{
+  const el=document.createElement('div');
+  el.className='st'+(full(s.role)?'':' none');
+  let top=`<div class="st-top">
+    <div class="st-num">${s.n}</div>
+    <div class="st-id">
+      <div class="st-name">${s.name}${s.lap?' <span class="lap">'+s.lap+'</span>':''}</div>
+      <div class="st-meta"><span class="mono">Mile ${s.mi.toFixed(1)}</span><span class="mono">${s.t}</span></div>
+    </div>
+    <div class="role-chip ${roleClass[s.role]}">${roleLabel[s.role]}</div>
+  </div>`;
+  let body='';
+  if(full(s.role)){
+    body='<div class="st-body">';
+    if(s.eta) body+=`<div class="eta">
+      <div class="pill"><span class="k">Window opens</span><span class="v">${s.eta[0]}</span></div>
+      <div class="pill target"><span class="k">Target (32h)</span><span class="v">${s.eta[1]}</span></div>
+      <div class="pill"><span class="k">Window closes</span><span class="v">${s.eta[2]}</span></div>
+    </div>`;
+    if(s.access) body+=`<div class="access">${s.access}</div>`;
+    if(s.note) body+=`<div class="access" style="background:var(--warn-soft);color:var(--warn)">🌙 ${s.note}</div>`;
+    if(s.pacer) body+=`<div class="access" style="background:var(--plum-soft);color:var(--plum)">🤝 ${s.pacer}</div>`;
+    if(s.tasks){ body+='<div class="tasks"><h4>Crew actions</h4>'; s.tasks.forEach(t=>body+=`<div class="task"><span class="b">▸</span><span>${t}</span></div>`); body+='</div>'; }
+    if(s.mand) body+=`<div class="mand"><b>Mandatory gear to leave Olympian:</b> headlamp + backup light · warm jacket · space blanket · raincoat · gloves. Confirm all five.</div>`;
+    if(s.cls) s.cls.forEach(c=>{ body+=`<div class="cl"><h4>${c.title}</h4>`; c.items.forEach(it=>body+=`<label><input type="checkbox"><span>${it}</span></label>`); body+='</div>'; });
+    body+='</div>';
+  } else {
+    // compact: show access inline under the row
+    body=`<div class="st-body" style="border-top:none;padding-top:0;padding-bottom:12px"><div class="access" style="margin:0;background:transparent;padding:0;color:var(--ink-faint)">${s.access}</div></div>`;
+  }
+  el.innerHTML=top+body;
+  host.appendChild(el);
+});
+</script>
+
+</body>
+</html>

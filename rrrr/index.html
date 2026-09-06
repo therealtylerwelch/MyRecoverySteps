@@ -62,6 +62,18 @@
     font-family:"Libre Franklin",system-ui,-apple-system,Segoe UI,sans-serif;
     line-height:1.5; margin:0; -webkit-font-smoothing:antialiased;
   }
+  /* ---------- Shared hub nav (Plan · Race · Track) ---------- */
+  .nav{position:sticky; top:0; z-index:30; background:var(--pine); color:var(--pine-ink); box-shadow:var(--shadow)}
+  .nav-in{max-width:1160px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 20px}
+  .brand{display:flex; align-items:baseline; gap:9px; font-family:"Oswald",sans-serif; font-weight:600; letter-spacing:.02em; font-size:17px; color:var(--pine-ink)}
+  .brand .yr{font-size:12px; color:var(--pine-ink-soft); font-weight:500; letter-spacing:.12em}
+  .tabs{display:flex; gap:6px}
+  .tabs a{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.06em; font-size:13px; color:var(--pine-ink-soft); text-decoration:none; padding:7px 13px; border-radius:999px; transition:.14s}
+  .tabs a:hover{color:var(--pine-ink); background:rgba(255,255,255,.06)}
+  .tabs a.active{background:var(--amber); color:#231403}
+  :root[data-theme="dark"] .tabs a.active,:root:not([data-theme="light"]) .tabs a.active{color:#1a130a}
+  .tabs a .sub{display:block; font-size:8.5px; letter-spacing:.08em; font-weight:400; opacity:.85; text-transform:none; margin-top:1px}
+  @media (max-width:560px){.tabs a{padding:7px 9px; font-size:12px} .brand{font-size:15px}}
   .wrap{max-width:1160px; margin:0 auto; padding:0 20px 72px}
   .mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace; font-variant-numeric:tabular-nums}
   h1,h2,h3{font-family:"Oswald",system-ui,sans-serif; font-weight:600; margin:0; text-wrap:balance}
@@ -125,7 +137,7 @@
   /* ---------- Table ---------- */
   .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
   table{border-collapse:collapse; width:100%; min-width:880px}
-  thead th{position:sticky; top:0; background:var(--pine); color:var(--pine-ink); font-family:"Oswald",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:11px; text-align:right; padding:11px 8px; white-space:nowrap; z-index:2}
+  thead th{position:sticky; top:52px; background:var(--pine); color:var(--pine-ink); font-family:"Oswald",sans-serif; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:11px; text-align:right; padding:11px 8px; white-space:nowrap; z-index:2}
   thead th.l{text-align:left}
   tbody td{padding:9px 8px; border-top:1px solid var(--line); text-align:right; white-space:nowrap; font-size:14px}
   tbody td.l{text-align:left}
@@ -255,6 +267,17 @@
 </head>
 <body>
 
+
+<nav class="nav">
+  <div class="nav-in">
+    <div class="brand">🐇 RRRR <span class="yr">2026</span></div>
+    <div class="tabs">
+      <a href="#" class="active" aria-current="page">Plan<span class="sub">Race planner</span></a>
+      <a href="https://myrecoverysteps.com/rrrr/race/">Race<span class="sub">Crew guide</span></a>
+      <a href="https://www.mytrailhead.tax/rrr2026/">Track<span class="sub">Live tracker</span></a>
+    </div>
+  </div>
+</nav>
 
 <header class="mast">
   <div class="mast-inner">
