@@ -220,6 +220,10 @@
   tr.wx-cold td{background:var(--dusk-soft)}
   .wx-attr{font-size:11.5px; color:var(--ink-faint); margin:12px 0 0; line-height:1.5}
   .wx-attr a{color:var(--dusk)}
+  .wx-2023{color:var(--amber-ink); font-weight:600}
+  :root[data-theme="dark"] .wx-2023,:root:not([data-theme="light"]) .wx-2023{color:var(--amber)}
+  .wx-2023-note{font-size:12.5px; line-height:1.55; color:var(--ink-soft); margin:14px 0 0; padding:12px 14px; background:var(--amber-soft); border-radius:9px}
+  .wx-2023-note b{color:var(--ink)}
 
   /* ---------- read note + footer ---------- */
   .note{background:var(--card); border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:10px; padding:16px 18px; margin-top:26px; font-size:13.5px; color:var(--ink-soft); line-height:1.6}
@@ -492,6 +496,14 @@ const WX = [
   {lat:40.45317,lon:-106.74669,em:3156,exp:true},  // Mt Werner BACK
   {lat:40.45969,lon:-106.79994,em:2177,exp:false}  // Finish
 ];
+/* 2023 ACTUAL weather (elevation-correct, Open-Meteo archive) at each aid station Shannon reached,
+   at her real 2023 arrival time. Indices 0–10 (she DNF'd at Olympian Hall BACK, mile 64). f=feels-like °F. */
+const HIST_WX = {
+  0:{t:45,f:42,w:1,g:6,c:1},   1:{t:44,f:39,w:2,g:11,c:2},  2:{t:62,f:61,w:2,g:11,c:51},
+  3:{t:52,f:47,w:7,g:20,c:53}, 4:{t:49,f:41,w:8,g:22,c:51}, 5:{t:50,f:43,w:5,g:22,c:0},
+  6:{t:45,f:39,w:5,g:13,c:0},  7:{t:45,f:40,w:5,g:12,c:0},  8:{t:38,f:32,w:4,g:11,c:0},
+  9:{t:35,f:29,w:3,g:10,c:0},  10:{t:40,f:35,w:4,g:10,c:0}
+};
 const RACE_START_ISO = "2026-09-18T09:00:00-06:00";  // Tortoise gun, Fri (MDT)
 const COURSE_HIGH_FT = 10587;
 const WX_TTL = 45*60*1000;                            // 45-min cache
@@ -850,13 +862,16 @@ function renderWeather(){
       <td class="mono wx-feels">${feels}</td>
       <td class="mono">${w.temp!=null?R(w.temp)+'°':'—'}</td>
       <td class="mono">${w.wind!=null?R(w.wind):'—'}<span class="wx-g"> g${w.gust!=null?R(w.gust):'—'}</span></td>
-      <td class="mono">${prec}</td></tr>`; }).join('');
+      <td class="mono">${prec}</td>
+      <td class="mono wx-2023">${HIST_WX[c.i]?wxIcon(HIST_WX[c.i].c)+' '+HIST_WX[c.i].f+'°':'<span class="hist-none">—</span>'}</td></tr>`; }).join('');
+  let c23=null; Object.keys(HIST_WX).forEach(k=>{const f=HIST_WX[k].f; if(c23===null||f<c23.f)c23={f:f,i:+k};});
 
   host.innerHTML=
     `<div class="wx-conf ${conf.cls}">${conf.txt}</div>`+
     `<div class="wx-tiles">${tiles}</div>`+
-    `<div class="tbl-scroll" style="margin-top:16px"><table><thead><tr><th class="l">Aid Station</th><th>Arrive</th><th>Feels</th><th>Temp</th><th>Wind · gust</th><th>Precip</th></tr></thead><tbody>${trs}</tbody></table></div>`+
-    `<p class="wx-attr">Each aid station forecast at its true elevation, mapped to Shannon's live ${fmtHM(goalMinutes())} plan — change the goal or rest and these times shift with it. Weather data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</p>`;
+    `<div class="tbl-scroll" style="margin-top:16px"><table><thead><tr><th class="l">Aid Station</th><th>Arrive</th><th>Feels</th><th>Temp</th><th>Wind · gust</th><th>Precip</th><th>2023 feels</th></tr></thead><tbody>${trs}</tbody></table></div>`+
+    `<p class="wx-2023-note"><b>2023, for scale:</b> the coldest air she actually ran through was <b>${c23.f}°F feels-like at ${STATIONS[c23.i].short}${STATIONS[c23.i].lap?' '+STATIONS[c23.i].lap:''}</b> (mile ${STATIONS[c23.i].mi.toFixed(1)}, deep night) — below freezing to the body, in the Emerald loop where her race unraveled. The town station read 34°F that night, hiding it. The <b>2023 feels</b> column is elevation-correct for each station she reached; she stopped at mile 64, so there's nothing past it.</p>`+
+    `<p class="wx-attr">2026 forecast at each aid station's true elevation, mapped to Shannon's live ${fmtHM(goalMinutes())} plan — change the goal or rest and these times shift. 2023 column is the Open-Meteo historical archive at her actual arrival times. Weather data by <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</p>`;
 }
 
 /* ---------------- Wire up ---------------- */
