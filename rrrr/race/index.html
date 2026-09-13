@@ -154,6 +154,21 @@
   .mand{background:var(--warn-soft); border-radius:9px; padding:11px 13px; margin-top:12px; font-size:12.5px; color:var(--warn); line-height:1.5}
   .mand b{color:var(--ink)}
 
+  /* ---------- Gear & packing list ---------- */
+  .gear-note{font-size:12.5px; color:var(--ink-soft); margin:0 2px 14px; line-height:1.55}
+  .gear-note b{color:var(--ink)}
+  #gear{display:flex; flex-direction:column; gap:10px}
+  .gear-cat{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:2px 15px 12px}
+  .gear-h{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 0 9px; border-bottom:1px solid var(--line); margin-bottom:2px}
+  .gear-h h3{font-family:"Oswald",sans-serif; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink)}
+  .gear-h .sub{display:block; font-size:11px; letter-spacing:.02em; color:var(--ink-faint); text-transform:none; font-weight:400; margin-top:1px}
+  .gear-count{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; color:var(--ink-faint); background:var(--paper-2); border:1px solid var(--line); border-radius:999px; padding:3px 11px; white-space:nowrap}
+  .gear-count.done{color:#fff; background:var(--good); border-color:transparent}
+  .gear-cat .cl label{border-bottom:1px solid var(--line)}
+  .gear-cat .cl label:last-child{border-bottom:none}
+  .gear-cat .cl .det{display:block; font-size:12px; color:var(--ink-faint); margin-top:2px; line-height:1.45}
+  .gear-reset{margin:14px 2px 0; background:none; border:none; color:var(--dusk); font-size:12.5px; cursor:pointer; text-decoration:underline; font-family:"Libre Franklin",sans-serif; padding:0}
+
   footer{margin-top:34px; font-size:12px; color:var(--ink-faint); line-height:1.6}
   .tmpl-note{margin-top:22px; background:var(--dusk-soft); border-radius:11px; padding:14px 16px; font-size:12.5px; color:var(--ink-soft); line-height:1.6}
   .tmpl-note b{color:var(--ink)}
@@ -218,6 +233,11 @@
     <span><span class="dotc" style="background:var(--line-strong)"></span>Self-supported</span>
   </div>
   <div id="stations"></div>
+
+  <div class="sec"><h2>Gear &amp; Packing List</h2><span class="hint">Master checklist · tap to pack it</span></div>
+  <div class="gear-note">Shannon's full kit for the weekend, grouped the way you sent it. <b>Your progress saves on this device</b>, so you can pack over a few days and pick up where you left off.</div>
+  <div id="gear"></div>
+  <button class="gear-reset" id="gearReset">↺ Reset packing progress</button>
 
   <div class="tmpl-note">
     <b>This is a reusable template.</b> Each station is a data block (role, ETA window, tasks, checklists) — future races drop in their own aid stations and it re-renders. Sections marked <i>"pending Shannon's input"</i> are placeholders to fill once her nutrition, gear, and drop-bag specifics are confirmed.
@@ -318,6 +338,66 @@ S.forEach(s=>{
   }
   el.innerHTML=top+body;
   host.appendChild(el);
+});
+
+/* ---------------- Gear & packing list ---------------- */
+// items: string, or {t:"name", d:"detail line"}
+const GEAR=[
+  {title:"Running Gear", sub:"Worn & carried by Shannon", items:[
+    "Hydration vest","Flasks ×2 (+2 spare)","Shoes ×3","Socks ×3","Pants ×2","T-shirt ×2","Shorts ×2",
+    "Sleeves","Sunglasses","Cap","Poles","Quiver","Long sleeve (options)","Rain layer","Puffy",
+    "Mittens & glove options","Buff ×2","Emergency first aid","Underwear ×3","Sports bra ×3"]},
+  {title:"Crew Gear", items:[
+    "Blister kit",
+    {t:"First aid kit", d:"Tums, Pepto, ibuprofen, Tylenol, sunscreen, chapstick, Leukotape, KT tape, Icy Hot, Squirrel's Nut Butter"},
+    "JetBoil","Coffee mug","Utensil","Sleeping bag","Extra batteries","Phone charging cord","Watch charging cord",
+    "Headlamp charging cord","Power bank","Backup headlamp","Toothbrush","Toothpaste","Floss","Extra underwear",
+    "Extra sports bra",{t:"Emergency blanket", d:"Required gear"},"Wet wipes","Chair","Extra surprise food","Portable change tent"]},
+  {title:"Runner Food", items:[
+    "Neversecond gels ×8","Fig bars","Cookies (Chips Ahoy or Oreo)","Cheese & crackers","Applesauce","Pop-Tarts","Tailwind"]},
+  {title:"Crew Food", items:[
+    "Coffee","Mashed potatoes","Cup of noodles","Flour tortillas","Cheese","Hummus","Pickles","Coke","Ginger ale","Water to boil","Electrolytes"]},
+  {title:"Drop Bag Gear", sub:"Summit Lake, placed pre-race", items:[
+    "Dry bag","Headlamp","Waist light","Extra batteries","Food","Tailwind","Extra socks","Long sleeve","Buff","Extra clothing"]}
+];
+
+const GKEY='rrr_gear_v1';
+function loadGearState(){ try{return JSON.parse(localStorage.getItem(GKEY)||'{}')||{};}catch(e){return {};} }
+function saveGearState(st){ try{localStorage.setItem(GKEY,JSON.stringify(st));}catch(e){} }
+let gearState=loadGearState();
+
+const gearHost=document.getElementById('gear');
+GEAR.forEach((cat,ci)=>{
+  const card=document.createElement('div'); card.className='gear-cat';
+  let labels='';
+  cat.items.forEach((it,ii)=>{
+    const key='g'+ci+'-'+ii;
+    const name=typeof it==='string'?it:it.t;
+    const det=(typeof it==='object'&&it.d)?`<span class="det">${it.d}</span>`:'';
+    const on=gearState[key]?' checked':'';
+    labels+=`<label><input type="checkbox" data-k="${key}"${on}><span>${name}${det}</span></label>`;
+  });
+  card.innerHTML=`<div class="gear-h"><h3>${cat.title}${cat.sub?'<span class="sub">'+cat.sub+'</span>':''}</h3><span class="gear-count" data-ci="${ci}"></span></div><div class="cl">${labels}</div>`;
+  gearHost.appendChild(card);
+});
+function updateCount(ci){
+  const card=gearHost.children[ci];
+  const boxes=[...card.querySelectorAll('input')], done=boxes.filter(b=>b.checked).length;
+  const badge=card.querySelector('.gear-count');
+  badge.textContent=done+'/'+boxes.length+' packed';
+  badge.classList.toggle('done', done===boxes.length && boxes.length>0);
+}
+GEAR.forEach((_,ci)=>updateCount(ci));
+gearHost.addEventListener('change',e=>{
+  const b=e.target.closest('input'); if(!b) return;
+  gearState[b.dataset.k]=b.checked; if(!b.checked) delete gearState[b.dataset.k];
+  saveGearState(gearState);
+  updateCount([...gearHost.children].indexOf(b.closest('.gear-cat')));
+});
+document.getElementById('gearReset').addEventListener('click',()=>{
+  gearState={}; saveGearState(gearState);
+  gearHost.querySelectorAll('input').forEach(b=>b.checked=false);
+  GEAR.forEach((_,ci)=>updateCount(ci));
 });
 </script>
 
