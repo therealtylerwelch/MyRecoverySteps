@@ -115,13 +115,13 @@
   .ctl-note{flex:1 1 200px; min-width:180px; font-size:12.5px; color:var(--ink-faint); line-height:1.45}
   .btn-line{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap}
   /* ---------- Scenario switcher / compare bar ---------- */
-  .scen-bar{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px}
+  .scen-bar{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:12px}
   .scen{text-align:left; cursor:pointer; background:var(--card); border:1.5px solid var(--line); border-radius:var(--radius); padding:13px 15px; font-family:inherit; color:var(--ink); box-shadow:var(--shadow); transition:.14s}
   .scen:hover{border-color:var(--line-strong)}
   .scen.active{border-color:var(--amber); box-shadow:0 0 0 2px color-mix(in srgb,var(--amber) 34%,transparent), var(--shadow)}
   .scen-h{display:flex; align-items:center; gap:8px}
   .scen-k{font-family:"Oswald",sans-serif; font-weight:700; font-size:14px; width:22px; height:22px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; color:#fff; background:var(--ink-faint)}
-  .scen-A .scen-k{background:var(--good)} .scen-B .scen-k{background:var(--warn)} .scen-C .scen-k{background:var(--danger)}
+  .scen-A .scen-k{background:var(--dusk)} .scen-B .scen-k{background:var(--good)} .scen-C .scen-k{background:var(--warn)} .scen-D .scen-k{background:var(--danger)}
   .scen-nm{font-family:"Oswald",sans-serif; font-weight:600; font-size:16px; letter-spacing:.01em}
   .scen-sub{font-size:11px; color:var(--ink-faint); margin:3px 0 9px}
   .scen-fin{font-family:"Oswald",sans-serif; margin-bottom:8px; line-height:1}
@@ -129,7 +129,8 @@
   .scen-row{display:flex; justify-content:space-between; align-items:baseline; font-size:11.5px; color:var(--ink-soft); padding:3px 0; border-top:1px solid var(--line)}
   .scen-row b{font-family:"IBM Plex Mono",monospace; font-size:12px; font-variant-numeric:tabular-nums}
   .scen-row b.g{color:var(--good)} .scen-row b.w{color:var(--warn)} .scen-row b.d{color:var(--danger)}
-  @media(max-width:640px){.scen-bar{grid-template-columns:1fr}}
+  @media(max-width:760px){.scen-bar{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:440px){.scen-bar{grid-template-columns:1fr}}
 
   /* ---------- Summary tiles ---------- */
   .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; margin-top:22px}
@@ -350,7 +351,7 @@
       <input id="start" type="time" value="09:00">
     </div>
     <div class="ctl-note">
-      Editing <b id="editing-name">Plan A · Green Day</b>. Change its goal, fade, or any <b>Rest</b> value in the table below and the whole plan — arrivals, weather, and cutoff cushions — refactors. <b>B</b> and <b>C</b> are auto-seeded starting points (2023 fade · cutoff-survival) you can edit freely.
+      Editing <b id="editing-name">Plan B · Green Day</b>. Change its goal, fade, or any <b>Rest</b> value in the table below and the whole plan — arrivals, weather, and cutoff cushions — refactors. Four plans, fastest to safest: <b>A Dream</b> (30:00) · <b>B Green</b> (32:00, the goal) · <b>C Grind</b> (34:30) · <b>D Survival</b> (35:30). Every plan runs the fastest plan's early pace and fades more the slower it is; all are auto-seeded and fully editable.
       <div class="btn-line">
         <button class="btn solid" onclick="window.print()">⎙ Print / Save PDF</button>
         <a class="btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Pocket card</a>
@@ -526,11 +527,12 @@ const SUNSET_SAT = 34*60+5;    // ~7:05 PM Sat
    Fade presets: Fresh 1.2 · Moderate 1.6 · Heavy 2.4. */
 const seedRest = mult => DEFAULT_REST.map(r=>Math.round(r*mult));
 const state = {
-  activeKey: 'A',
+  activeKey: 'B',                                        // opens on her 32:00 goal; A is the faster dream plan
   scenarios: {
-    A: {name:'Green Day',  sub:'Everything goes right',        goalMin:1920, expo:1.6, restMult:1.00, rest:seedRest(1.00)},
-    B: {name:'The Grind',  sub:'2023 fade, carried to finish', goalMin:2070, expo:1.6, restMult:1.30, rest:seedRest(1.30)},
-    C: {name:'Survival',   sub:'Just beat the 36-hr cutoff',   goalMin:2130, expo:2.4, restMult:1.50, rest:seedRest(1.50)}
+    A: {name:'Dream Day',  sub:'Best case — everything clicks', goalMin:1800, expo:1.6, restMult:0.85, rest:seedRest(0.85)},
+    B: {name:'Green Day',  sub:'Everything goes right',         goalMin:1920, expo:1.6, restMult:1.00, rest:seedRest(1.00)},
+    C: {name:'The Grind',  sub:'2023 fade, carried to finish',  goalMin:2070, expo:1.6, restMult:1.30, rest:seedRest(1.30)},
+    D: {name:'Survival',   sub:'Just beat the 36-hr cutoff',    goalMin:2130, expo:2.4, restMult:1.50, rest:seedRest(1.50)}
   }
 };
 const AS = () => state.scenarios[state.activeKey];      // active scenario
@@ -582,15 +584,17 @@ function fmtClock(minsFromStart, startMin){
 }
 function isNight(el){ return (el>=SUNSET_FRI && el<SUNRISE_SAT) || (el>=SUNSET_SAT); }
 
-/* ---------------- Core compute — anchored A/B/C model ----------------
-   Plan A sets the global base pace: paceScale = (A.goal − A.rest) / WEIGHT_SUM.
-   Every plan's leg = A's base leg + its share of the EXTRA time its slower goal needs,
-   distributed by legMin·(mi/MI_MAX)^expo so the extra lands late (front never speeds up).
-   Finish lands exactly on that plan's goal; extra rest trades slow miles for aid-station time. */
+/* ---------------- Core compute — anchored A/B/C/D model ----------------
+   The FASTEST plan sets the global base pace: paceScale = (goal − rest) / WEIGHT_SUM.
+   Every plan's leg = that base leg + its share of the EXTRA time its slower goal needs,
+   distributed by legMin·(mi/MI_MAX)^expo so the extra lands late (front never speeds up —
+   a slower plan holds the same early pace and fades more). Finish lands exactly on that
+   plan's goal; extra rest trades slow miles for aid-station time. */
 function baseAnchor(){
-  const A = state.scenarios.A;
-  const restA = A.rest.reduce((a,b)=>a+b,0);
-  const scale = (A.goalMin - restA) / WEIGHT_SUM;        // A's moving pace, shared by all plans
+  let f=null;                                            // fastest plan = the one with the lowest goal
+  for(const k in state.scenarios){ const s=state.scenarios[k]; if(!f||s.goalMin<f.goalMin) f=s; }
+  const restF = f.rest.reduce((a,b)=>a+b,0);
+  const scale = (f.goalMin - restF) / WEIGHT_SUM;        // fastest plan's moving pace, shared by all
   const baseLeg = STATIONS.map(s => s.legMin==null ? 0 : s.legMin*scale);
   return {scale, baseLeg, baseMoving: baseLeg.reduce((a,b)=>a+b,0)};
 }
@@ -952,7 +956,7 @@ function renderWeather(){
 }
 
 /* ---------------- Scenario bar + controls wiring ---------------- */
-const SCEN_KEYS=['A','B','C'];
+const SCEN_KEYS=['A','B','C','D'];
 function renderScenarioBar(){
   const bar=document.getElementById('scenBar'); if(!bar) return;
   const startMin=startMinutes();
