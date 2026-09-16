@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>html{color-scheme:light dark}img{max-width:100%}[hidden]{display:none!important}</style>
+<title>RRR Fuel Tracker</title>
+<meta name="description" content="Live fueling tracker for Shannon's Run Rabbit Run 100 — tap what she actually eats each section, log aid-station extras, watch carbs vs target.">
+<style>
+@font-face{font-family:"Oswald";font-style:normal;font-weight:200 700;font-display:swap;src:url("/rrrr/fonts/oswald-latin-wght-normal.woff2") format("woff2")}
+@font-face{font-family:"Libre Franklin";font-style:normal;font-weight:100 900;font-display:swap;src:url("/rrrr/fonts/libre-franklin-latin-wght-normal.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:400;font-display:swap;src:url("/rrrr/fonts/ibm-plex-mono-latin-400-normal.woff2") format("woff2")}
+@font-face{font-family:"IBM Plex Mono";font-style:normal;font-weight:600;font-display:swap;src:url("/rrrr/fonts/ibm-plex-mono-latin-600-normal.woff2") format("woff2")}
+</style>
+<style>
+  :root{
+    --paper:#F0F3EE; --paper-2:#FBFCFA; --card:#FFFFFF;
+    --ink:#1B231E; --ink-soft:#4C574F; --ink-faint:#7A857C;
+    --line:#D9DFD6; --line-strong:#C3CBBF;
+    --pine:#1E3A2D; --pine-ink:#EAF1E7; --pine-ink-soft:#A9C0AE;
+    --amber:#CF7C22; --amber-ink:#8A4E10; --amber-soft:#F4E6D1;
+    --dusk:#3C5A86; --dusk-soft:#DEE6F1;
+    --good:#2F7D5B; --good-soft:#DCEEE4;
+    --warn:#B57A16; --warn-soft:#F6E9CF;
+    --danger:#B8412F; --danger-soft:#F4DCD6;
+    --shadow:0 1px 2px rgba(24,40,30,.06),0 6px 18px rgba(24,40,30,.05);
+    --radius:14px;
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --paper:#121713; --paper-2:#1A211B; --card:#1D251F;
+    --ink:#E8EEE6; --ink-soft:#A2AEA4; --ink-faint:#7E8A80;
+    --line:#2B342C; --line-strong:#3A453B;
+    --pine:#0E1913; --pine-ink:#E7F0E6; --pine-ink-soft:#8FAB95;
+    --amber:#E4A250; --amber-ink:#F0C489; --amber-soft:#3A2C18;
+    --dusk:#86A5D4; --dusk-soft:#212F45;
+    --good:#5CB088; --good-soft:#183527;
+    --warn:#D9A64A; --warn-soft:#352a13;
+    --danger:#E0705C; --danger-soft:#3a1f19;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.28);
+  }}
+  :root[data-theme="dark"]{
+    --paper:#121713; --paper-2:#1A211B; --card:#1D251F;
+    --ink:#E8EEE6; --ink-soft:#A2AEA4; --ink-faint:#7E8A80;
+    --line:#2B342C; --line-strong:#3A453B;
+    --pine:#0E1913; --pine-ink:#E7F0E6; --pine-ink-soft:#8FAB95;
+    --amber:#E4A250; --amber-ink:#F0C489; --amber-soft:#3A2C18;
+    --dusk:#86A5D4; --dusk-soft:#212F45;
+    --good:#5CB088; --good-soft:#183527;
+    --warn:#D9A64A; --warn-soft:#352a13;
+    --danger:#E0705C; --danger-soft:#3a1f19;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.28);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--paper); color:var(--ink); font-family:"Libre Franklin",system-ui,-apple-system,Segoe UI,sans-serif; line-height:1.5; margin:0; -webkit-font-smoothing:antialiased}
+  .mono{font-family:"IBM Plex Mono",ui-monospace,Menlo,monospace; font-variant-numeric:tabular-nums}
+  h1,h2,h3{font-family:"Oswald",system-ui,sans-serif; font-weight:600; margin:0}
+
+  .nav{position:sticky; top:0; z-index:30; background:var(--pine); color:var(--pine-ink); box-shadow:var(--shadow)}
+  .nav-in{max-width:820px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px 16px}
+  .brand{font-family:"Oswald",sans-serif; font-weight:600; letter-spacing:.02em; font-size:16px}
+  .brand .yr{font-size:11px; color:var(--pine-ink-soft); font-weight:500; letter-spacing:.12em; margin-left:4px}
+  .tabs{display:flex; gap:5px}
+  .tabs a{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.05em; font-size:12px; color:var(--pine-ink-soft); text-decoration:none; padding:6px 11px; border-radius:999px}
+  .tabs a.active{background:var(--amber); color:#231403}
+  :root[data-theme="dark"] .tabs a.active,:root:not([data-theme="light"]) .tabs a.active{color:#1a130a}
+
+  .wrap{max-width:820px; margin:0 auto; padding:0 14px 90px}
+  .head{padding:18px 2px 6px}
+  .eyebrow{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.14em; font-size:11px; color:var(--ink-faint)}
+  h1{font-size:clamp(24px,6vw,34px); text-transform:uppercase; line-height:1; margin:5px 0 6px}
+  h1 .amb{color:var(--amber)}
+  .lede{color:var(--ink-soft); font-size:13.5px; max-width:62ch}
+
+  /* running total bar */
+  .total{position:sticky; top:47px; z-index:20; background:var(--card); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); padding:11px 14px; margin:12px 0 6px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
+  .total .big{font-family:"Oswald",sans-serif; font-weight:600; font-size:20px}
+  .total .big .u{font-size:12px; color:var(--ink-faint); font-weight:500}
+  .total .lab{font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-faint); font-family:"Oswald",sans-serif}
+  .total .seg{display:flex; flex-direction:column; gap:1px}
+  .total .reset{margin-left:auto; background:none; border:1px solid var(--line-strong); color:var(--ink-soft); font-size:11.5px; border-radius:8px; padding:6px 10px; cursor:pointer; font-family:inherit}
+
+  .sec{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); margin:12px 0; overflow:hidden}
+  .sec.stop{background:var(--paper-2)}
+  .sec-h{padding:12px 15px 10px; border-bottom:1px solid var(--line)}
+  .sec-h .top{display:flex; align-items:baseline; justify-content:space-between; gap:8px}
+  .sec-nm{font-family:"Oswald",sans-serif; font-weight:600; font-size:16px}
+  .sec-tag{font-family:"Oswald",sans-serif; font-size:9.5px; text-transform:uppercase; letter-spacing:.06em; padding:3px 8px; border-radius:999px; white-space:nowrap}
+  .tag-carry{background:var(--good-soft); color:var(--good)}
+  .tag-stop{background:var(--amber-soft); color:var(--amber-ink)}
+  .sec-meta{font-size:11.5px; color:var(--ink-faint); margin-top:2px}
+  .sec-note{font-size:11.5px; color:var(--dusk); background:var(--dusk-soft); border-radius:8px; padding:6px 9px; margin-top:8px; line-height:1.4}
+
+  /* progress */
+  .prog{margin-top:9px}
+  .prog-nums{display:flex; align-items:baseline; justify-content:space-between; font-size:12px; margin-bottom:4px}
+  .prog-nums b{font-family:"IBM Plex Mono",monospace; font-size:15px}
+  .prog-nums .ghr{color:var(--ink-faint); font-size:11.5px}
+  .bar{height:8px; border-radius:99px; background:var(--line); overflow:hidden}
+  .bar span{display:block; height:100%; border-radius:99px; transition:width .18s}
+  .bar span.g{background:var(--good)} .bar span.w{background:var(--warn)} .bar span.d{background:var(--danger)}
+
+  /* items */
+  .items{padding:4px 15px 12px}
+  .it{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line)}
+  .it:last-child{border-bottom:none}
+  .it .nm{flex:1; min-width:0; font-size:14px; line-height:1.3}
+  .it .nm .c{display:block; font-size:11px; color:var(--ink-faint); font-family:"IBM Plex Mono",monospace}
+  .it.hasqty .nm{color:var(--ink)}
+  .step{display:flex; align-items:center; gap:0; flex:0 0 auto}
+  .step button{width:34px; height:34px; border:1px solid var(--line-strong); background:var(--paper-2); color:var(--ink); font-size:19px; line-height:1; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center}
+  .step button:active{background:var(--amber-soft)}
+  .step button.minus{border-radius:9px 0 0 9px}
+  .step button.plus{border-radius:0 9px 9px 0}
+  .step .ct{min-width:44px; text-align:center; font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px; border-top:1px solid var(--line-strong); border-bottom:1px solid var(--line-strong); height:34px; display:flex; align-items:center; justify-content:center; background:var(--card)}
+  .it.done .ct{color:var(--good)}
+  .it.done .nm{color:var(--ink-faint)}
+
+  .aid{padding:10px 15px 14px; background:var(--paper-2); border-top:1px dashed var(--line-strong)}
+  .aid-lab{font-family:"Oswald",sans-serif; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--amber-ink); margin-bottom:7px}
+  :root[data-theme="dark"] .aid-lab,:root:not([data-theme="light"]) .aid-lab{color:var(--amber)}
+  .aid-row{display:flex; align-items:center; gap:8px; flex-wrap:wrap}
+  .aid-chip{border:1px solid var(--line-strong); background:var(--card); color:var(--ink-soft); border-radius:999px; padding:7px 11px; font-size:12.5px; cursor:pointer; font-family:inherit}
+  .aid-chip:active{background:var(--amber-soft)}
+  .aid-val{margin-left:auto; font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:14px}
+  .aid-val .clr{margin-left:8px; color:var(--danger); cursor:pointer; font-size:12px; text-decoration:underline}
+
+  footer{margin-top:26px; font-size:11.5px; color:var(--ink-faint); line-height:1.6}
+  footer b{color:var(--ink-soft)}
+  @media (max-width:560px){ .tabs a{padding:6px 9px; font-size:11px} .brand{font-size:14px} }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+
+<nav class="nav">
+  <div class="nav-in">
+    <div class="brand">🐇 RRRR<span class="yr">2026</span></div>
+    <div class="tabs">
+      <a href="https://myrecoverysteps.com/rrrr/">Plan</a>
+      <a href="https://myrecoverysteps.com/rrrr/race/">Race</a>
+      <a href="#" class="active" aria-current="page">Fuel</a>
+      <a href="https://www.mytrailhead.tax/rrr2026/">Track</a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrap">
+  <header class="head">
+    <div class="eyebrow">Run Rabbit Run 100 · Redemption · Sep 18–19, 2026</div>
+    <h1>Fuel <span class="amb">Tracker</span></h1>
+    <p class="lede">Tap what Shannon <b>actually</b> eats in each section — she won't eat everything, and she'll grab more at aid. Log aid-station extras with the quick buttons. Target is ~60 g/hr early, easing to ~48 on the late climbs. Everything saves on this phone.</p>
+  </header>
+
+  <div class="total">
+    <div class="seg"><span class="lab">Carbs eaten · race total</span><span class="big"><span id="tTotal">0</span><span class="u"> g</span></span></div>
+    <div class="seg"><span class="lab">Protein</span><span class="big"><span id="tPro">0</span><span class="u"> g</span></span></div>
+    <button class="reset" id="resetAll">↺ Reset all</button>
+  </div>
+
+  <div id="secs"></div>
+
+  <footer>
+    <p><b>How it works.</b> Each carry section has a carb target (g/hr × the Green-Day leg time). The bar fills as you log food; it goes green past ~85% of target. Aid-station food is on top of the bags — use the quick-add chips. Times/targets are the 32-hr plan; if she's slower the per-hour number eases, so don't sweat being a little under on the big climbs.</p>
+    <p style="margin-top:6px">Part of the RRRR 2026 hub · Plan · Race · Fuel · Track</p>
+  </footer>
+</div>
+
+<script>
+// unit carbs (g) and protein (g) per item
+const SECTIONS=[
+ {id:'s1',kind:'carry',nm:'Start → Fish Creek',meta:'Mi 0–17.7 · ~3.9 h · Fri afternoon',hours:3.9,ghr:60,
+  note:'Warm & fresh — best absorption of the day. Water top-up at Mt. Werner aid (mi 5.4).',
+  items:[['Neversecond gel',30,0,6],['Hostess Ding Dong',23,1,1],["Nature's fig bar",19,1,1],['Tailwind flask',25,0,2]]},
+ {id:'s2',kind:'carry',nm:'Fish Creek → Summit Lake',meta:'Mi 17.7–30.1 · ~5.6 h · big climb',hours:5.6,ghr:55,
+  note:'Long climb. Long Lake aid (mi 24.3) is mid-leg — make it a real top-up.',
+  items:[['Neversecond gel',30,0,3],["Nature's fig bar",19,1,1],['GoGo applesauce',15,0,2],['Oreo cookie',8,1,5],['Chips Ahoy',10,1,4],['Ritz cheese crackers',22,2,1],['Tailwind flask',25,0,2]]},
+ {id:'s3',kind:'carry',nm:'Summit → Olympian (night)',meta:'Mi 30.1–51.2 · ~5.3 h · dark',hours:5.3,ghr:57,
+  note:'Night leg — appetite drops. Keep nibbling. Dry Lake aid (mi 44.5) mid-leg is load-bearing.',
+  items:[['Neversecond gel',30,0,3],['Pringles (10)',9,1,1],['Pop-Tart (BSC)',34,2,2],["Nature's fig bar",19,1,1],['GoGo applesauce',15,0,1],['Ritz cheese crackers',22,2,1],['Landjaeger stick',0,4.5,2],['Tailwind flask',25,0,2]]},
+ {id:'s4',kind:'stop',nm:'Olympian OUT · hot food',meta:'Mi 51.2 · crew stop · eat 1–2',hours:0,ghr:0,
+  note:'Force a warm carb + a protein before the solo loop. This is the most important stop.',
+  items:[['Cup Noodles',39,6,1],['Idahoan mashed',27,3,1],['Pasta Roni cup',40,8,1],["McD cheeseburger",32,15,2],["Hawaiian + soppressata (2)",28,13,1],['Cheese stick',1,7,2]]},
+ {id:'s5',kind:'carry',nm:'Emerald Loop kit (solo)',meta:'Mi 51.2–63.9 · ~3.5 h · dark, alone',hours:3.5,ghr:50,
+  note:'The 2023 crux. Two Lane of Pain aids (mi 54.4, 58.1) to graze. Keep eating even if not hungry.',
+  items:[['Neversecond gel',30,0,1],['Ritz cheese crackers',22,2,1],["Fig bar pack (2)",38,2,1],['Tailwind flask',25,0,2]]},
+ {id:'s6',kind:'stop',nm:'Olympian BACK · hot food',meta:'Mi 63.9 · crew + Jason joins · eat 1–2',hours:0,ghr:0,
+  note:'Pre-dawn, coldest, through the loop. Reset with warm food before the long climb.',
+  items:[['Cup Noodles',39,6,1],['Idahoan mashed',27,3,1],['Pasta Roni cup',40,8,1],["McD cheeseburger",32,15,2],["Hawaiian + soppressata (2)",28,13,1],['Cheese stick',1,7,2]]},
+ {id:'s7',kind:'carry',nm:'Olympian → Summit (climb)',meta:'Mi 63.9–80.8 · ~7.0 h · Jason pacing',hours:7.0,ghr:48,
+  note:'Longest leg, 3,650 ft up. Jason keeps her eating. Dry Lake BACK aid (mi 70.8) mid-leg.',
+  items:[['Neversecond gel',30,0,4],['Ritz cheese crackers',22,2,2],['GoGo applesauce',15,0,3],["Nature's fig bar",19,1,1],['Landjaeger stick',0,4.5,2],['Tailwind flask',25,0,3]]},
+ {id:'s8',kind:'stop',nm:'Summit BACK · hot food',meta:'Mi 80.8 · Tyler crews · Jason done',hours:0,ghr:0,
+  note:'Last crew stop. If she’s behind pace, she finishes in the dark — send her out with a headlamp.',
+  items:[['Cup Noodles',39,6,1],['Idahoan mashed',27,3,1],['Pasta Roni cup',40,8,1],["McD cheeseburger",32,15,2],["Hawaiian + soppressata (2)",28,13,1],['Cheese stick',1,7,2]]},
+ {id:'s9',kind:'carry',nm:'Summit → Finish',meta:'Mi 80.8–101.8 · ~6.8 h · home stretch',hours:6.8,ghr:48,
+  note:'Daylight, net downhill, finish pulling her in. Long Lake (89) & Werner (95.8) aids to graze.',
+  items:[['Neversecond gel',30,0,2],['Hostess Ding Dong',23,1,1],['Chips Ahoy',10,1,4],['Ritz cheese crackers',22,2,1],['Pop-Tart (BSC)',34,2,2],['Landjaeger stick',0,4.5,2],['Tailwind flask',25,0,3]]},
+];
+const AID_CHIPS=[['+ Gel',25],['+ Coke',20],['+ Banana',25],['+ PB&J ¼',15],['+ Broth/ramen',20],['+ Potato',15],['+ Chews',24],['+10',10]];
+
+const KEY='rrr_fuel_v1';
+function load(){ try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){return {}} }
+function save(){ try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){} }
+let state=load();  // {s1:{counts:{0:2,...}, aid:30}, ...}
+function sec(id){ if(!state[id])state[id]={counts:{},aid:0}; return state[id]; }
+
+function secCarbs(S){ const st=sec(S.id); let c=0,p=0;
+  S.items.forEach((it,i)=>{ const n=st.counts[i]||0; c+=n*it[1]; p+=n*it[2]; });
+  return {carbs:c+(st.aid||0), pro:p, food:c}; }
+
+function barClass(pct){ return pct>=85?'g':(pct>=55?'w':'d'); }
+
+const host=document.getElementById('secs');
+SECTIONS.forEach(S=>{
+  const el=document.createElement('div'); el.className='sec'+(S.kind==='stop'?' stop':''); el.id='sec-'+S.id;
+  const tgt=Math.round(S.ghr*S.hours);
+  let itemsHtml=S.items.map((it,i)=>`
+    <div class="it hasqty" data-i="${i}">
+      <div class="nm">${it[0]} <span class="c">${it[1]}g${it[2]?' · '+it[2]+'g pro':''} · plan ×${it[3]}</span></div>
+      <div class="step">
+        <button class="minus" data-a="-" aria-label="minus">–</button>
+        <span class="ct">0<span style="color:var(--ink-faint);font-weight:400">/${it[3]}</span></span>
+        <button class="plus" data-a="+" aria-label="plus">+</button>
+      </div>
+    </div>`).join('');
+  const aidHtml=`<div class="aid">
+      <div class="aid-lab">Aid-station extras (on top of the bags)</div>
+      <div class="aid-row">
+        ${AID_CHIPS.map(c=>`<button class="aid-chip" data-add="${c[1]}">${c[0]}${c[1]&&!/\d$/.test(c[0])?' '+c[1]+'g':''}</button>`).join('')}
+        <span class="aid-val">+<span class="aidv">0</span> g<span class="clr" data-clr>clear</span></span>
+      </div></div>`;
+  const progHtml = S.kind==='carry' ? `
+    <div class="prog">
+      <div class="prog-nums"><span><b class="cNow">0</b> / ${tgt} g <span class="ghr">(<span class="gNow">0</span> g/hr · target ${S.ghr})</span></span><span class="pNow" style="font-size:11.5px;color:var(--ink-faint)"></span></div>
+      <div class="bar"><span class="d" style="width:0%"></span></div>
+    </div>` : `
+    <div class="prog"><div class="prog-nums"><span><b class="cNow">0</b> g eaten here</span><span class="pNow" style="font-size:11.5px;color:var(--ink-faint)"></span></div></div>`;
+  el.innerHTML=`
+    <div class="sec-h">
+      <div class="top"><span class="sec-nm">${S.nm}</span><span class="sec-tag ${S.kind==='stop'?'tag-stop':'tag-carry'}">${S.kind==='stop'?'Crew stop':'Carry'}</span></div>
+      <div class="sec-meta">${S.meta}</div>
+      ${progHtml}
+      ${S.note?`<div class="sec-note">${S.note}</div>`:''}
+    </div>
+    <div class="items">${itemsHtml}</div>
+    ${aidHtml}`;
+  host.appendChild(el);
+});
+
+function renderSec(S){
+  const st=sec(S.id), el=document.getElementById('sec-'+S.id);
+  S.items.forEach((it,i)=>{ const n=st.counts[i]||0; const itEl=el.querySelectorAll('.it')[i];
+    itEl.querySelector('.ct').innerHTML=n+`<span style="color:var(--ink-faint);font-weight:400">/${it[3]}</span>`;
+    itEl.classList.toggle('done', n>=it[3] && it[3]>0);
+  });
+  el.querySelector('.aidv').textContent=st.aid||0;
+  const {carbs,pro}=secCarbs(S);
+  el.querySelector('.cNow').textContent=carbs;
+  const pEl=el.querySelector('.pNow'); if(pEl) pEl.textContent=pro?('protein '+pro+'g'):'';
+  if(S.kind==='carry'){
+    const tgt=Math.round(S.ghr*S.hours), ghr=S.hours?Math.round(carbs/S.hours):0;
+    el.querySelector('.gNow').textContent=ghr;
+    const pct=tgt?Math.min(100,Math.round(carbs/tgt*100)):0;
+    const bs=el.querySelector('.bar span'); bs.style.width=pct+'%'; bs.className=barClass(tgt?carbs/tgt*100:0);
+  }
+}
+function renderTotals(){
+  let c=0,p=0; SECTIONS.forEach(S=>{const r=secCarbs(S); c+=r.carbs; p+=r.pro;});
+  document.getElementById('tTotal').textContent=c;
+  document.getElementById('tPro').textContent=p;
+}
+function renderAll(){ SECTIONS.forEach(renderSec); renderTotals(); }
+
+host.addEventListener('click',e=>{
+  const secEl=e.target.closest('.sec'); if(!secEl) return;
+  const S=SECTIONS.find(x=>'sec-'+x.id===secEl.id); const st=sec(S.id);
+  const stepBtn=e.target.closest('.step button');
+  if(stepBtn){ const i=+stepBtn.closest('.it').dataset.i; const max=S.items[i][3];
+    let n=st.counts[i]||0; n+= stepBtn.dataset.a==='+'?1:-1; n=Math.max(0,Math.min(max,n)); st.counts[i]=n; save(); renderSec(S); renderTotals(); return; }
+  const chip=e.target.closest('.aid-chip');
+  if(chip){ st.aid=(st.aid||0)+ +chip.dataset.add; save(); renderSec(S); renderTotals(); return; }
+  if(e.target.closest('[data-clr]')){ st.aid=0; save(); renderSec(S); renderTotals(); return; }
+});
+document.getElementById('resetAll').addEventListener('click',()=>{
+  if(confirm('Reset all fuel tracking? This clears everything logged.')){ state={}; save(); renderAll(); }
+});
+renderAll();
+</script>
+
+</body>
+</html>

@@ -86,6 +86,9 @@
   .dl-btn{display:flex; align-items:center; gap:10px; margin-top:14px; text-decoration:none; background:var(--amber); color:#231403; font-family:"Oswald",sans-serif; font-weight:600; font-size:15px; letter-spacing:.02em; padding:12px 16px; border-radius:11px; box-shadow:var(--shadow)}
   .dl-btn span{font-family:"Libre Franklin",sans-serif; font-weight:500; font-size:11px; letter-spacing:0; opacity:.85; margin-left:auto; text-align:right}
   .dl-btn:hover{filter:brightness(1.05)}
+  .fuel-btn{display:flex; align-items:center; gap:10px; margin-top:10px; text-decoration:none; background:var(--pine); color:var(--pine-ink); font-family:"Oswald",sans-serif; font-weight:600; font-size:15px; letter-spacing:.02em; padding:12px 16px; border-radius:11px; box-shadow:var(--shadow)}
+  .fuel-btn span{font-family:"Libre Franklin",sans-serif; font-weight:500; font-size:11px; letter-spacing:0; opacity:.85; margin-left:auto; text-align:right}
+  .fuel-btn:hover{filter:brightness(1.08)}
   :root[data-theme="dark"] .dl-btn,:root:not([data-theme="light"]) .dl-btn{color:#1a130a}
 
   /* ---------- Callout ---------- */
@@ -192,6 +195,7 @@
     <div class="tabs">
       <a href="https://myrecoverysteps.com/rrrr">Plan<span class="sub">Race planner</span></a>
       <a href="#" class="active" aria-current="page">Race<span class="sub">Crew guide</span></a>
+      <a href="https://myrecoverysteps.com/rrrr/fuel/">Fuel<span class="sub">Eat tracker</span></a>
       <a href="https://www.mytrailhead.tax/rrr2026/">Track<span class="sub">Live tracker</span></a>
     </div>
   </div>
@@ -210,6 +214,7 @@
     </div>
 
     <a class="dl-btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Print the pocket card <span>PDF · 3.5×5.5″<br>double-sided · laminate for the field</span></a>
+    <a class="fuel-btn" href="https://myrecoverysteps.com/rrrr/fuel/">🍫 Open the Fuel Tracker <span>tap what she eats · live carbs<br>vs target · saves on your phone</span></a>
 
     <div class="callout">
       <h3>⚠ The one thing that decides this race: protect the night</h3>
@@ -244,7 +249,7 @@
   <button class="gear-reset" id="gearReset">↺ Reset packing progress</button>
 
   <div class="tmpl-note">
-    <b>This is a reusable template.</b> Each station is a data block (role, ETA window, tasks, checklists) — future races drop in their own aid stations and it re-renders. Sections marked <i>"pending Shannon's input"</i> are placeholders to fill once her nutrition, gear, and drop-bag specifics are confirmed.
+    <b>This is a reusable template.</b> Each station is a data block (role, ETA window, tasks, checklists) — future races drop in their own aid stations and it re-renders. Shannon's per-item fueling lives on the <b><a href="https://myrecoverysteps.com/rrrr/fuel/">Fuel tab</a></b> (tap what she actually eats, watch carbs vs target); her full kit is in the <b>Gear list</b> above.
   </div>
 
   <footer>
@@ -261,13 +266,13 @@ const S=[
    eta:["12:50 PM","1:06 PM","1:22 PM"],
    access:"<b>Mobile crew — foot/bike pack-in from Steamboat.</b> No vehicle access; pack in everything you need and pack it out. This is the first crew touch, ~4 hours in.",
    tasks:["<b>Swap bottles</b> — hand off fresh, take her empties","<b>Hand off the food bag</b> — all items she needs for the next leg","Quick blister/hot-spot check — she's got 12 mi to Long Lake"],
-   cls:[{title:"Pack-in kit (crew carries)",items:["Fresh bottles / soft flasks (filled)","Food bag — <i>contents pending Shannon's input</i>","Blister kit (tape, needle, alcohol wipes)","Sunscreen","Extra layer (in case of a weather turn)","Trash bag for her empties"]}]},
+   cls:[{title:"Pack-in kit (crew carries)",items:["Fresh bottles / soft flasks (filled)","Food bag — <i>packed per the Fuel tab</i>","Blister kit (tape, needle, alcohol wipes)","Sunscreen","Extra layer (in case of a weather turn)","Trash bag for her empties"]}]},
   {n:3,name:"Long Lake",lap:"OUT",mi:24.3,t:"4:35 PM Fri",role:"none",access:"No crew. Self-supported; aid station stocked."},
   {n:4,name:"Summit Lake",lap:"OUT",mi:30.1,t:"7:00 PM Fri",role:"drop",
    eta:["6:21 PM","7:00 PM","7:38 PM"],
    access:"<b>Drop bag only — no crew here on the way out.</b> This bag is placed pre-race and is her lifeline into the first night. Tyler collects it on the return (mile 80.8).",
    note:"Sunset is ~7:11 PM — she likely leaves Summit into the dark. This bag must set her up for night + the high country.",
-   cls:[{title:"Summit Lake drop bag",items:["Headlamp + <b>backup light</b> + spare batteries","Warm layer (jacket) + hat + gloves","Buff / neck gaiter","Night nutrition — <i>quantity pending Shannon's input</i>","Caffeine (gels/chews/pills)","Blister + chafe kit (spare)","Dry socks","Hand warmers","Ziploc for trash / swap-outs"]}]},
+   cls:[{title:"Summit Lake drop bag",items:["Headlamp + <b>backup light</b> + spare batteries","Warm layer (jacket) + hat + gloves","Buff / neck gaiter","Night nutrition — <i>packed per the Fuel tab</i>","Caffeine (gels/chews/pills)","Blister + chafe kit (spare)","Dry socks","Hand warmers","Ziploc for trash / swap-outs"]}]},
   {n:5,name:"Billy's Rabbit Hole",lap:"OUT",mi:34.3,t:"8:14 PM Fri",role:"minimal",access:"No crew · minimal aid station. She's self-supported through the high country."},
   {n:6,name:"Dry Lake",lap:"OUT",mi:44.5,t:"10:33 PM Fri",role:"none",access:"No crew support planned. Aid station stocked; pacers could be picked up here but per the plan Jason joins at Olympian."},
   {n:7,name:"Olympian Hall",lap:"OUT",mi:51.2,t:"12:24 AM Sat",role:"crew",
@@ -276,8 +281,8 @@ const S=[
    tasks:["Full food + fluid resupply — she's on her own for ~13 mi / 3+ hrs","<b>Warm her before she's cold</b> — jacket on, hat + gloves, dry layers now","<b>Mandatory gear check</b> before she leaves","Caffeine for the 2–4 AM low, in-hand for the loop","Update her on the race plan / cushion vs cutoffs","Gut check: is she eating and warm enough to go alone? If not, fix it here"],
    mand:true,
    cls:[
-    {title:"Food & fluids",items:["Hot food / broth / real calories","Refill bottles + hand off next leg's nutrition","Caffeine top-up for the 2–4 AM low","<i>Specific menu pending Shannon's input</i>"]},
-    {title:"Clothing & gear",items:["Warm jacket on / packed","Hat + gloves","Dry socks","Headlamp battery swap + confirm backup light","<i>Additional items pending Shannon's input</i>"]}]},
+    {title:"Food & fluids",items:["Hot food / broth / real calories","Refill bottles + hand off next leg's nutrition","Caffeine top-up for the 2–4 AM low","<i>Full per-item menu on the Fuel tab</i>"]},
+    {title:"Clothing & gear",items:["Warm jacket on / packed","Hat + gloves","Dry socks","Headlamp battery swap + confirm backup light","<i>Full kit on the Gear list below</i>"]}]},
   {n:8,name:"Lane of Pain",lap:"EMER",mi:54.4,t:"1:25 AM Sat",role:"minimal",access:"No crew · minimal aid. Emerald Mountain loop — the 2023 crux. If Jason is aboard, this is where he earns it."},
   {n:9,name:"Lane of Pain",lap:"EMER",mi:58.1,t:"2:21 AM Sat",role:"minimal",access:"No crew · minimal aid. Coldest point of the 2023 run (29°F feels-like). Keep moving, keep fueling."},
   {n:10,name:"Olympian Hall",lap:"BACK",mi:63.9,t:"3:50 AM Sat",role:"crewpacer",
@@ -287,8 +292,8 @@ const S=[
    tasks:["Full food + fluid resupply — she's been out ~15 hrs","Warm, dry layers — pre-dawn is the coldest stretch ahead","<b>Mandatory gear check</b> before she leaves","Brief Jason: pace plan, her state, cutoffs","Update race plan / cushion","Feet + blister care"],
    mand:true,
    cls:[
-    {title:"Food & fluids",items:["Hot food / broth","Refill bottles + next-leg nutrition","Caffeine — the pre-dawn low is coming","<i>Specific menu pending Shannon's input</i>"]},
-    {title:"Clothing & gear (pre-dawn = coldest)",items:["Warmest layer — she climbs 3,300 ft to 10,000 ft into the dawn low","Hat + gloves (fresh/dry)","Dry socks","Confirm both lights + batteries","<i>Additional items pending Shannon's input</i>"]},
+    {title:"Food & fluids",items:["Hot food / broth","Refill bottles + next-leg nutrition","Caffeine — the pre-dawn low is coming","<i>Full per-item menu on the Fuel tab</i>"]},
+    {title:"Clothing & gear (pre-dawn = coldest)",items:["Warmest layer — she climbs 3,300 ft to 10,000 ft into the dawn low","Hat + gloves (fresh/dry)","Dry socks","Confirm both lights + batteries","<i>Full kit on the Gear list below</i>"]},
     {title:"Pacer handoff — Jason",items:["Jason's own layers, light, food, water","Pace plan + cutoff cushion briefed","Phone / comms with crew","Any meds / notes from Shannon"]}]},
   {n:11,name:"Dry Lake",lap:"BACK",mi:70.8,t:"6:35 AM Sat",role:"none",access:"No crew support planned. Jason is pacing; aid station stocked. Last staffed stop before the big climb to Summit."},
   {n:12,name:"Billy's Rabbit Hole",lap:"BACK",mi:76.6,t:"8:49 AM Sat",role:"minimal",access:"No crew · minimal aid. High country, day 2. Jason pacing."},
@@ -299,8 +304,8 @@ const S=[
    pacer:"<b>Jason completes his pacing duties here.</b> Tyler picks up Jason and takes over crew.",
    tasks:["Full food + fluid resupply for the final ~21 mi","<b>Tyler collects the Summit Lake drop bag</b> (placed on the 1st pass)","Shed night layers → day layers; sunscreen back on","Assess her feet / hydration for the long descent home","Update plan: time in hand to the finish"],
    cls:[
-    {title:"Food & fluids",items:["Real food + refill for the run home","Electrolytes — midday exposure ahead","<i>Specific menu pending Shannon's input</i>"]},
-    {title:"Clothing & gear",items:["Day layers / sun protection","Sunscreen, hat, sunglasses","Retrieve &amp; pack out the 1st-pass drop bag","<i>Additional items pending Shannon's input</i>"]}]},
+    {title:"Food & fluids",items:["Real food + refill for the run home","Electrolytes — midday exposure ahead","<i>Full per-item menu on the Fuel tab</i>"]},
+    {title:"Clothing & gear",items:["Day layers / sun protection","Sunscreen, hat, sunglasses","Retrieve &amp; pack out the 1st-pass drop bag","<i>Full kit on the Gear list below</i>"]}]},
   {n:14,name:"Long Lake",lap:"BACK",mi:89.0,t:"1:17 PM Sat",role:"none",access:"No crew. Self-supported. On the way home."},
   {n:15,name:"Mt. Werner",lap:"BACK",mi:95.8,t:"3:41 PM Sat",role:"none",access:"No crew. Last aid before the descent to the finish — it's all downhill from here."},
   {n:16,name:"FINISH",lap:"",mi:101.8,t:"5:00 PM Sat",role:"finish",access:"<b>Base of the ski area.</b> Crew + anyone may run her in the last stretch from the top of the gondola. Bring the buckle-worthy welcome. 🐇"}
