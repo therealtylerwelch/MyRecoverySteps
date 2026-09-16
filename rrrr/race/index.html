@@ -184,6 +184,31 @@
   }
   @media print{.nav{position:static} .st{break-inside:avoid} .callout{break-inside:avoid}}
   @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* ---------- Now / Next race clock + leave-by ---------- */
+  .nownext{margin-top:14px; background:var(--card); border:1px solid var(--line); border-left:4px solid var(--amber); border-radius:12px; box-shadow:var(--shadow); overflow:hidden}
+  .nn-head{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; padding:10px 14px 9px; border-bottom:1px solid var(--line)}
+  .nn-title{font-family:"Oswald",sans-serif; font-weight:600; font-size:14px; text-transform:uppercase; letter-spacing:.04em}
+  .nn-plan{font-size:11px; color:var(--ink-faint); display:flex; align-items:center; gap:7px}
+  .nn-pills{display:flex; gap:4px}
+  .nn-pills button{font-family:"Oswald",sans-serif; font-size:12px; font-weight:600; border:1px solid var(--line-strong); background:var(--paper-2); color:var(--ink-soft); border-radius:999px; width:26px; height:26px; cursor:pointer; padding:0}
+  .nn-pills button.on{background:var(--amber); color:#231403; border-color:transparent}
+  :root[data-theme="dark"] .nn-pills button.on,:root:not([data-theme="light"]) .nn-pills button.on{color:#1a130a}
+  .nn-body{padding:11px 14px 13px}
+  .nn-now{font-size:11px; color:var(--ink-faint); font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.06em}
+  .nn-pos{font-size:16px; margin:3px 0 4px; line-height:1.35}
+  .nn-pos b{font-family:"Oswald",sans-serif; font-weight:600}
+  .nn-next{font-size:13.5px; color:var(--ink-soft); line-height:1.4}
+  .nn-next b{color:var(--ink); font-family:"Oswald",sans-serif; font-weight:600}
+  .nn-next .eta{font-family:"IBM Plex Mono",monospace; color:var(--amber-ink); font-weight:600}
+  :root[data-theme="dark"] .nn-next .eta,:root:not([data-theme="light"]) .nn-next .eta{color:var(--amber)}
+  .nn-dl{margin-top:10px; padding-top:9px; border-top:1px dashed var(--line-strong); display:flex; flex-direction:column; gap:7px}
+  .nn-dl .d{display:flex; align-items:baseline; gap:8px; font-size:13px; color:var(--ink-soft)}
+  .nn-dl .d .lb{font-family:"IBM Plex Mono",monospace; font-weight:600; margin-left:auto; white-space:nowrap; color:var(--ink)}
+  .nn-dl .d.urgent{color:var(--danger)} .nn-dl .d.urgent .lb{color:var(--danger)}
+  .nn-dl .d.done{color:var(--ink-faint)} .nn-dl .d.done .lb{color:var(--good)}
+  .nn-msg{font-size:14px; color:var(--ink-soft); line-height:1.45}
+  .nn-msg b{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -212,6 +237,14 @@
       <span class="who"><span class="role">Pacer</span> <b>Jason Welch</b></span>
       <span class="who"><span class="role">Goal</span> <b class="mono">32:00</b></span>
     </div>
+
+    <section class="nownext" id="nowNext" aria-label="Race clock and next crew action">
+      <div class="nn-head">
+        <span class="nn-title">⏱ Race Clock — Now &amp; Next</span>
+        <span class="nn-plan">Tracking: <span class="nn-pills" id="nnPills"></span></span>
+      </div>
+      <div class="nn-body" id="nnBody"></div>
+    </section>
 
     <a class="dl-btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Print the pocket card <span>PDF · 3.5×5.5″<br>double-sided · laminate for the field</span></a>
     <a class="fuel-btn" href="https://myrecoverysteps.com/rrrr/fuel/">🍫 Open the Fuel Tracker <span>tap what she eats · live carbs<br>vs target · saves on your phone</span></a>
@@ -242,6 +275,7 @@
     <span><span class="dotc" style="background:var(--line-strong)"></span>Self-supported</span>
   </div>
   <div id="stations"></div>
+  <button class="gear-reset" id="checkReset">↺ Reset station check-offs</button>
 
   <div class="sec"><h2>Gear &amp; Packing List</h2><span class="hint">Master checklist · tap to pack it</span></div>
   <div class="gear-note">Shannon's full kit for the weekend, grouped the way you sent it. <b>Your progress saves on this device</b>, so you can pack over a few days and pick up where you left off.</div>
@@ -351,6 +385,21 @@ S.forEach(s=>{
   host.appendChild(el);
 });
 
+/* ---------------- Persist station check-offs (survive reloads all race long) ---------------- */
+(function(){
+  const CK='rrr_crew_checks_v1';
+  let saved={}; try{saved=JSON.parse(localStorage.getItem(CK)||'{}')||{}}catch(e){}
+  const boxes=document.querySelectorAll('#stations .cl input[type=checkbox]');
+  boxes.forEach((b,i)=>{ b.dataset.k='c'+i; if(saved['c'+i]) b.checked=true; });
+  host.addEventListener('change',e=>{
+    const b=e.target.closest('input[type=checkbox]'); if(!b) return;
+    if(b.checked) saved[b.dataset.k]=1; else delete saved[b.dataset.k];
+    try{localStorage.setItem(CK,JSON.stringify(saved));}catch(e){}
+  });
+  const rb=document.getElementById('checkReset');
+  if(rb) rb.addEventListener('click',()=>{ if(confirm('Clear all station check-offs?')){ saved={}; try{localStorage.removeItem(CK);}catch(e){} boxes.forEach(b=>b.checked=false); }});
+})();
+
 /* ---------------- Gear & packing list ---------------- */
 // items: string, or {t:"name", d:"detail line"}
 const GEAR=[
@@ -410,6 +459,59 @@ document.getElementById('gearReset').addEventListener('click',()=>{
   gearHost.querySelectorAll('input').forEach(b=>b.checked=false);
   GEAR.forEach((_,ci)=>updateCount(ci));
 });
+</script>
+
+<script>
+/* ---------------- Now / Next race clock + leave-by deadlines ----------------
+   Runs off the wall clock + the plan (no GPS). Crew taps the plan Shannon is
+   actually running (A Dream / B Green / C Grind / D Survival) and every time updates.
+   Test any moment with ?now=2026-09-19T03:10:00-06:00  (&plan=C optional). */
+(function(){
+  const ST=[["Start",0,false],["Mt. Werner",5.4,false],["Fish Creek",17.7,true],["Long Lake",24.3,false],["Summit Lake",30.1,false],["Billy's",34.3,false],["Dry Lake",44.5,false],["Olympian",51.2,true],["Lane of Pain",54.4,false],["Lane of Pain",58.1,false],["Olympian BACK",63.9,true],["Dry Lake BACK",70.8,false],["Billy's BACK",76.6,false],["Summit BACK",80.8,true],["Long Lake BACK",89,false],["Mt. Werner BACK",95.8,false],["FINISH",101.8,true]];
+  const EL={"A":[0,84,231,427,563,632,763,866,922,975,1059,1213,1339,1440,1590,1726,1800],"B":[0,85,233,433,571,643,779,888,949,1005,1095,1262,1401,1512,1681,1835,1920],"C":[0,85,235,440,582,659,801,918,986,1046,1142,1327,1480,1604,1795,1971,2070],"D":[0,84,233,435,577,652,793,910,979,1040,1138,1328,1488,1619,1825,2019,2130]};
+  const NAMES={A:'Dream 30:00',B:'Green 32:00',C:'Grind 34:30',D:'Survival 35:30'};
+  const CREWLABEL={2:'Fish Creek (pack-in)',7:'Olympian OUT (mi 51)',10:'Olympian BACK (mi 64)',13:'Summit BACK (mi 81)',16:'FINISH'};
+  const DEADLINES=[{sta:2,buffer:90,icon:'🥾',label:'Fish Creek pack-in (foot/bike)'},{sta:13,buffer:165,icon:'🚗',label:'Drive to Summit (2-hr back road)'}];
+  const START=new Date('2026-09-18T09:00:00-06:00');
+  const params=new URLSearchParams(location.search);
+  const nowDate=()=>{ const o=params.get('now'); return o?new Date(o):new Date(); };
+  let plan='B';
+  try{ const s=localStorage.getItem('rrr_nn_plan'); if(s&&EL[s]) plan=s; }catch(e){}
+  if(params.get('plan')&&EL[params.get('plan')]) plan=params.get('plan');
+  const dtf=o=>new Intl.DateTimeFormat('en-US',Object.assign({timeZone:'America/Denver'},o));
+  const clockOf=m=>{ const d=new Date(START.getTime()+m*60000); return dtf({weekday:'short'}).format(d)+' '+dtf({hour:'numeric',minute:'2-digit'}).format(d); };
+  const hm=m=>{ m=Math.round(m); const s=m<0?'-':''; m=Math.abs(m); const h=Math.floor(m/60),mm=m%60; return s+(h?h+'h ':'')+mm+'m'; };
+
+  const pillWrap=document.getElementById('nnPills');
+  if(pillWrap){ pillWrap.innerHTML=['A','B','C','D'].map(k=>`<button data-p="${k}" title="${NAMES[k]}">${k}</button>`).join('');
+    pillWrap.addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b)return; plan=b.dataset.p; try{localStorage.setItem('rrr_nn_plan',plan);}catch(e){} render(); }); }
+
+  function render(){
+    const body=document.getElementById('nnBody'); if(!body) return;
+    const now=nowDate(), elapsed=(now-START)/60000, el=EL[plan];
+    const nowStr=dtf({weekday:'short',hour:'numeric',minute:'2-digit'}).format(now);
+    let html;
+    if(elapsed<0){
+      html=`<div class="nn-now">Now · ${nowStr}</div><div class="nn-msg">Race starts <b>Fri 9:00 AM</b> — this goes live then (in ${hm(-elapsed)}). Tap the plan she's running once she's moving.</div>`;
+    } else if(elapsed>=el[el.length-1]){
+      html=`<div class="nn-now">Now · ${nowStr} · tracking ${NAMES[plan]}</div><div class="nn-msg">Past the ${NAMES[plan]} finish (${clockOf(el[el.length-1])}). 🐇 If she's still out there, tap a slower plan above.</div>`;
+    } else {
+      let k=el.findIndex(e=>e>elapsed); if(k<1)k=1; const prev=k-1;
+      const atSta=(elapsed-el[prev])<8;
+      const pos=atSta?`at <b>${ST[prev][0]}</b>`:`<b>${ST[prev][0]}</b> → <b>${ST[k][0]}</b>`;
+      let j=k; while(j<ST.length&&!ST[j][2]) j++;
+      let nextHtml='';
+      if(j<ST.length){ const mins=el[j]-elapsed; nextHtml=`<div class="nn-next">Next crew stop: <b>${CREWLABEL[j]||ST[j][0]}</b><br>ETA <span class="eta">${clockOf(el[j])}</span> <span style="color:var(--ink-faint)">· in ${hm(mins)}</span></div>`; }
+      const dls=DEADLINES.map(d=>{ const eta=el[d.sta], lb=eta-d.buffer, passed=elapsed>eta, overdue=!passed&&lb<=elapsed, cls=passed?'done':((lb-elapsed)<=90?'urgent':'');
+        const right=passed?'✓ done':(overdue?'GO NOW':'leave by '+clockOf(lb));
+        return `<div class="d ${cls}">${d.icon} <span>${d.label}</span><span class="lb">${right}</span></div>`; }).join('');
+      html=`<div class="nn-now">Now · ${nowStr} · tracking ${NAMES[plan]}</div><div class="nn-pos">Shannon: ${pos}</div>${nextHtml}<div class="nn-dl">${dls}</div>`;
+    }
+    body.innerHTML=html;
+    document.querySelectorAll('#nnPills button').forEach(b=>b.classList.toggle('on',b.dataset.p===plan));
+  }
+  render(); setInterval(render,30000);
+})();
 </script>
 
 </body>
