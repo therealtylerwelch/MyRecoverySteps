@@ -135,6 +135,8 @@
   .eta .pill.target .k{color:var(--pine-ink-soft)}
   .access{font-size:12.5px; color:var(--ink-soft); margin:10px 0; padding:9px 12px; background:var(--paper-2); border-radius:9px; line-height:1.5}
   .access b{color:var(--ink)}
+  .dir-link{display:inline-block; margin-top:8px; background:var(--dusk); color:#fff; font-family:"Oswald",sans-serif; font-weight:600; letter-spacing:.02em; text-decoration:none; padding:8px 13px; border-radius:8px; font-size:13px}
+  .dir-link:hover{filter:brightness(1.06)}
   .tasks{margin:12px 0 0}
   .tasks h4,.cl h4{font-size:11.5px; text-transform:uppercase; letter-spacing:.07em; color:var(--amber-ink); margin:14px 0 6px; padding-bottom:5px; border-bottom:1px solid var(--line)}
   :root[data-theme="dark"] .tasks h4,:root[data-theme="dark"] .cl h4,:root:not([data-theme="light"]) .tasks h4,:root:not([data-theme="light"]) .cl h4{color:var(--amber)}
@@ -218,7 +220,9 @@
     </div>
 
     <div class="rules">
-      <div class="r"><span class="k">CREW ACCESS</span><span>No crew vehicles on Buffalo Pass Rd above Dry Lake. <b>Fish Creek Falls is foot/bike pack-in only</b> — no driving. Summit Lake is carpool/drop-off only.</span></div>
+      <div class="r"><span class="k">CREW ACCESS</span><span><b>No crew vehicles on Buffalo Pass Rd above Dry Lake — the permit depends on it.</b> Fish Creek Falls is foot/bike pack-in only. Dry Lake is drop-off only (no parking). Summit Lake is reachable only by the ~2-hr back route via Hwy 14 — see the Summit stop.</span></div>
+      <div class="r"><span class="k">OLYMPIAN</span><span>Drive in slowly; park only in designated spots, never in front of the gate (emergency access). Crews set up on the grass; runners &amp; pacers only inside. Dogs leashed or in the car.</span></div>
+      <div class="r"><span class="k">FRI NIGHT</span><span>Homecoming football by Spring Creek Trailhead may fill parking. Park at Olympian and walk/jog the ~1.5 mi to meet her at the trailhead through town.</span></div>
       <div class="r"><span class="k">MANDATORY GEAR</span><span>New for 2026 — Shannon <b>may not leave Olympian Hall</b> without: headlamp + backup light, warm jacket, space blanket, raincoat, gloves. Crew verifies this at both Olympian stops.</span></div>
       <div class="r"><span class="k">PACER</span><span>As a Tortoise, Shannon may have one pacer from Olympian (mile 51) to the finish. Jason paces until <b>Summit Lake return (mile 80.8)</b>, where Tyler takes over crew.</span></div>
     </div>
@@ -290,7 +294,8 @@ const S=[
   {n:12,name:"Billy's Rabbit Hole",lap:"BACK",mi:76.6,t:"8:49 AM Sat",role:"minimal",access:"No crew · minimal aid. High country, day 2. Jason pacing."},
   {n:13,name:"Summit Lake",lap:"BACK",mi:80.8,t:"10:37 AM Sat",role:"crew",
    eta:["9:01 AM","10:37 AM","12:12 PM"],
-   access:"<b>Full crew station — Tyler.</b> Carpool/drop-off access only (no driving above Dry Lake). The high point of the course is just past here.",
+   access:"<b>Full crew station — Tyler.</b> The one crew stop you reach by car — but only the long way around. The high point of the course is just past here.",
+   drive:"<b>~2-hr drive from town, the back way.</b> No crew vehicles on Buffalo Pass above Dry Lake, so you can't come up the Steamboat side. Route (manual §16.5): Hwy 40 east ~22 mi → LEFT on Hwy 14 toward Walden ~18.5 mi → Buffalo Pass / CO 24 ~11 mi → CO 24-FR 60 → ~18.2 mi to Summit. Ample parking. <b>Leave town by 6:00 AM, be parked by ~8:00</b> — ahead of her 9:00 AM best case. Gas up first; download offline maps (no cell); don't drive it late &amp; tired.<br><a class=\"dir-link\" href=\"https://www.google.com/maps/dir/Olympian+Hall,+Steamboat+Springs,+CO/Muddy+Pass,+Colorado/40.54174,-106.68400\" target=\"_blank\" rel=\"noopener\">📍 Open directions — via Muddy Pass →</a>",
    pacer:"<b>Jason completes his pacing duties here.</b> Tyler picks up Jason and takes over crew.",
    tasks:["Full food + fluid resupply for the final ~21 mi","<b>Tyler collects the Summit Lake drop bag</b> (placed on the 1st pass)","Shed night layers → day layers; sunscreen back on","Assess her feet / hydration for the long descent home","Update plan: time in hand to the finish"],
    cls:[
@@ -328,6 +333,7 @@ S.forEach(s=>{
     if(s.access) body+=`<div class="access">${s.access}</div>`;
     if(s.note) body+=`<div class="access" style="background:var(--warn-soft);color:var(--warn)">🌙 ${s.note}</div>`;
     if(s.pacer) body+=`<div class="access" style="background:var(--plum-soft);color:var(--plum)">🤝 ${s.pacer}</div>`;
+    if(s.drive) body+=`<div class="access" style="background:var(--dusk-soft);color:var(--dusk)">🚗 ${s.drive}</div>`;
     if(s.tasks){ body+='<div class="tasks"><h4>Crew actions</h4>'; s.tasks.forEach(t=>body+=`<div class="task"><span class="b">▸</span><span>${t}</span></div>`); body+='</div>'; }
     if(s.mand) body+=`<div class="mand"><b>Mandatory gear to leave Olympian:</b> headlamp + backup light · warm jacket · space blanket · raincoat · gloves. Confirm all five.</div>`;
     if(s.cls) s.cls.forEach(c=>{ body+=`<div class="cl"><h4>${c.title}</h4>`; c.items.forEach(it=>body+=`<label><input type="checkbox"><span>${it}</span></label>`); body+='</div>'; });
