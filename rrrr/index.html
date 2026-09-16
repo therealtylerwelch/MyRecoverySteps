@@ -988,8 +988,8 @@ function readGoal(){ const h=parseInt(document.getElementById('gh').value)||0, m
 
 document.getElementById('scenBar').addEventListener('click',e=>{const b=e.target.closest('.scen'); if(b) setActive(b.dataset.k);});
 document.getElementById('fadeCtl').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; AS().expo=parseFloat(b.dataset.e); syncControls(); recompute();});
-['gh','gm'].forEach(id=>document.getElementById(id).addEventListener('input',()=>{ readGoal(); recompute(); }));
-document.getElementById('start').addEventListener('input',recompute);
+['gh','gm'].forEach(id=>['input','change'].forEach(ev=>document.getElementById(id).addEventListener(ev,()=>{ readGoal(); recompute(); })));
+['input','change'].forEach(ev=>document.getElementById('start').addEventListener(ev,recompute));
 document.getElementById('resetRest').addEventListener('click',()=>{ AS().rest=seedRest(AS().restMult); syncControls(); recompute(); });
 
 buildTable();
