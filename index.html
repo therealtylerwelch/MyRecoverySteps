@@ -1012,7 +1012,7 @@
     const WalkTracker = () => {
       const data = {
         year: 2026,
-        updated: 'September 1, 2026',
+        updated: 'September 16, 2026',
         dailyData: [
           { date: 'Jun 3',  distance: 0.33, duration: 713,  elevGain: 10, effort: 1, achievements: 0 },
           { date: 'Jun 4',  distance: 0.33, duration: 644,  elevGain: 20, effort: 1, achievements: 0 },
@@ -1091,7 +1091,20 @@
           { date: 'Aug 27', distance: 0.43, duration: 709,  elevGain: 0,   effort: 1,  achievements: 0 },
           { date: 'Aug 28', distance: 1.75, duration: 2130, elevGain: 295, effort: 8,  achievements: 0, walks: [{ distance: 0.40, duration: 559 }, { distance: 1.36, duration: 1571 }] },
           { date: 'Aug 30', distance: 4.60, duration: 5186, elevGain: 344, effort: 14, achievements: 1, walks: [{ distance: 1.76, duration: 1747 }, { distance: 2.84, duration: 3439 }] },
-          { date: 'Sep 1',  distance: 1.00, duration: 1752, elevGain: 49,  effort: 3,  achievements: 0 }
+          { date: 'Sep 1',  distance: 1.00, duration: 1752, elevGain: 49,  effort: 3,  achievements: 0 },
+          { date: 'Sep 2',  distance: 0.87, duration: 1175, elevGain: 52,  effort: 3,  achievements: 0 },
+          { date: 'Sep 3',  distance: 2.00, duration: 2366, elevGain: 43,  effort: 5,  achievements: 0 },
+          { date: 'Sep 6',  distance: 2.02, duration: 2417, elevGain: 49,  effort: 6,  achievements: 0 },
+          { date: 'Sep 7',  distance: 2.00, duration: 2966, elevGain: 118, effort: 6,  achievements: 0 },
+          { date: 'Sep 8',  distance: 0.43, duration: 772,  elevGain: 30,  effort: 1,  achievements: 0 },
+          { date: 'Sep 9',  distance: 1.00, duration: 1688, elevGain: 66,  effort: 3,  achievements: 0 },
+          { date: 'Sep 10', distance: 0.77, duration: 1736, elevGain: 20,  effort: 3,  achievements: 0 },
+          { date: 'Sep 11', distance: 0.42, duration: 831,  elevGain: 16,  effort: 2,  achievements: 0 },
+          { date: 'Sep 12', distance: 2.54, duration: 2829, elevGain: 200, effort: 8,  achievements: 1 },
+          { date: 'Sep 13', distance: 1.52, duration: 1600, elevGain: 10,  effort: 3,  achievements: 0 },
+          { date: 'Sep 14', distance: 1.09, duration: 1749, elevGain: 23,  effort: 3,  achievements: 0 },
+          { date: 'Sep 15', distance: 4.23, duration: 4718, elevGain: 184, effort: 11, achievements: 0, walks: [{ distance: 2.20, duration: 2375 }, { distance: 2.03, duration: 2343 }] },
+          { date: 'Sep 16', distance: 1.60, duration: 1819, elevGain: 56,  effort: 4,  achievements: 0 }
         ],
         badges: [
           { id: 1, name: 'First Steps',     description: 'Complete your first walk',      unlocked: true, earned: 'Jun 3',  icon: 'footprints' },
@@ -1479,10 +1492,10 @@
             {insightsOpen && (
               <>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '8px' }}>
-                  Strong, steady recovery: <b style={{ color: GOLD_LIGHT }}>107 walks across 78 days</b> for <b style={{ color: GOLD_LIGHT }}>121.69 miles</b> since June 1. Your typical walk has grown from <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> to a <b style={{ color: GOLD_LIGHT }}>5.54 mi</b> peak on August 23, and pace has improved from ~39 to ~21 min/mi — about <b style={{ color: GOLD_LIGHT }}>46% faster</b>. Current records: longest walk <b style={{ color: GOLD_LIGHT }}>5.54 mi — set Aug 23</b>, fastest pace <b style={{ color: GOLD_LIGHT }}>14:01/mi — set Aug 3</b>, 20 days apart.
+                  Strong, steady recovery: <b style={{ color: GOLD_LIGHT }}>121 walks across 91 days</b> for <b style={{ color: GOLD_LIGHT }}>142.18 miles</b> since June 1. Your typical walk has grown from <b style={{ color: GOLD_LIGHT }}>0.33 mi</b> to a <b style={{ color: GOLD_LIGHT }}>5.54 mi</b> peak on August 23, and pace has improved from ~38 to ~20 min/mi — about <b style={{ color: GOLD_LIGHT }}>49% faster</b>. Current records: longest walk <b style={{ color: GOLD_LIGHT }}>5.54 mi — set Aug 23</b>, fastest pace <b style={{ color: GOLD_LIGHT }}>14:01/mi — set Aug 3</b>, 20 days apart.
                 </p>
                 <p style={{ fontSize: 'clamp(12px, 2vw, 14px)', color: BLUE_LIGHT, lineHeight: 1.75, fontWeight: 400, marginTop: '12px' }}>
-                  <b style={{ color: GOLD_LIGHT }}>Your longest streak yet ran 63 days</b> (Jun 27–Aug 28, bridging three well-spaced rest days — Jun 28, Aug 8, and Aug 24 — streaks here allow one rest day per rolling week, because rest is part of recovery), well past the old 40-day mark. It broke when two more rest days landed close together right after: Aug 29 and Aug 31, with only one walk between them — one rest day too many for the bridge rule inside a single week — so the counter reset, and you're three days into a new stretch as of Sep 1. Along the way you settled into a rhythm of a big effort day followed by easy recovery days: Jul 31, Aug 4, and Aug 30 (all Strava-flagged achievements) were each bracketed by shorter outings. Watch the ramp, though — the week of Jul 19–25 ran about 1.8× the week before it, and the week of Aug 16–22 ran about 1.6× the week before it (17.66 vs 10.97 mi), both well above the 1.3× safe-ramp guideline. Gaps on Jun 6, 12, 14, 19–22, 26 and 28 cost early momentum — the four-day pause (Jun 19–22) alone cost a possible 3-week run — but from Jun 29 you didn't miss more than a single day at a time for two full months. Here's where to focus next:
+                  <b style={{ color: GOLD_LIGHT }}>Your longest streak yet ran 63 days</b> (Jun 27–Aug 28, bridging three well-spaced rest days — Jun 28, Aug 8, and Aug 24 — streaks here allow one rest day per rolling week, because rest is part of recovery), well past the old 40-day mark. It broke when two more rest days landed close together right after: Aug 29 and Aug 31, with only one walk between them — one rest day too many for the bridge rule inside a single week — so the counter reset. The rebuild that followed (Aug 30–Sep 3, bridging Aug 31) ran 5 days before Sep 4–5 brought a second two-day gap and reset it again — but the stretch since has held: <b style={{ color: GOLD_LIGHT }}>11 days and counting, Sep 6–16</b>, already your second-longest of the recovery. Along the way you settled into a rhythm of a big effort day followed by easy recovery days: Jul 31, Aug 4, Aug 30, and Sep 12 (all Strava-flagged achievements) were each bracketed by shorter outings. Watch the ramp, though — the week of Jul 19–25 ran about 1.8× the week before it, and the week of Aug 16–22 ran about 1.6× the week before it (17.66 vs 10.97 mi), both well above the 1.3× safe-ramp guideline. Gaps on Jun 6, 12, 14, 19–22, 26 and 28 cost early momentum — the four-day pause (Jun 19–22) alone cost a possible 3-week run — but from Jun 29 you didn't miss more than a single day at a time for about nine weeks, through Sep 3. Here's where to focus next:
                 </p>
                 <ul className="insight-list">
                   <li>
@@ -1490,8 +1503,8 @@
                     <span><b>Every badge unlocked.</b> A real bike ride on Aug 13 completed Send It, the last one on the board — the full set is now earned.</span>
                   </li>
                   <li>
-                    <span className="ico"><Icon name="bolt" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>New distance PR.</b> Aug 23's 5.54 mi walk broke the Aug 4 record of 3.46 mi by roughly 60% in a single outing.</span>
+                    <span className="ico"><Icon name="flame" c={GOLD_LIGHT} size={14} sw={2} /></span>
+                    <span><b>Second-longest streak — and building.</b> The current 11-day stretch (Sep 6–16) is your best run since the 63-day record, following two resets (Aug 29/31, then Sep 4–5) inside about a week of each other.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="crown" c={GOLD_LIGHT} size={14} sw={2} /></span>
@@ -1499,11 +1512,11 @@
                   </li>
                   <li>
                     <span className="ico"><Icon name="shield" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>The bridge rule did its job.</b> Aug 29 and Aug 31 were one rest day more than a single week can absorb, so the streak reset instead of quietly overextending. Not a setback — you're rebuilding now.</span>
+                    <span><b>The bridge rule did its job — twice.</b> Aug 29/31 and then Sep 4–5 each brought more rest than a single week can absorb, so the streak reset both times instead of quietly overextending. Not a setback — you're rebuilding faster each time.</span>
                   </li>
                   <li>
                     <span className="ico"><Icon name="sparkles" c={GOLD_LIGHT} size={14} sw={2} /></span>
-                    <span><b>Two-a-days keep stacking.</b> You've done it 26 times now, including three triple-walk days (Jul 9, Jul 18, Aug 15) — each one doubles or triples daily progress.</span>
+                    <span><b>Two-a-days keep stacking.</b> You've done it 27 times now, including three triple-walk days (Jul 9, Jul 18, Aug 15) — each one doubles or triples daily progress.</span>
                   </li>
                 </ul>
               </>
