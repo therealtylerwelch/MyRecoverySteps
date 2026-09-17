@@ -312,7 +312,6 @@
   <div class="mast-inner">
     <div class="brow"><span>Run Rabbit Run 100</span><span class="dot"></span><span>Steamboat Springs, CO</span><span class="dot"></span><span>Tortoise Wave · 2026</span></div>
     <h1>Run Rabbit Run <span class="amb">Redemption Race Plan</span></h1>
-    <p class="subhead">A living split sheet built from the official 2026 Runner's Manual — set the goal time, tune the rest at each aid station, and every arrival, finish time, and cutoff cushion recalculates.</p>
     <div class="runner-row">
       <span class="who">Shannon</span>
       <span class="meta"><b id="rr-goal">32:00</b> goal</span>
@@ -328,7 +327,8 @@
       <span class="lg"><b>◆</b> crew access allowed</span>
       <span class="lg"><b>•</b> no crew</span>
       <span class="lg"><span class="sw" style="background:var(--night-band)"></span>Projected darkness</span>
-      <span class="lg">☀ sunset · 🌙 sunrise</span>
+      <span class="lg"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><g stroke="#F0904A" stroke-width="1.1" stroke-linecap="round"><line x1="6.5" y1="2.3" x2="6.5" y2="0.8"/><line x1="3" y1="3.7" x2="2.1" y2="2.8"/><line x1="10" y1="3.7" x2="10.9" y2="2.8"/></g><path d="M2.6 9.3 A3.9 3.9 0 0 1 10.4 9.3 Z" fill="#F0904A"/><line x1="0.8" y1="9.3" x2="12.2" y2="9.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.75"/><path d="M16 3.8 L16 9 M14 7 L16 9 L18 7" stroke="#F0904A" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>sunset</span>
+      <span class="lg"><svg width="20" height="14" viewBox="0 0 20 14" aria-hidden="true"><g stroke="#F5CE58" stroke-width="1.1" stroke-linecap="round"><line x1="6.5" y1="2.3" x2="6.5" y2="0.8"/><line x1="3" y1="3.7" x2="2.1" y2="2.8"/><line x1="10" y1="3.7" x2="10.9" y2="2.8"/></g><path d="M2.6 9.3 A3.9 3.9 0 0 1 10.4 9.3 Z" fill="#F5CE58"/><line x1="0.8" y1="9.3" x2="12.2" y2="9.3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" opacity="0.75"/><path d="M16 9 L16 3.8 M14 5.8 L16 3.8 L18 5.8" stroke="#F5CE58" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>sunrise</span>
     </div>
   </div>
 </header>
@@ -398,6 +398,14 @@
     </table>
   </div>
 
+  <details class="note how-read">
+    <summary class="c-head"><span class="c-h2" style="font-size:15px">How to read this</span><span class="chev">▸</span></summary>
+    <p><b>Move</b> is the running time for the leg into that aid station; <b>Rest</b> is the time spent there (type a new number to change it). <b>Arrive</b> is the clock time she reaches the station, <b>Elapsed</b> her total race time so far. Most stations appear twice — the <b>OUT</b> / <b>BACK</b> tag says which pass; <b>EMER</b> is the Emerald Mountain loop (Lane of Pain, out and back).</p>
+    <p><b>Crew access:</b> a <span class="badge crew">◆ CREW</span> badge means crew may meet her there; <span class="badge pace">◇ PACER</span> means a pacer may join or leave. Fish Creek Falls allows crew <b>on foot or bike only</b> (no vehicles); Billy's Rabbit Hole and Lane of Pain are minimal aid with no crew.</p>
+    <p><b>Cutoff cushion</b> is how far ahead of the official time limit she is — <span class="buf g" style="padding:1px 7px">green</span> comfortable, <span class="buf w" style="padding:1px 7px">amber</span> tight, <span class="buf d" style="padding:1px 7px">red</span> at or behind. A dash means no cutoff at that stop. This is a planning estimate; use the cushion, not the exact minute, to make calls on the day.</p>
+    <p><b>1st Attempt ’23</b> is Shannon's actual elapsed time at each aid station from her 2023 Garmin file, with a chip showing how it compared to this plan (<span class="hist"><span class="hd g" style="margin:0">−</span></span> ahead, <span class="hist"><span class="hd w" style="margin:0">+</span></span> / <span class="hist"><span class="hd d" style="margin:0">+</span></span> behind). Her run ended at Olympian Hall on the second pass (mile 64), so there's no data beyond it — those are the miles the Redemption run goes to claim.</p>
+  </details>
+
   <div class="sec-head">
     <h2>Course Weather — Race-Day Forecast</h2>
     <span class="hint">Elevation-correct per aid station · follows your live plan</span>
@@ -428,14 +436,6 @@
     <div class="chart-wrap"><svg id="histchart" viewBox="0 0 1000 664" role="img" aria-label="Four stacked panels of Shannon's 2023 run over distance: heart rate, pace, course elevation, and air temperature. Around mile 54 she climbs a steep grade in falling temperatures while her heart rate drops into the 50s — a likely cold-induced sensor artifact."></svg></div>
     <p class="chart-note">Four aligned views of the same run. In daylight her heart rate tracks effort cleanly at a steady 13–18 min/mi. Now look at the highlighted stretch near <b>mile 54</b>: the elevation panel shows her grinding up a steep <b>9–17% grade</b> toward Lane of Pain, yet the heart rate reads in the <b>40s–50s</b> and turns jagged — not physically possible while climbing at altitude, so it's the optical wrist sensor dropping out, not a real crash. The bottom panel is the real Steamboat weather, and it shows why: it was <b>68°F</b> when she crested Summit in the afternoon, but by the time she hit that climb near midnight it had fallen to <b>~49°F</b> and kept sliding toward the <b>34°F</b> dawn low as she reached her drop. She ran the entire back half in falling, 40s-and-colder air — enough to fool a wrist sensor, and enough to be the real adversary. Trust her <b>pace</b> for the fade; trust the <b>temperature</b> for the cause.</p>
   </details>
-
-  <div class="note">
-    <h3>How to read this</h3>
-    <p><b>Move</b> is the running time for the leg into that aid station; <b>Rest</b> is the time spent there (type a new number to change it). <b>Arrive</b> is the clock time she reaches the station, <b>Elapsed</b> her total race time so far. Most stations appear twice — the <b>OUT</b> / <b>BACK</b> tag says which pass; <b>EMER</b> is the Emerald Mountain loop (Lane of Pain, out and back).</p>
-    <p><b>Crew access:</b> a <span class="badge crew">◆ CREW</span> badge means crew may meet her there; <span class="badge pace">◇ PACER</span> means a pacer may join or leave. Fish Creek Falls allows crew <b>on foot or bike only</b> (no vehicles); Billy's Rabbit Hole and Lane of Pain are minimal aid with no crew.</p>
-    <p><b>Cutoff cushion</b> is how far ahead of the official time limit she is — <span class="buf g" style="padding:1px 7px">green</span> comfortable, <span class="buf w" style="padding:1px 7px">amber</span> tight, <span class="buf d" style="padding:1px 7px">red</span> at or behind. A dash means no cutoff at that stop. This is a planning estimate; use the cushion, not the exact minute, to make calls on the day.</p>
-    <p><b>1st Attempt ’23</b> is Shannon's actual elapsed time at each aid station from her 2023 Garmin file, with a chip showing how it compared to this plan (<span class="hist"><span class="hd g" style="margin:0">−</span></span> ahead, <span class="hist"><span class="hd w" style="margin:0">+</span></span> / <span class="hist"><span class="hd d" style="margin:0">+</span></span> behind). Her run ended at Olympian Hall on the second pass (mile 64), so there's no data beyond it — those are the miles the Redemption run goes to claim.</p>
-  </div>
 
   <footer>
     <p><b>Source.</b> All aid stations, mileages, elevations, cutoff times, and crew/pacer access are taken directly from the <b>2026 Run Rabbit Run Runner's Manual</b> (100-Mile Aid Stations, Mileage, Crews & Cutoffs table; updated 29 July 2026). The pacing shape is calibrated to the manual's own Tortoise split predictions and scaled to Shannon's goal. Sunset ~7:07 PM Fri and sunrise ~6:47 AM Sat are for Steamboat Springs. Split times are a planning model, not official predictions. The 2023 charts come from Shannon's Garmin .fit file; the temperature panel uses historical Steamboat Springs station readings for Sep 15–16, 2023.</p>
@@ -708,6 +708,23 @@ function recompute(){
   renderWeather();
 }
 
+/* half-sun on the horizon with a direction arrow: isSet=true → dipping (down), false → rising (up) */
+function solarGlyph(cx, cy, isSet){
+  const col = isSet ? '#F0904A' : '#F5CE58';
+  const r=4.3, hy=(cy+4);
+  let g='';
+  [-52,-24,0,24,52].forEach(deg=>{ const t=deg*Math.PI/180, sx=Math.sin(t), sy=-Math.cos(t);
+    g+=`<line x1="${(cx+sx*(r+1.4)).toFixed(1)}" y1="${(hy+sy*(r+1.4)).toFixed(1)}" x2="${(cx+sx*(r+3.4)).toFixed(1)}" y2="${(hy+sy*(r+3.4)).toFixed(1)}" stroke="${col}" stroke-width="1.2" stroke-linecap="round"/>`; });
+  g+=`<path d="M ${(cx-r).toFixed(1)} ${hy.toFixed(1)} A ${r} ${r} 0 0 1 ${(cx+r).toFixed(1)} ${hy.toFixed(1)} Z" fill="${col}"/>`;
+  g+=`<line x1="${(cx-9).toFixed(1)}" y1="${hy.toFixed(1)}" x2="${(cx+9).toFixed(1)}" y2="${hy.toFixed(1)}" stroke="var(--pine-ink)" stroke-width="1.4" stroke-linecap="round" opacity="0.92"/>`;
+  const ax=(cx+r+5.5).toFixed(1);
+  const arrow = isSet
+    ? `M ${ax} ${(cy-2.5).toFixed(1)} L ${ax} ${(cy+3.5).toFixed(1)} M ${(cx+r+3.3).toFixed(1)} ${(cy+1).toFixed(1)} L ${ax} ${(cy+3.5).toFixed(1)} L ${(cx+r+7.7).toFixed(1)} ${(cy+1).toFixed(1)}`
+    : `M ${ax} ${(cy+3.5).toFixed(1)} L ${ax} ${(cy-2.5).toFixed(1)} M ${(cx+r+3.3).toFixed(1)} ${cy.toFixed(1)} L ${ax} ${(cy-2.5).toFixed(1)} L ${(cx+r+7.7).toFixed(1)} ${cy.toFixed(1)}`;
+  g+=`<path d="${arrow}" stroke="${col}" stroke-width="1.25" fill="none" stroke-linecap="round" stroke-linejoin="round"/>`;
+  return g;
+}
+
 /* ---------------- Elevation profile with crew markers + all labels ---------------- */
 function drawProfile(rows, startMin){
   const svg=document.getElementById('profile');
@@ -727,8 +744,8 @@ function drawProfile(rows, startMin){
   if(nA!=null){
     const bx=x(nA), bw=x(nB==null?MI_MAX:nB)-bx;
     band+=`<rect x="${bx.toFixed(1)}" y="${padT-6}" width="${bw.toFixed(1)}" height="${base-padT+6}" fill="var(--night-band)"/>`;
-    band+=`<text x="${(bx+3).toFixed(1)}" y="${padT+6}" font-size="14">☀️</text>`;
-    if(nB!=null) band+=`<text x="${(x(nB)-17).toFixed(1)}" y="${padT+6}" font-size="14">🌙</text>`;
+    band+=solarGlyph(bx+9, padT+1, true);
+    if(nB!=null) band+=solarGlyph(x(nB)-9, padT+1, false);
   }
 
   // markers + labels for every aid station
