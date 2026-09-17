@@ -129,6 +129,15 @@
   .role-pacer{background:var(--plum-soft); color:var(--plum)}
   .role-none{background:transparent; color:var(--ink-faint); border:1px solid var(--line-strong)}
 
+  /* collapsible station cards */
+  details.st > summary.st-top{cursor:pointer; list-style:none; user-select:none}
+  details.st > summary.st-top::-webkit-details-marker{display:none}
+  details.st > summary.st-top::marker{content:""}
+  .st .chev{margin-left:2px; color:var(--ink-faint); font-size:13px; transition:transform .18s; flex:0 0 auto}
+  details.st[open] > summary .chev{transform:rotate(180deg)}
+  details.st[open]{box-shadow:0 1px 2px rgba(24,40,30,.06),0 10px 26px rgba(24,40,30,.08)}
+  summary.st-top:hover{background:var(--paper-2)}
+
   .st-body{padding:0 15px 15px; border-top:1px solid var(--line)}
   .eta{display:flex; gap:8px; flex-wrap:wrap; margin:13px 0 4px}
   .eta .pill{background:var(--paper-2); border:1px solid var(--line); border-radius:9px; padding:7px 11px; font-size:12px}
@@ -230,7 +239,6 @@
   <header class="head">
     <div class="eyebrow">Run Rabbit Run 100 · Redemption · Sep 18–19, 2026</div>
     <h1>Crew &amp; Pacer <span class="amb">Guide</span></h1>
-    <p class="subline">The field playbook — what happens at each stop, who does it, and what goes in the bag. Built to be read on a phone, in the dark, when you're tired. Tap a checklist item to tick it off.</p>
     <div class="roster">
       <span class="who"><span class="role">Runner</span> <b>Shannon</b></span>
       <span class="who"><span class="role">Crew lead</span> <b>Tyler</b></span>
@@ -249,16 +257,7 @@
     <a class="dl-btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Print the pocket card <span>PDF · 3.5×5.5″<br>double-sided · laminate for the field</span></a>
     <a class="fuel-btn" href="https://myrecoverysteps.com/rrrr/fuel/">🍫 Open the Fuel Tracker <span>tap what she eats · live carbs<br>vs target · saves on your phone</span></a>
 
-    <div class="callout">
-      <h3>⚠ The one thing that decides this race: protect the night</h3>
-      In 2023 Shannon was on 32-hour pace to halfway, then the <b>Emerald Mountain loop (miles 51–64) unraveled it — solo, in 29°F feels-like cold.</b> This year Jason joins at Olympian on the <b>return (mile 64)</b>, so she runs that same loop solo again.
-      <div style="margin-top:9px; padding-top:9px; border-top:1px solid rgba(0,0,0,.08)">
-        That makes the <b>mile-51 Olympian stop the most important crew stop of the race:</b> send her into the loop fully warm, fueled, caffeinated, and lit — nobody is with her until she climbs back to Olympian at mile 64. Warm her <b>before</b> she's cold, not after.
-      </div>
-    </div>
-
     <div class="rules">
-      <div class="r"><span class="k">CREW ACCESS</span><span><b>No crew vehicles on Buffalo Pass Rd above Dry Lake — the permit depends on it.</b> Fish Creek Falls is foot/bike pack-in only. Dry Lake is drop-off only (no parking). Summit Lake is reachable only by the ~2-hr back route via Hwy 14 — see the Summit stop.</span></div>
       <div class="r"><span class="k">OLYMPIAN</span><span>Drive in slowly; park only in designated spots, never in front of the gate (emergency access). Crews set up on the grass; runners &amp; pacers only inside. Dogs leashed or in the car.</span></div>
       <div class="r"><span class="k">FRI NIGHT</span><span>Homecoming football by Spring Creek Trailhead may fill parking. Park at Olympian and walk/jog the ~1.5 mi to meet her at the trailhead through town.</span></div>
       <div class="r"><span class="k">MANDATORY GEAR</span><span>New for 2026 — Shannon <b>may not leave Olympian Hall</b> without: headlamp + backup light, warm jacket, space blanket, raincoat, gloves. Crew verifies this at both Olympian stops.</span></div>
@@ -266,7 +265,7 @@
     </div>
   </header>
 
-  <div class="sec"><h2>Station-by-Station</h2><span class="hint">Course order · times are the 32:00 plan</span></div>
+  <div class="sec"><h2>Station-by-Station</h2><span class="hint">Course order · times are the 32:00 plan · tap a stop to expand</span></div>
   <div class="legend">
     <span><span class="dotc" style="background:var(--amber)"></span>Mobile crew</span>
     <span><span class="dotc" style="background:var(--dusk)"></span>Drop bag</span>
@@ -281,6 +280,15 @@
   <div class="gear-note">Shannon's full kit for the weekend, grouped the way you sent it. <b>Your progress saves on this device</b>, so you can pack over a few days and pick up where you left off.</div>
   <div id="gear"></div>
   <button class="gear-reset" id="gearReset">↺ Reset packing progress</button>
+
+  <div class="sec"><h2>The one thing that decides this race</h2></div>
+  <div class="callout">
+    <h3>⚠ Protect the night</h3>
+    In 2023 Shannon was on 32-hour pace to halfway, then the <b>Emerald Mountain loop (miles 51–64) unraveled it — solo, in 29°F feels-like cold.</b> This year Jason joins at Olympian on the <b>return (mile 64)</b>, so she runs that same loop solo again.
+    <div style="margin-top:9px; padding-top:9px; border-top:1px solid rgba(0,0,0,.08)">
+      That makes the <b>mile-51 Olympian stop the most important crew stop of the race:</b> send her into the loop fully warm, fueled, caffeinated, and lit — nobody is with her until she climbs back to Olympian at mile 64. Warm her <b>before</b> she's cold, not after.
+    </div>
+  </div>
 
   <div class="tmpl-note">
     <b>This is a reusable template.</b> Each station is a data block (role, ETA window, tasks, checklists) — future races drop in their own aid stations and it re-renders. Shannon's per-item fueling lives on the <b><a href="https://myrecoverysteps.com/rrrr/fuel/">Fuel tab</a></b> (tap what she actually eats, watch carbs vs target); her full kit is in the <b>Gear list</b> above.
@@ -323,6 +331,7 @@ const S=[
    eta:["2:40 AM","3:50 AM","5:01 AM"],
    access:"<b>Major crew station + pacer exchange.</b> She's through the loop and turning for home. Big reset before the long climb back up to the high country.",
    pacer:"<b>Shannon picks up pacer Jason Welch here.</b> He paces her from here to Summit Lake (mile 80.8). Get him briefed and moving fast — she's cold and it's the pre-dawn low.",
+   drive:"<b>Once she's off with Jason, this is Tyler's cue to drive to Summit Lake — ~2 hr, the back way.</b> No crew vehicles on Buffalo Pass above Dry Lake, so you can't come up the Steamboat side. Route (manual §16.5): Hwy 40 east ~22 mi → LEFT on Hwy 14 toward Walden ~18.5 mi → Buffalo Pass / CO 24 ~11 mi → CO 24-FR 60 → ~18.2 mi to Summit. Ample parking. <b>Be parked by ~8:00 AM</b> — ahead of her 9:00 AM best case at Summit. Gas up first; download offline maps (no cell); don't drive it late &amp; tired.<br><a class=\"dir-link\" href=\"https://www.google.com/maps/dir/Olympian+Hall,+Steamboat+Springs,+CO/Muddy+Pass,+Colorado/40.54174,-106.68400\" target=\"_blank\" rel=\"noopener\">📍 Open directions — via Muddy Pass →</a>",
    tasks:["Full food + fluid resupply — she's been out ~15 hrs","Warm, dry layers — pre-dawn is the coldest stretch ahead","<b>Mandatory gear check</b> before she leaves","Brief Jason: pace plan, her state, cutoffs","Update race plan / cushion","Feet + blister care"],
    mand:true,
    cls:[
@@ -333,8 +342,7 @@ const S=[
   {n:12,name:"Billy's Rabbit Hole",lap:"BACK",mi:76.6,t:"8:49 AM Sat",role:"minimal",access:"No crew · minimal aid. High country, day 2. Jason pacing."},
   {n:13,name:"Summit Lake",lap:"BACK",mi:80.8,t:"10:37 AM Sat",role:"crew",
    eta:["9:01 AM","10:37 AM","12:12 PM"],
-   access:"<b>Full crew station — Tyler.</b> The one crew stop you reach by car — but only the long way around. The high point of the course is just past here.",
-   drive:"<b>~2-hr drive from town, the back way.</b> No crew vehicles on Buffalo Pass above Dry Lake, so you can't come up the Steamboat side. Route (manual §16.5): Hwy 40 east ~22 mi → LEFT on Hwy 14 toward Walden ~18.5 mi → Buffalo Pass / CO 24 ~11 mi → CO 24-FR 60 → ~18.2 mi to Summit. Ample parking. <b>Leave town by 6:00 AM, be parked by ~8:00</b> — ahead of her 9:00 AM best case. Gas up first; download offline maps (no cell); don't drive it late &amp; tired.<br><a class=\"dir-link\" href=\"https://www.google.com/maps/dir/Olympian+Hall,+Steamboat+Springs,+CO/Muddy+Pass,+Colorado/40.54174,-106.68400\" target=\"_blank\" rel=\"noopener\">📍 Open directions — via Muddy Pass →</a>",
+   access:"<b>Full crew station — Tyler.</b> The one crew stop you reach by car — but only the long way around (directions are at the Olympian BACK stop, where you'll set off). The high point of the course is just past here.",
    pacer:"<b>Jason completes his pacing duties here.</b> Tyler picks up Jason and takes over crew.",
    tasks:["Full food + fluid resupply for the final ~21 mi","<b>Tyler collects the Summit Lake drop bag</b> (placed on the 1st pass)","Shed night layers → day layers; sunscreen back on","Assess her feet / hydration for the long descent home","Update plan: time in hand to the finish"],
    cls:[
@@ -351,18 +359,17 @@ const full=r=>["mobile","drop","crew","crewpacer","finish"].includes(r);
 
 const host=document.getElementById('stations');
 S.forEach(s=>{
-  const el=document.createElement('div');
-  el.className='st'+(full(s.role)?'':' none');
-  let top=`<div class="st-top">
-    <div class="st-num">${s.n}</div>
+  const isFull=full(s.role);
+  const el=document.createElement(isFull?'details':'div');
+  el.className='st'+(isFull?'':' none');
+  const topInner=`<div class="st-num">${s.n}</div>
     <div class="st-id">
       <div class="st-name">${s.name}${s.lap?' <span class="lap">'+s.lap+'</span>':''}</div>
       <div class="st-meta"><span class="mono">Mile ${s.mi.toFixed(1)}</span><span class="mono">${s.t}</span></div>
     </div>
-    <div class="role-chip ${roleClass[s.role]}">${roleLabel[s.role]}</div>
-  </div>`;
+    <div class="role-chip ${roleClass[s.role]}">${roleLabel[s.role]}</div>`;
   let body='';
-  if(full(s.role)){
+  if(isFull){
     body='<div class="st-body">';
     if(s.eta) body+=`<div class="eta">
       <div class="pill"><span class="k">Window opens</span><span class="v">${s.eta[0]}</span></div>
@@ -377,11 +384,12 @@ S.forEach(s=>{
     if(s.mand) body+=`<div class="mand"><b>Mandatory gear to leave Olympian:</b> headlamp + backup light · warm jacket · space blanket · raincoat · gloves. Confirm all five.</div>`;
     if(s.cls) s.cls.forEach(c=>{ body+=`<div class="cl"><h4>${c.title}</h4>`; c.items.forEach(it=>body+=`<label><input type="checkbox"><span>${it}</span></label>`); body+='</div>'; });
     body+='</div>';
+    el.innerHTML=`<summary class="st-top">${topInner}<span class="chev" aria-hidden="true">▾</span></summary>`+body;
   } else {
     // compact: show access inline under the row
     body=`<div class="st-body" style="border-top:none;padding-top:0;padding-bottom:12px"><div class="access" style="margin:0;background:transparent;padding:0;color:var(--ink-faint)">${s.access}</div></div>`;
+    el.innerHTML=`<div class="st-top">${topInner}</div>`+body;
   }
-  el.innerHTML=top+body;
   host.appendChild(el);
 });
 
