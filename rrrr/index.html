@@ -150,6 +150,17 @@
   .sec-head{display:flex; align-items:baseline; justify-content:space-between; gap:14px; margin:34px 0 12px; flex-wrap:wrap}
   .sec-head h2{font-size:22px; text-transform:uppercase; letter-spacing:.03em}
   .sec-head .hint{font-size:12.5px; color:var(--ink-faint)}
+  /* collapsible 2023 sections */
+  summary.c-head{list-style:none; cursor:pointer; display:flex; align-items:flex-start; justify-content:space-between; gap:14px}
+  summary.c-head::-webkit-details-marker{display:none}
+  summary.c-head::marker{content:""}
+  .c-t{display:flex; flex-direction:column; gap:3px; min-width:0}
+  .c-h2{font-family:"Oswald",sans-serif; font-weight:600; font-size:20px; text-transform:uppercase; letter-spacing:.03em; line-height:1.05}
+  .c-sub{font-size:12.5px; color:var(--ink-faint)}
+  summary.c-head .eyebrow{margin:0}
+  .chev{font-family:"IBM Plex Mono",monospace; font-size:17px; color:var(--ink-faint); transition:transform .18s; flex:0 0 auto; line-height:1.2}
+  details[open] summary.c-head .chev{transform:rotate(90deg)}
+  details[open] summary.c-head{margin-bottom:14px; padding-bottom:12px; border-bottom:1px solid var(--line)}
 
   /* ---------- Table ---------- */
   .tbl-scroll{overflow-x:auto; border:1px solid var(--line); border-radius:var(--radius); background:var(--card); box-shadow:var(--shadow)}
@@ -393,9 +404,8 @@
   </div>
   <div class="wx-card" id="wx-body" aria-live="polite"></div>
 
-  <section class="hist-panel" aria-label="2023 first attempt analysis">
-    <div class="eyebrow">First Attempt · Sep 15–16, 2023</div>
-    <h2>What the 2023 Data Says</h2>
+  <details class="hist-panel" aria-label="2023 first attempt analysis">
+    <summary class="c-head"><span class="c-t"><span class="eyebrow">First Attempt · Sep 15–16, 2023</span><span class="c-h2">What the 2023 Data Says</span></span><span class="chev">▸</span></summary>
     <p class="lead">Read from Shannon's Garmin track. The encouraging headline: this wasn't a fitness or a speed problem — she ran the first half on 32-hour pace. The race turned in the cold and the dark on Emerald Mountain.</p>
     <div class="hist-stats">
       <div class="hs"><div class="l">Reached</div><div class="v">Mile 64<span class="u"> / 101.8</span></div><div class="s">DNF at Olympian Hall, 2nd pass</div></div>
@@ -411,49 +421,13 @@
       <div class="f"><span class="n">4</span><div><b>The clock wasn't the enemy.</b> She reached mile 64 at 20:11 — with more than 15 hours still on the 36-hour cutoff to cover the last 38 miles. She had the time. Staying warm, fueled, and moving through the night was the fight.</div></div>
     </div>
     <div class="hist-take"><b>Redemption plan:</b> protect the night. Layer up and fuel hard <b>before</b> sunset, pick up a pacer at Olympian (allowed both directions), keep the Emerald loop moving, and get in and out of Olympian fast — she spent ~27 minutes there on the way out. The last 38 miles are the ones to go get.</div>
-  </section>
+  </details>
 
-  <section class="chart-card" aria-label="2023 heart rate and pace chart">
-    <div class="sec-head" style="margin:0 0 4px">
-      <h2>Heart Rate, Pace, Elevation &amp; Temperature — 2023</h2>
-      <span class="hint">Her Garmin trace + Steamboat weather · shaded = after dark · red = sensor anomaly</span>
-    </div>
+  <details class="chart-card" aria-label="2023 heart rate and pace chart">
+    <summary class="c-head"><span class="c-t"><span class="c-h2">Heart Rate, Pace, Elevation &amp; Temperature — 2023</span><span class="c-sub">Her Garmin trace + Steamboat weather · shaded = after dark · red = sensor anomaly</span></span><span class="chev">▸</span></summary>
     <div class="chart-wrap"><svg id="histchart" viewBox="0 0 1000 664" role="img" aria-label="Four stacked panels of Shannon's 2023 run over distance: heart rate, pace, course elevation, and air temperature. Around mile 54 she climbs a steep grade in falling temperatures while her heart rate drops into the 50s — a likely cold-induced sensor artifact."></svg></div>
     <p class="chart-note">Four aligned views of the same run. In daylight her heart rate tracks effort cleanly at a steady 13–18 min/mi. Now look at the highlighted stretch near <b>mile 54</b>: the elevation panel shows her grinding up a steep <b>9–17% grade</b> toward Lane of Pain, yet the heart rate reads in the <b>40s–50s</b> and turns jagged — not physically possible while climbing at altitude, so it's the optical wrist sensor dropping out, not a real crash. The bottom panel is the real Steamboat weather, and it shows why: it was <b>68°F</b> when she crested Summit in the afternoon, but by the time she hit that climb near midnight it had fallen to <b>~49°F</b> and kept sliding toward the <b>34°F</b> dawn low as she reached her drop. She ran the entire back half in falling, 40s-and-colder air — enough to fool a wrist sensor, and enough to be the real adversary. Trust her <b>pace</b> for the fade; trust the <b>temperature</b> for the cause.</p>
-  </section>
-
-  <section class="chk-card" aria-label="Night prep checklist">
-    <div class="sec-head" style="margin:0 0 4px">
-      <h2>Race the Night — Prep Checklist</h2>
-      <span class="hint">Drawn from what the 2023 data showed · tap to check off</span>
-    </div>
-    <div class="chk-grid">
-      <div class="chk-group">
-        <h4>Before the sun drops · Olympian Hall (mi 51)</h4>
-        <label class="chk"><input type="checkbox"><span>Put warm layers <b>on</b> before leaving — jacket, hat, gloves (mandatory gear check here anyway: headlamp + backup, space blanket, raincoat)</span></label>
-        <label class="chk"><input type="checkbox"><span>Eat a real, warm meal — soup, broth, potatoes — not just gels</span></label>
-        <label class="chk"><input type="checkbox"><span>Take caffeine here, and pocket more for the 2–4 AM low</span></label>
-        <label class="chk"><input type="checkbox"><span>Pick up the pacer — don't head into the Emerald loop alone (2023 she was solo)</span></label>
-        <label class="chk"><input type="checkbox"><span>In and out fast: target under 10 minutes (2023 was ~27)</span></label>
-      </div>
-      <div class="chk-group">
-        <h4>Through the night · Emerald loop + climb home</h4>
-        <label class="chk"><input type="checkbox"><span>Eat on a timer — ~200–250 cal every 30–40 min, whether or not you feel like it</span></label>
-        <label class="chk"><input type="checkbox"><span>Keep drinking (Tailwind at aid) even without thirst</span></label>
-        <label class="chk"><input type="checkbox"><span>Power-hike the climbs, jog the flats and downs — keep forward motion, don't sit</span></label>
-        <label class="chk"><input type="checkbox"><span>Hot broth or soup at every staffed aid — warmth, salt, and calories in one</span></label>
-        <label class="chk"><input type="checkbox"><span>Use poles on the climbs (allowed this year) to save the legs</span></label>
-      </div>
-      <div class="chk-group">
-        <h4>If the wheels start to come off</h4>
-        <label class="chk"><input type="checkbox"><span>Sugar + caffeine <b>now</b> — the energy and heart-rate crash is fuelable, not fatal</span></label>
-        <label class="chk"><input type="checkbox"><span>Add a layer <b>before</b> you're cold, not after</span></label>
-        <label class="chk"><input type="checkbox"><span>Reset, don't nest: 5 minutes to eat and warm up, then move</span></label>
-        <label class="chk"><input type="checkbox"><span>Remember the math — in 2023 she reached mile 64 with 15+ hrs of cushion. Forward motion beats the clock</span></label>
-        <label class="chk"><input type="checkbox"><span>Tell the crew and pacer the truth so they can actually help</span></label>
-      </div>
-    </div>
-  </section>
+  </details>
 
   <div class="note">
     <h3>How to read this</h3>
