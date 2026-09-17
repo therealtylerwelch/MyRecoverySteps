@@ -176,6 +176,14 @@
   .gear-h{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:13px 0 9px; border-bottom:1px solid var(--line); margin-bottom:2px}
   .gear-h h3{font-family:"Oswald",sans-serif; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.04em; color:var(--ink)}
   .gear-h .sub{display:block; font-size:11px; letter-spacing:.02em; color:var(--ink-faint); text-transform:none; font-weight:400; margin-top:1px}
+  details.gear-cat > summary.gear-h{cursor:pointer; list-style:none; user-select:none}
+  details.gear-cat > summary.gear-h::-webkit-details-marker{display:none}
+  details.gear-cat > summary.gear-h::marker{content:""}
+  .gear-cat .gear-right{display:flex; align-items:center; gap:10px}
+  .gear-cat .gear-h .chev{color:var(--ink-faint); font-size:13px; transition:transform .18s; flex:0 0 auto}
+  details.gear-cat[open] .gear-h .chev{transform:rotate(180deg)}
+  details.gear-cat:not([open]){padding-bottom:6px}
+  details.gear-cat:not([open]) > summary.gear-h{border-bottom:none; margin-bottom:0}
   .gear-count{font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:600; color:var(--ink-faint); background:var(--paper-2); border:1px solid var(--line); border-radius:999px; padding:3px 11px; white-space:nowrap}
   .gear-count.done{color:#fff; background:var(--good); border-color:transparent}
   .gear-cat .cl label{border-bottom:1px solid var(--line)}
@@ -256,13 +264,6 @@
 
     <a class="dl-btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Print the pocket card <span>PDF · 3.5×5.5″<br>double-sided · laminate for the field</span></a>
     <a class="fuel-btn" href="https://myrecoverysteps.com/rrrr/fuel/">🍫 Open the Fuel Tracker <span>tap what she eats · live carbs<br>vs target · saves on your phone</span></a>
-
-    <div class="rules">
-      <div class="r"><span class="k">OLYMPIAN</span><span>Drive in slowly; park only in designated spots, never in front of the gate (emergency access). Crews set up on the grass; runners &amp; pacers only inside. Dogs leashed or in the car.</span></div>
-      <div class="r"><span class="k">FRI NIGHT</span><span>Homecoming football by Spring Creek Trailhead may fill parking. Park at Olympian and walk/jog the ~1.5 mi to meet her at the trailhead through town.</span></div>
-      <div class="r"><span class="k">MANDATORY GEAR</span><span>New for 2026 — Shannon <b>may not leave Olympian Hall</b> without: headlamp + backup light, warm jacket, space blanket, raincoat, gloves. Crew verifies this at both Olympian stops.</span></div>
-      <div class="r"><span class="k">PACER</span><span>As a Tortoise, Shannon may have one pacer from Olympian (mile 51) to the finish. Jason paces until <b>Summit Lake return (mile 80.8)</b>, where Tyler takes over crew.</span></div>
-    </div>
   </header>
 
   <div class="sec"><h2>Station-by-Station</h2><span class="hint">Course order · times are the 32:00 plan · tap a stop to expand</span></div>
@@ -436,7 +437,7 @@ let gearState=loadGearState();
 
 const gearHost=document.getElementById('gear');
 GEAR.forEach((cat,ci)=>{
-  const card=document.createElement('div'); card.className='gear-cat';
+  const card=document.createElement('details'); card.className='gear-cat';
   let labels='';
   cat.items.forEach((it,ii)=>{
     const key='g'+ci+'-'+ii;
@@ -445,7 +446,7 @@ GEAR.forEach((cat,ci)=>{
     const on=gearState[key]?' checked':'';
     labels+=`<label><input type="checkbox" data-k="${key}"${on}><span>${name}${det}</span></label>`;
   });
-  card.innerHTML=`<div class="gear-h"><h3>${cat.title}${cat.sub?'<span class="sub">'+cat.sub+'</span>':''}</h3><span class="gear-count" data-ci="${ci}"></span></div><div class="cl">${labels}</div>`;
+  card.innerHTML=`<summary class="gear-h"><h3>${cat.title}${cat.sub?'<span class="sub">'+cat.sub+'</span>':''}</h3><span class="gear-right"><span class="gear-count" data-ci="${ci}"></span><span class="chev" aria-hidden="true">▾</span></span></summary><div class="cl">${labels}</div>`;
   gearHost.appendChild(card);
 });
 function updateCount(ci){
