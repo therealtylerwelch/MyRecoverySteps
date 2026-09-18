@@ -342,39 +342,18 @@
 
   <div class="sec-head" style="margin-top:26px">
     <h2>Race-Day Scenarios</h2>
-    <span class="hint">A / B / C plans · tap a card to switch · edit any of them</span>
+    <span class="hint">Her 2023 line to mile 64 · then 32–36 hr finishes · tap a card to switch</span>
   </div>
   <div class="scen-bar" id="scenBar" aria-label="Scenario switcher"></div>
 
-  <section class="controls" aria-label="Plan controls">
-    <div class="ctl">
-      <label for="gh">Goal / target</label>
-      <div class="goal-in">
-        <input id="gh" class="mono" type="number" min="18" max="40" step="1" value="32" aria-label="Goal hours" inputmode="numeric">
-        <span class="colon">:</span>
-        <input id="gm" class="mono" type="number" min="0" max="59" step="5" value="0" aria-label="Goal minutes" inputmode="numeric">
-      </div>
-    </div>
-    <div class="ctl">
-      <label>Back-half fade</label>
-      <div class="presets" id="fadeCtl">
-        <button data-e="1.2">Fresh</button>
-        <button data-e="1.6">Moderate</button>
-        <button data-e="2.4">Heavy</button>
-      </div>
-    </div>
-    <div class="ctl">
-      <label for="start">Start time</label>
-      <input id="start" type="time" value="09:00">
-    </div>
-    <div class="btn-line ctl-btns">
+  <section class="controls" aria-label="Plan controls" style="grid-template-columns:1fr">
+    <div class="btn-line ctl-btns" style="margin-left:0">
       <button class="btn solid" onclick="window.print()">⎙ Print / Save PDF</button>
       <a class="btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Pocket card</a>
-      <button class="btn" id="resetRest">↺ Reset rest</button>
     </div>
     <details class="ctl-about">
-      <summary class="c-head"><span class="c-t"><span class="about-title">Editing <b id="editing-name">Plan B · Green Day</b></span><span class="c-sub">Goal, fade &amp; rest — how the four plans work</span></span><span class="chev">▸</span></summary>
-      <p class="about-body">Change its goal, fade, or any <b>Rest</b> value in the table below and the whole plan — arrivals, weather, and cutoff cushions — refactors. Four plans, fastest to safest: <b>A Dream</b> (30:00) · <b>B Green</b> (32:00, the goal) · <b>C Grind</b> (34:30) · <b>D Survival</b> (35:30). Every plan runs the fastest plan's early pace and fades more the slower it is; all are auto-seeded and fully editable.</p>
+      <summary class="c-head"><span class="c-t"><span class="about-title">How this plan is built</span><span class="c-sub">2023 GPS data + finish scenarios</span></span><span class="chev">▸</span></summary>
+      <p class="about-body">The front half — through the mile-64 point where Shannon stopped in 2023 — is her <b>real 2023 arrival times from her Garmin file</b>, shifted +1 hr onto this year's 9:00 AM gun (the 2023 gun was 8:00 AM). She beat every cutoff that year; the DNF was the cold on the Emerald loop, not the clock. From <b>Olympian Hall (mi 64)</b> home — miles she has never run — the cards spread the remaining time to a <b>32, 33, 34, 35, or 36-hour</b> finish across the back legs. Tap a card and the table, elevation profile, and weather all follow it.</p>
     </details>
   </section>
 
@@ -382,7 +361,7 @@
 
   <div class="sec-head">
     <h2>Aid-Station Splits</h2>
-    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> = crew allowed · <b style="color:var(--dusk)">◇ PACER</b> = pacer allowed · Rest is editable</span>
+    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> = crew allowed · <b style="color:var(--dusk)">◇ PACER</b> = pacer allowed · front = 2023 line · back = selected finish</span>
   </div>
   <div class="tbl-scroll">
     <table>
@@ -406,7 +385,7 @@
 
   <details class="note how-read">
     <summary class="c-head"><span class="c-h2" style="font-size:15px">How to read this</span><span class="chev">▸</span></summary>
-    <p><b>Move</b> is the running time for the leg into that aid station; <b>Rest</b> is the time spent there (type a new number to change it). <b>Arrive</b> is the clock time she reaches the station, <b>Elapsed</b> her total race time so far. Most stations appear twice — the <b>OUT</b> / <b>BACK</b> tag says which pass; <b>EMER</b> is the Emerald Mountain loop (Lane of Pain, out and back).</p>
+    <p><b>Move</b> is the elapsed time for the leg into that aid station; <b>Arrive</b> is the clock time she reaches it, <b>Elapsed</b> her total race time so far (rest is folded into her real 2023 arrivals, so it shows as —). Most stations appear twice — the <b>OUT</b> / <b>BACK</b> tag says which pass; <b>EMER</b> is the Emerald Mountain loop (Lane of Pain, out and back).</p>
     <p><b>Crew access:</b> a <span class="badge crew">◆ CREW</span> badge means crew may meet her there; <span class="badge pace">◇ PACER</span> means a pacer may join or leave. Fish Creek Falls allows crew <b>on foot or bike only</b> (no vehicles); Billy's Rabbit Hole and Lane of Pain are minimal aid with no crew.</p>
     <p><b>Cutoff cushion</b> is how far ahead of the official time limit she is — <span class="buf g" style="padding:1px 7px">green</span> comfortable, <span class="buf w" style="padding:1px 7px">amber</span> tight, <span class="buf d" style="padding:1px 7px">red</span> at or behind. A dash means no cutoff at that stop. This is a planning estimate; use the cushion, not the exact minute, to make calls on the day.</p>
     <p><b>1st Attempt ’23</b> is Shannon's actual elapsed time at each aid station from her 2023 Garmin file, with a chip showing how it compared to this plan (<span class="hist"><span class="hd g" style="margin:0">−</span></span> ahead, <span class="hist"><span class="hd w" style="margin:0">+</span></span> / <span class="hist"><span class="hd d" style="margin:0">+</span></span> behind). Her run ended at Olympian Hall on the second pass (mile 64), so there's no data beyond it — those are the miles the Redemption run goes to claim.</p>
@@ -488,7 +467,7 @@ const DEFAULT_REST_TOTAL = DEFAULT_REST.reduce((a,b)=>a+b,0);          // 71
 const MI_MAX = 101.8;
 
 /* ---- Shannon's 1st attempt (2023), from her Garmin .fit — actual elapsed minutes at each aid station ---- */
-const HIST = {1:112, 2:300, 3:441, 4:548, 5:620, 6:783, 7:913, 8:989, 9:1068, 10:1165};
+const HIST = {1:103, 2:285, 3:429, 4:527, 5:609, 6:775, 7:907, 8:973, 9:1051, 10:1165};
 const HIST_DROP_IDX = 10;      // dropped at Olympian Hall (2nd pass, ~mile 64)
 const HIST_DROP_MILE = 63.9;
 /* Shannon's 2023 HR (bpm) + smoothed pace (min/mi) in 0.5-mi bins, from her Garmin .fit */
@@ -508,12 +487,13 @@ const SUNSET_SAT = 34*60+5;    // ~7:05 PM Sat
    Fade presets: Fresh 1.2 · Moderate 1.6 · Heavy 2.4. */
 const seedRest = mult => DEFAULT_REST.map(r=>Math.round(r*mult));
 const state = {
-  activeKey: 'B',                                        // opens on her 32:00 goal; A is the faster dream plan
+  activeKey: 'S32',                                      // opens on the 32:00 goal line
   scenarios: {
-    A: {name:'Dream Day',  sub:'Best case — everything clicks', goalMin:1800, expo:1.6, restMult:0.85, rest:seedRest(0.85)},
-    B: {name:'Green Day',  sub:'Everything goes right',         goalMin:1920, expo:1.6, restMult:1.00, rest:seedRest(1.00)},
-    C: {name:'The Grind',  sub:'2023 fade, carried to finish',  goalMin:2070, expo:1.6, restMult:1.30, rest:seedRest(1.30)},
-    D: {name:'Survival',   sub:'Just beat the 36-hr cutoff',    goalMin:2130, expo:1.6, restMult:1.50, rest:seedRest(1.50)}
+    S32:{name:'32:00', sub:'Goal — hold a strong back half', goalMin:1920, expo:1.6, rest:DEFAULT_REST.slice()},
+    S33:{name:'33:00', sub:'Steady fade home',              goalMin:1980, expo:1.6, rest:DEFAULT_REST.slice()},
+    S34:{name:'34:00', sub:'Manage the low points',         goalMin:2040, expo:1.6, rest:DEFAULT_REST.slice()},
+    S35:{name:'35:00', sub:'Grind it out',                  goalMin:2100, expo:1.6, rest:DEFAULT_REST.slice()},
+    S36:{name:'36:00', sub:'Beat the 36-hr buckle cutoff',  goalMin:2160, expo:1.6, rest:DEFAULT_REST.slice()}
   }
 };
 const AS = () => state.scenarios[state.activeKey];      // active scenario
@@ -579,22 +559,26 @@ function baseAnchor(){
   const baseLeg = STATIONS.map(s => s.legMin==null ? 0 : s.legMin*scale);
   return {scale, baseLeg, baseMoving: baseLeg.reduce((a,b)=>a+b,0)};
 }
+/* MODEL: front (idx 0–10, through the mile-64 DNF) = Shannon's real 2023 GPS-verified
+   arrival elapsed, re-anchored to a 9:00 AM gun. From Olympian BACK the remaining time to
+   the scenario's finish goal is spread across the back legs by the manual's leg-shape. */
+const FRONT23 = [0,103,285,429,527,609,775,907,973,1051,1165];   // 2023 arrival elapsed, min
+const DNF_IDX = 10;                                              // Olympian Hall BACK, mi 63.9
 function computeS(sc){
-  const {scale, baseLeg, baseMoving} = baseAnchor();
-  const restTotal = sc.rest.reduce((a,b)=>a+b,0);
-  const extraTotal = (sc.goalMin - restTotal) - baseMoving;   // back-loaded slowdown (≥0 for slower goals)
-  const g = STATIONS.map(s => s.legMin==null ? 0 : s.legMin*Math.pow(s.mi/MI_MAX, sc.expo));
-  const gSum = g.reduce((a,b)=>a+b,0) || 1;
-  let elapsed=0, movingTotal=0;
+  const olyBack = FRONT23[DNF_IDX];
+  const backShape = STATIONS.reduce((a,s,i)=> i>DNF_IDX ? a+(s.legMin||0) : a, 0);  // 885
+  const remain = Math.max(0, sc.goalMin - olyBack);
+  let cumBack = 0, movingTotal = 0;
   const rows=[{...STATIONS[0], leg:0, legTime:0, arriveElapsed:0}];
   for(let i=1;i<STATIONS.length;i++){
-    const leg = STATIONS[i].mi - STATIONS[i-1].mi;
-    const legTime = baseLeg[i] + extraTotal*(g[i]/gSum);
-    movingTotal += legTime; elapsed += legTime;
-    rows.push({...STATIONS[i], leg, legTime, arriveElapsed:elapsed});
-    elapsed += sc.rest[i];
+    let arriveElapsed;
+    if(i<=DNF_IDX){ arriveElapsed = FRONT23[i]; }
+    else { cumBack += (STATIONS[i].legMin||0); arriveElapsed = olyBack + remain*(cumBack/backShape); }
+    const legTime = arriveElapsed - rows[i-1].arriveElapsed;
+    movingTotal += legTime;
+    rows.push({...STATIONS[i], leg:STATIONS[i].mi-STATIONS[i-1].mi, legTime, arriveElapsed});
   }
-  return {rows, movingTotal, restTotal, finish:rows[rows.length-1].arriveElapsed, movingScale:scale};
+  return {rows, movingTotal, restTotal:0, finish:rows[rows.length-1].arriveElapsed, movingScale:0};
 }
 function compute(){ return computeS(AS()); }            // active scenario
 function tightestCut(rows){                             // {margin, i} of the binding cutoff
@@ -611,7 +595,8 @@ function mileAtElapsed(rows, target){
 }
 function goalMinutes(){ return AS().goalMin; }          // single source of truth = active scenario
 function startMinutes(){
-  const [sh,sm]=(document.getElementById('start').value||'09:00').split(':').map(Number);
+  const el=document.getElementById('start');
+  const [sh,sm]=((el&&el.value)||'09:00').split(':').map(Number);
   return sh*60+sm;
 }
 
@@ -629,9 +614,7 @@ function buildTable(){
     if(r.pacer) badges+='<span class="badge pace">◇ PACER</span>';
     const access = badges? `<span class="access">${badges}</span>` : '';
     const terr = r.terr ? `<span class="terr"><span class="tt" style="background:${T[r.terr].c}"></span>${T[r.terr].l}</span>` : '';
-    const restCell = (i===0 || r.name==='FINISH')
-      ? `<span class="rest-dash">—</span>`
-      : `<input class="rest-in mono" type="number" min="0" max="120" step="1" value="${r.rest}" data-i="${i}" aria-label="Rest minutes at ${r.name}">`;
+    const restCell = `<span class="rest-dash">—</span>`;
     tr.innerHTML=`
       <td class="l"><span class="st-name">${r.name}${i>0?' ':''}${lap} ${access}</span></td>
       <td class="mono">${r.mi.toFixed(1)}</td>
@@ -954,7 +937,7 @@ function renderWeather(){
 }
 
 /* ---------------- Scenario bar + controls wiring ---------------- */
-const SCEN_KEYS=['A','B','C','D'];
+const SCEN_KEYS=['S32','S33','S34','S35','S36'];
 function renderScenarioBar(){
   const bar=document.getElementById('scenBar'); if(!bar) return;
   const startMin=startMinutes();
@@ -965,7 +948,7 @@ function renderScenarioBar(){
     const tcTxt = tc ? `${tc.margin<0?'−':'+'}${fmtHM(Math.abs(tc.margin))} · ${STATIONS[tc.i].short}` : '—';
     const tcCls = !tc?'g':(tc.margin<=15?'d':(tc.margin<75?'w':'g'));
     return `<button class="scen scen-${k}${k===state.activeKey?' active':''}" data-k="${k}">
-      <div class="scen-h"><span class="scen-k">${k}</span><span class="scen-nm">${sc.name}</span></div>
+      <div class="scen-h"><span class="scen-k">${k.replace('S','')}</span><span class="scen-nm">${sc.name}</span></div>
       <div class="scen-sub">${sc.sub}</div>
       <div class="scen-fin"><span class="v">${fc.t}</span><span class="u"> ${fc.day} · ${fmtHM(finish)}</span></div>
       <div class="scen-row"><span>Finish cushion</span><b class="${cush<0?'d':(cush<30?'w':'g')}">${cush<0?'−':'+'}${fmtHM(Math.abs(cush))}</b></div>
@@ -973,25 +956,12 @@ function renderScenarioBar(){
     </button>`;
   }).join('');
 }
-function syncControls(){
-  const sc=AS();
-  document.getElementById('gh').value=Math.floor(sc.goalMin/60);
-  document.getElementById('gm').value=sc.goalMin%60;
-  document.querySelectorAll('#fadeCtl button').forEach(b=>b.classList.toggle('active', parseFloat(b.dataset.e)===sc.expo));
-  document.querySelectorAll('.rest-in').forEach(inp=>{ inp.value=sc.rest[+inp.dataset.i]; });
-  const en=document.getElementById('editing-name'); if(en) en.textContent=`Plan ${state.activeKey} · ${sc.name}`;
-}
-function setActive(k){ if(!state.scenarios[k])return; state.activeKey=k; syncControls(); recompute(); }
-function readGoal(){ const h=parseInt(document.getElementById('gh').value)||0, m=parseInt(document.getElementById('gm').value)||0; AS().goalMin=Math.max(1080,Math.min(2400,h*60+m)); }
+function setActive(k){ if(!state.scenarios[k])return; state.activeKey=k; recompute(); }
 
-document.getElementById('scenBar').addEventListener('click',e=>{const b=e.target.closest('.scen'); if(b) setActive(b.dataset.k);});
-document.getElementById('fadeCtl').addEventListener('click',e=>{const b=e.target.closest('button'); if(!b)return; AS().expo=parseFloat(b.dataset.e); syncControls(); recompute();});
-['gh','gm'].forEach(id=>['input','change'].forEach(ev=>document.getElementById(id).addEventListener(ev,()=>{ readGoal(); recompute(); })));
-['input','change'].forEach(ev=>document.getElementById('start').addEventListener(ev,recompute));
-document.getElementById('resetRest').addEventListener('click',()=>{ AS().rest=seedRest(AS().restMult); syncControls(); recompute(); });
+const scenBar=document.getElementById('scenBar');
+if(scenBar) scenBar.addEventListener('click',e=>{const b=e.target.closest('.scen'); if(b) setActive(b.dataset.k);});
 
 buildTable();
-syncControls();
 recompute();
 drawHistChart();
 loadWeather();
