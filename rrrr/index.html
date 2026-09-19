@@ -187,6 +187,7 @@
   .elevd.up{color:var(--danger)}
   .elevd.dn{color:var(--good)}
   #tbody td[id^="pace-"]{font-weight:600}
+  #tbody td.p23{color:var(--ink-faint); font-weight:500}
   .arrive{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px}
   .arrive .dy{font-size:11px; color:var(--ink-faint); margin-left:4px}
   .elapsed{font-family:"IBM Plex Mono",monospace; color:var(--ink-soft)}
@@ -356,14 +357,14 @@
   <section class="controls" aria-label="Live position" style="grid-template-columns:auto auto 1fr; align-items:end; gap:14px">
     <div class="ctl">
       <label for="nowMi">Her mile now</label>
-      <input id="nowMi" class="mono" type="number" min="0" max="101.8" step="0.1" value="34.3" inputmode="decimal" aria-label="Current mile">
+      <input id="nowMi" class="mono" type="number" min="0" max="101.8" step="0.1" value="36.3" inputmode="decimal" aria-label="Current mile">
     </div>
     <div class="ctl">
       <label for="nowH">Elapsed (h:mm)</label>
       <div class="goal-in">
-        <input id="nowH" class="mono" type="number" min="0" max="36" step="1" value="10" aria-label="Elapsed hours" inputmode="numeric">
+        <input id="nowH" class="mono" type="number" min="0" max="36" step="1" value="11" aria-label="Elapsed hours" inputmode="numeric">
         <span class="colon">:</span>
-        <input id="nowM" class="mono" type="number" min="0" max="59" step="1" value="42" aria-label="Elapsed minutes" inputmode="numeric">
+        <input id="nowM" class="mono" type="number" min="0" max="59" step="1" value="22" aria-label="Elapsed minutes" inputmode="numeric">
       </div>
     </div>
     <div class="btn-line ctl-btns" style="margin-left:auto">
@@ -385,7 +386,7 @@
 
   <div class="sec-head">
     <h2>Aid-Station Splits</h2>
-    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> · <b style="color:var(--dusk)">◇ PACER</b> · <b>Pace /mi</b> = the min/mi she needs on that leg (elevation-adjusted) · rows past her mile are projected from her live pace</span>
+    <span class="hint"><b>Pace /mi</b> = her leg pace — <b>actual</b> through the last timed stop, projected after · <b>’23 /mi</b> = her actual 2023 pace · rows up to <b>◉ now</b> = real 2026 splits</span>
   </div>
   <div class="tbl-scroll">
     <table>
@@ -397,6 +398,7 @@
           <th class="l">Terrain · elev Δ</th>
           <th>Move</th>
           <th>Pace /mi</th>
+          <th>’23 /mi</th>
           <th>Arrive</th>
           <th>Elapsed</th>
           <th>1st Attempt ’23</th>
@@ -512,8 +514,8 @@ const SUNSET_SAT = 34*60+5;    // ~7:05 PM Sat
 const seedRest = mult => DEFAULT_REST.map(r=>Math.round(r*mult));
 const state = {
   activeKey: 'ON',
-  nowMi: 34.3,          // her live position (crew updates as the race goes)
-  nowElapsed: 642,      // minutes since the 9:00 AM gun at that position
+  nowMi: 36.3,          // her live position (crew updates as the race goes)
+  nowElapsed: 682,      // minutes since the 9:00 AM gun at that position
   scenarios: {          // fmax = how much she slows by the finish (fade), applied over the terrain-weighted legs ahead
     HOLD:{name:'Holding',   sub:'Keeps her current effort',                fmax:1.20},
     ON:  {name:'On pace',   sub:'Normal 100-mi fade — matches her trend',  fmax:1.50},
@@ -588,6 +590,10 @@ function baseAnchor(){
    the scenario's finish goal is spread across the back legs by the manual's leg-shape. */
 const FRONT23 = [0,103,285,429,527,609,775,907,973,1051,1165];   // 2023 arrival elapsed, min (reference only)
 const DNF_IDX = 10;                                              // Olympian Hall BACK, mi 63.9
+/* Her ACTUAL 2026 splits (official Aravaipa live timing), by station index — elapsed min from
+   the 9:00 AM gun. These override the estimate for stations she's already timed through. Add
+   more as the race posts them (Dry Lake, Olympian…) and everything up to that point is her real race. */
+const ACTUAL = {1:107, 2:288, 3:449, 4:548};   // Mt Werner · Fish Creek · Long Lake · Summit Lake
 /* LIVE ESTIMATOR — projects from her actual 2026 position.
    Each leg is weighted by the manual's Tortoise leg-minutes (legMin = terrain + distance
    difficulty, i.e. the climbs). We calibrate her pace-per-difficulty-unit (k) from where she
@@ -625,8 +631,14 @@ function computeS(sc){
   for(let i=1;i<STATIONS.length;i++){
     let arriveElapsed;
     const passed = STATIONS[i].mi <= nowMi;
-    if(passed){                                            // show passed stops on her real 2023 curve
-      arriveElapsed = (scale23 && STATIONS[i].mi<=STATIONS[DNF_IDX].mi) ? front23AtMile(STATIONS[i].mi)*scale23 : CUMLEG[i]*k;
+    if(passed){
+      if(ACTUAL[i]!=null){ arriveElapsed = ACTUAL[i]; }    // her real official split
+      else {
+        // no official split yet (e.g. Billy's): interpolate between the last real split and her live position
+        let la=0; for(const key in ACTUAL){ const ki=+key; if(ki<=i && ki>la) la=ki; }
+        if(la>0 && cumNow>CUMLEG[la]){ const f=Math.max(0,Math.min(1,(CUMLEG[i]-CUMLEG[la])/(cumNow-CUMLEG[la]))); arriveElapsed = ACTUAL[la] + f*(state.nowElapsed-ACTUAL[la]); }
+        else { arriveElapsed = (scale23 && STATIONS[i].mi<=STATIONS[DNF_IDX].mi) ? front23AtMile(STATIONS[i].mi)*scale23 : CUMLEG[i]*k; }
+      }
     } else {
       const frac = remainUnits>0 ? (CUMLEG[i]-cumNow)/remainUnits : 1;   // 0..1 into the remaining course
       const avgFade = 1 + (fmax-1)*Math.max(0,frac)/2;                    // fade grows toward the finish
@@ -671,6 +683,9 @@ function buildTable(){
     if(r.crew) badges+='<span class="badge crew">◆ CREW</span>';
     if(r.pacer) badges+='<span class="badge pace">◇ PACER</span>';
     const access = badges? `<span class="access">${badges}</span>` : '';
+    // her actual 2023 per-leg pace (front only; she DNF'd at mi 64)
+    let p23Txt='—';
+    if(i>0 && i<=DNF_IDX){ const legMi=STATIONS[i].mi-STATIONS[i-1].mi; if(legMi>0){ const s=Math.round(((FRONT23[i]-FRONT23[i-1])/legMi)*60); p23Txt=Math.floor(s/60)+':'+pad(s%60); } }
     const dEl = i===0 ? 0 : (STATIONS[i].elev - STATIONS[i-1].elev);
     const elTxt = i===0 ? '' : `<span class="elevd ${dEl>=0?'up':'dn'}">${dEl>=0?'▲':'▼'}${Math.abs(dEl).toLocaleString()} ft</span>`;
     const terr = (r.terr ? `<span class="terr"><span class="tt" style="background:${T[r.terr].c}"></span>${T[r.terr].l}</span> ` : '') + elTxt;
@@ -681,6 +696,7 @@ function buildTable(){
       <td class="l">${terr}</td>
       <td class="mono" id="move-${i}">—</td>
       <td class="mono" id="pace-${i}">—</td>
+      <td class="mono p23">${p23Txt}</td>
       <td id="arr-${i}"></td>
       <td class="elapsed" id="el-${i}"></td>
       <td id="hist-${i}"></td>
