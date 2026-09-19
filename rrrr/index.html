@@ -188,6 +188,23 @@
   .elevd.dn{color:var(--good)}
   #tbody td[id^="pace-"]{font-weight:600}
   #tbody td.p23{color:var(--ink-faint); font-weight:500}
+
+  /* segment pace targets */
+  .segt-wrap{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); padding:4px 4px 6px; overflow-x:auto}
+  .segt{width:100%; border-collapse:collapse; min-width:440px}
+  .segt th{font-family:"Oswald",sans-serif; text-transform:uppercase; letter-spacing:.05em; font-size:12px; color:var(--ink-faint); text-align:right; padding:11px 12px 8px; border-bottom:1.5px solid var(--line-strong)}
+  .segt th.l{text-align:left}
+  .segt th .sub{display:block; font-size:9px; font-weight:400; letter-spacing:.02em; margin-top:1px}
+  .segt th.g,.segt td.g{color:var(--good)}
+  .segt th.w,.segt td.w{color:var(--amber-ink)}
+  :root[data-theme="dark"] .segt th.w,:root[data-theme="dark"] .segt td.w,:root:not([data-theme="light"]) .segt th.w,:root:not([data-theme="light"]) .segt td.w{color:var(--amber)}
+  .segt th.d,.segt td.d{color:var(--danger)}
+  .segt td{padding:11px 12px; border-bottom:1px solid var(--line); text-align:right; font-family:"IBM Plex Mono",monospace; font-size:17px; font-weight:600}
+  .segt tr:last-child td{border-bottom:none}
+  .segt td.l{text-align:left; font-family:"Libre Franklin",sans-serif; font-weight:400}
+  .segt .segn{font-family:"Oswald",sans-serif; font-weight:600; font-size:15px; display:block; color:var(--ink)}
+  .segt .segw{font-size:11.5px; color:var(--ink-faint)}
+  .segt tr.seg-done td{opacity:.35}
   .arrive{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px}
   .arrive .dy{font-size:11px; color:var(--ink-faint); margin-left:4px}
   .elapsed{font-family:"IBM Plex Mono",monospace; color:var(--ink-soft)}
@@ -207,7 +224,8 @@
   tr.hist-dropped td{background:color-mix(in srgb, var(--danger-soft) 55%, transparent)}
   tr.done td{color:var(--ink-faint)}
   tr.done .st-name{color:var(--ink-soft)}
-  tr.now-row td{box-shadow:inset 3px 0 0 var(--amber); background:color-mix(in srgb, var(--amber-soft) 45%, transparent)}
+  tr.now-row td{background:color-mix(in srgb, var(--amber-soft) 45%, transparent)}
+  tr.now-row td:first-child{box-shadow:inset 3px 0 0 var(--amber)}
   tr.now-row .st-name::after{content:" ◉ now"; color:var(--amber-ink); font-family:"Oswald",sans-serif; font-weight:600; font-size:10px; letter-spacing:.04em}
   .hist{display:inline-flex; align-items:center; white-space:nowrap}
   .hist .he{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:13.5px}
@@ -383,6 +401,12 @@
   </section>
 
   <section class="tiles" id="tiles" aria-label="Summary"></section>
+
+  <div class="sec-head">
+    <h2>Pace Targets — What to Tell Her</h2>
+    <span class="hint">Even-effort pace to hold on each upcoming segment to hit each finish · locks in when you set her mile to the segment start</span>
+  </div>
+  <div class="segt-wrap"><div id="segTargets"></div></div>
 
   <div class="sec-head">
     <h2>Aid-Station Splits</h2>
@@ -777,6 +801,7 @@ function recompute(){
   let lastDone=-1; rows.forEach((r,i)=>{ if(r.done) lastDone=i; });
   if(lastDone>0){ const tr=document.getElementById('arr-'+lastDone)?.closest('tr'); if(tr) tr.classList.add('now-row'); }
 
+  renderSegTargets();
   drawProfile(rows, startMin);
   renderWeather();
 }
@@ -1041,6 +1066,30 @@ function renderScenarioBar(){
   }).join('');
 }
 function setActive(k){ if(!state.scenarios[k])return; state.activeKey=k; recompute(); }
+
+/* ---------------- Segment pace targets: what pace hits each finish ---------------- */
+const SEGS=[
+  {name:'Emerald Loop',      who:'Shannon — solo, night',  a:51.2, b:63.9},
+  {name:'Olympian → Summit', who:'Jason paces',            a:63.9, b:80.8},
+  {name:'Summit → Finish',   who:'bring it home',          a:80.8, b:101.8}
+];
+const TGT=[{h:'32:00',T:1920,cls:'g',lab:'to plan'},{h:'34:00',T:2040,cls:'w',lab:'safe'},{h:'35:30',T:2130,cls:'d',lab:'just finish'}];
+function fmtPace(mins){ if(!isFinite(mins)||mins<=0) return '—'; const s=Math.round(mins*60); return Math.floor(s/60)+':'+pad(s%60); }
+function renderSegTargets(){
+  const host=document.getElementById('segTargets'); if(!host) return;
+  const cumNow=cumLegAtMile(state.nowMi), remain=TOTAL_LEG-cumNow;
+  let html='<table class="segt"><thead><tr><th class="l">Segment</th>'+
+    TGT.map(t=>`<th class="${t.cls}">${t.h}<span class="sub">${t.lab}</span></th>`).join('')+'</tr></thead><tbody>';
+  SEGS.forEach(s=>{
+    const segLeg=cumLegAtMile(s.b)-cumLegAtMile(s.a), segMi=s.b-s.a;
+    const done=s.b<=state.nowMi;
+    html+=`<tr${done?' class="seg-done"':''}><td class="l"><span class="segn">${s.name}</span><span class="segw">${s.who} · ${segMi.toFixed(1)} mi</span></td>`;
+    TGT.forEach(t=>{ const kReq=remain>0?(t.T-state.nowElapsed)/remain:0; const pace=kReq*segLeg/segMi; html+=`<td class="${t.cls}">${done?'—':fmtPace(pace)+'<span style="font-size:10px;color:var(--ink-faint);font-weight:400">/mi</span>'}</td>`; });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  host.innerHTML=html;
+}
 
 const scenBar=document.getElementById('scenBar');
 if(scenBar) scenBar.addEventListener('click',e=>{const b=e.target.closest('.scen'); if(b) setActive(b.dataset.k);});
