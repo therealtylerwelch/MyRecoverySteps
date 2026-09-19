@@ -376,14 +376,14 @@
   <section class="controls" aria-label="Live position" style="grid-template-columns:auto auto 1fr; align-items:end; gap:14px">
     <div class="ctl">
       <label for="nowMi">Her mile now</label>
-      <input id="nowMi" class="mono" type="number" min="0" max="101.8" step="0.1" value="36.3" inputmode="decimal" aria-label="Current mile">
+      <input id="nowMi" class="mono" type="number" min="0" max="101.8" step="0.1" value="40.9" inputmode="decimal" aria-label="Current mile">
     </div>
     <div class="ctl">
       <label for="nowH">Elapsed (h:mm)</label>
       <div class="goal-in">
-        <input id="nowH" class="mono" type="number" min="0" max="36" step="1" value="11" aria-label="Elapsed hours" inputmode="numeric">
+        <input id="nowH" class="mono" type="number" min="0" max="36" step="1" value="12" aria-label="Elapsed hours" inputmode="numeric">
         <span class="colon">:</span>
-        <input id="nowM" class="mono" type="number" min="0" max="59" step="1" value="22" aria-label="Elapsed minutes" inputmode="numeric">
+        <input id="nowM" class="mono" type="number" min="0" max="59" step="1" value="45" aria-label="Elapsed minutes" inputmode="numeric">
       </div>
     </div>
     <div class="btn-line ctl-btns" style="margin-left:auto">
@@ -539,12 +539,12 @@ const SUNSET_SAT = 34*60+5;    // ~7:05 PM Sat
 const seedRest = mult => DEFAULT_REST.map(r=>Math.round(r*mult));
 const state = {
   activeKey: 'ON',
-  nowMi: 36.3,          // her live position (crew updates as the race goes)
-  nowElapsed: 682,      // minutes since the 9:00 AM gun at that position
+  nowMi: 40.9,          // her live position (crew updates as the race goes)
+  nowElapsed: 765,      // minutes since the 9:00 AM gun at that position
   scenarios: {          // fmax = how much she slows by the finish (fade), applied over the terrain-weighted legs ahead
-    HOLD:{name:'Holding',   sub:'Keeps her current effort',                fmax:1.20},
-    ON:  {name:'On pace',   sub:'Normal 100-mi fade — matches her trend',  fmax:1.50},
-    FADE:{name:'Cold fade', sub:'Night + the cold Summit climb bite',      fmax:1.85}
+    HOLD:{name:'Holding',   sub:'If she rallies — near a green day',       fmax:1.15},
+    ON:  {name:'On pace',   sub:'Her trend + normal night fade (tracker)', fmax:1.29},
+    FADE:{name:'Cold fade', sub:'Night + cold Summit climb bite her',      fmax:1.55}
   }
 };
 const AS = () => state.scenarios[state.activeKey];      // active scenario
