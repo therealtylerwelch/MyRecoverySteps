@@ -200,6 +200,10 @@
   tr.start td{color:var(--ink-soft)}
   .sun-emoji{font-size:12px}
   tr.hist-dropped td{background:color-mix(in srgb, var(--danger-soft) 55%, transparent)}
+  tr.done td{color:var(--ink-faint)}
+  tr.done .st-name{color:var(--ink-soft)}
+  tr.now-row td{box-shadow:inset 3px 0 0 var(--amber); background:color-mix(in srgb, var(--amber-soft) 45%, transparent)}
+  tr.now-row .st-name::after{content:" ◉ now"; color:var(--amber-ink); font-family:"Oswald",sans-serif; font-weight:600; font-size:10px; letter-spacing:.04em}
   .hist{display:inline-flex; align-items:center; white-space:nowrap}
   .hist .he{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:13.5px}
   .hist .hd{font-family:"IBM Plex Mono",monospace; font-size:11px; font-weight:600; padding:2px 6px; border-radius:999px; margin-left:6px}
@@ -341,19 +345,35 @@
 <div class="wrap">
 
   <div class="sec-head" style="margin-top:26px">
-    <h2>Race-Day Scenarios</h2>
-    <span class="hint">Her 2023 line to mile 64 · then 32–36 hr finishes · tap a card to switch</span>
+    <h2>Live Finish Estimator</h2>
+    <span class="hint">Built from her <b>actual 2026 pace</b> + the course climbs · tap a fade card to switch</span>
   </div>
-  <div class="scen-bar" id="scenBar" aria-label="Scenario switcher"></div>
 
-  <section class="controls" aria-label="Plan controls" style="grid-template-columns:1fr">
-    <div class="btn-line ctl-btns" style="margin-left:0">
-      <button class="btn solid" onclick="window.print()">⎙ Print / Save PDF</button>
+  <section class="controls" aria-label="Live position" style="grid-template-columns:auto auto 1fr; align-items:end; gap:14px">
+    <div class="ctl">
+      <label for="nowMi">Her mile now</label>
+      <input id="nowMi" class="mono" type="number" min="0" max="101.8" step="0.1" value="34.3" inputmode="decimal" aria-label="Current mile">
+    </div>
+    <div class="ctl">
+      <label for="nowH">Elapsed (h:mm)</label>
+      <div class="goal-in">
+        <input id="nowH" class="mono" type="number" min="0" max="36" step="1" value="10" aria-label="Elapsed hours" inputmode="numeric">
+        <span class="colon">:</span>
+        <input id="nowM" class="mono" type="number" min="0" max="59" step="1" value="42" aria-label="Elapsed minutes" inputmode="numeric">
+      </div>
+    </div>
+    <div class="btn-line ctl-btns" style="margin-left:auto">
+      <button class="btn solid" onclick="window.print()">⎙ Print</button>
       <a class="btn" href="https://myrecoverysteps.com/rrrr/RRR-crew-card.pdf" target="_blank" rel="noopener">⬇ Pocket card</a>
     </div>
+  </section>
+
+  <div class="scen-bar" id="scenBar" aria-label="Fade scenario switcher"></div>
+
+  <section class="controls" aria-label="How it works" style="grid-template-columns:1fr; margin-top:12px">
     <details class="ctl-about">
-      <summary class="c-head"><span class="c-t"><span class="about-title">How this plan is built</span><span class="c-sub">2023 GPS data + finish scenarios</span></span><span class="chev">▸</span></summary>
-      <p class="about-body">The front half — through the mile-64 point where Shannon stopped in 2023 — is her <b>real 2023 arrival times from her Garmin file</b>, shifted +1 hr onto this year's 9:00 AM gun (the 2023 gun was 8:00 AM). She beat every cutoff that year; the DNF was the cold on the Emerald loop, not the clock. From <b>Olympian Hall (mi 64)</b> home — miles she has never run — the cards spread the remaining time to a <b>32, 33, 34, 35, or 36-hour</b> finish across the back legs. Tap a card and the table, elevation profile, and weather all follow it.</p>
+      <summary class="c-head"><span class="c-t"><span class="about-title">How this estimate works</span><span class="c-sub">her 2026 pace + the course climbs</span></span><span class="chev">▸</span></summary>
+      <p class="about-body">Enter <b>where she is right now</b> — her current mile and race time (from the <a href="https://www.mytrailhead.tax/rrr2026/" target="_blank" rel="noopener">live tracker</a>). The estimator reads how fast she's moving relative to the course's <b>climb difficulty</b> (each leg weighted by the manual's Tortoise leg-times, so the big climbs cost more), then projects the rest of the race. The three cards are how much she <b>fades</b> from here: <b>Holding</b> keeps her current effort, <b>On pace</b> applies a normal 100-mile slowdown, <b>Cold fade</b> assumes the night and the cold Summit climb bite. Tap one and the table, elevation profile, and weather all follow it. Update her mile as the race goes and the whole thing re-fits to her real pace.</p>
     </details>
   </section>
 
@@ -361,7 +381,7 @@
 
   <div class="sec-head">
     <h2>Aid-Station Splits</h2>
-    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> = crew allowed · <b style="color:var(--dusk)">◇ PACER</b> = pacer allowed · front = 2023 line · back = selected finish</span>
+    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> = crew allowed · <b style="color:var(--dusk)">◇ PACER</b> = pacer allowed · rows past her mile are projected from her live pace</span>
   </div>
   <div class="tbl-scroll">
     <table>
@@ -487,13 +507,13 @@ const SUNSET_SAT = 34*60+5;    // ~7:05 PM Sat
    Fade presets: Fresh 1.2 · Moderate 1.6 · Heavy 2.4. */
 const seedRest = mult => DEFAULT_REST.map(r=>Math.round(r*mult));
 const state = {
-  activeKey: 'S32',                                      // opens on the 32:00 goal line
-  scenarios: {
-    S32:{name:'32:00', sub:'Goal — hold a strong back half', goalMin:1920, expo:1.6, rest:DEFAULT_REST.slice()},
-    S33:{name:'33:00', sub:'Steady fade home',              goalMin:1980, expo:1.6, rest:DEFAULT_REST.slice()},
-    S34:{name:'34:00', sub:'Manage the low points',         goalMin:2040, expo:1.6, rest:DEFAULT_REST.slice()},
-    S35:{name:'35:00', sub:'Grind it out',                  goalMin:2100, expo:1.6, rest:DEFAULT_REST.slice()},
-    S36:{name:'36:00', sub:'Beat the 36-hr buckle cutoff',  goalMin:2160, expo:1.6, rest:DEFAULT_REST.slice()}
+  activeKey: 'ON',
+  nowMi: 34.3,          // her live position (crew updates as the race goes)
+  nowElapsed: 642,      // minutes since the 9:00 AM gun at that position
+  scenarios: {          // fmax = how much she slows by the finish (fade), applied over the terrain-weighted legs ahead
+    HOLD:{name:'Holding',   sub:'Keeps her current effort',                fmax:1.20},
+    ON:  {name:'On pace',   sub:'Normal 100-mi fade — matches her trend',  fmax:1.50},
+    FADE:{name:'Cold fade', sub:'Night + the cold Summit climb bite',      fmax:1.85}
   }
 };
 const AS = () => state.scenarios[state.activeKey];      // active scenario
@@ -562,23 +582,57 @@ function baseAnchor(){
 /* MODEL: front (idx 0–10, through the mile-64 DNF) = Shannon's real 2023 GPS-verified
    arrival elapsed, re-anchored to a 9:00 AM gun. From Olympian BACK the remaining time to
    the scenario's finish goal is spread across the back legs by the manual's leg-shape. */
-const FRONT23 = [0,103,285,429,527,609,775,907,973,1051,1165];   // 2023 arrival elapsed, min
+const FRONT23 = [0,103,285,429,527,609,775,907,973,1051,1165];   // 2023 arrival elapsed, min (reference only)
 const DNF_IDX = 10;                                              // Olympian Hall BACK, mi 63.9
+/* LIVE ESTIMATOR — projects from her actual 2026 position.
+   Each leg is weighted by the manual's Tortoise leg-minutes (legMin = terrain + distance
+   difficulty, i.e. the climbs). We calibrate her pace-per-difficulty-unit (k) from where she
+   actually is right now, then project the legs ahead, slowing them by a fade that grows to
+   `fmax` at the finish (fatigue + the cold night/high-country climbs). Edit her mile/elapsed
+   as the race goes and the whole projection re-fits to her real pace. */
+const CUMLEG = (()=>{ let c=0; return STATIONS.map(s=>{ c+=(s.legMin||0); return c; }); })();
+const TOTAL_LEG = CUMLEG[CUMLEG.length-1];
+function cumLegAtMile(mi){
+  if(mi<=0) return 0;
+  for(let i=1;i<STATIONS.length;i++){
+    if(mi<=STATIONS[i].mi){ const a=STATIONS[i-1].mi,b=STATIONS[i].mi,f=(b-a)?(mi-a)/(b-a):0; return CUMLEG[i-1]+f*(CUMLEG[i]-CUMLEG[i-1]); }
+  }
+  return TOTAL_LEG;
+}
+/* Her real 2023 leg shape (front only) — used to DISPLAY the stations she's already passed
+   on her true pacing curve, scaled to where she actually is now. Projection ahead still uses
+   the terrain (legMin) weighting so the finish math stays on one consistent scale. */
+const MI23 = STATIONS.slice(0, DNF_IDX+1).map(s=>s.mi);
+function front23AtMile(mi){
+  if(mi<=0) return 0;
+  for(let i=1;i<=DNF_IDX;i++){ if(mi<=MI23[i]){ const f=(mi-MI23[i-1])/(MI23[i]-MI23[i-1]); return FRONT23[i-1]+f*(FRONT23[i]-FRONT23[i-1]); } }
+  return FRONT23[DNF_IDX];
+}
 function computeS(sc){
-  const olyBack = FRONT23[DNF_IDX];
-  const backShape = STATIONS.reduce((a,s,i)=> i>DNF_IDX ? a+(s.legMin||0) : a, 0);  // 885
-  const remain = Math.max(0, sc.goalMin - olyBack);
-  let cumBack = 0, movingTotal = 0;
-  const rows=[{...STATIONS[0], leg:0, legTime:0, arriveElapsed:0}];
+  const nowMi = Math.max(0.1, Math.min(101.8, state.nowMi));
+  const cumNow = cumLegAtMile(nowMi) || 1;
+  const k = state.nowElapsed / cumNow;                     // her min per difficulty-unit, to now
+  const fmax = sc.fmax || 1.0;
+  const remainUnits = TOTAL_LEG - cumNow;
+  const f23Now = nowMi<=STATIONS[DNF_IDX].mi ? front23AtMile(nowMi) : 0;   // her 2023 shape at her mile
+  const scale23 = f23Now>0 ? state.nowElapsed/f23Now : 0;                  // fit her 2023 curve to now
+  let movingTotal = 0;
+  const rows=[{...STATIONS[0], leg:0, legTime:0, arriveElapsed:0, done:nowMi>=0}];
   for(let i=1;i<STATIONS.length;i++){
     let arriveElapsed;
-    if(i<=DNF_IDX){ arriveElapsed = FRONT23[i]; }
-    else { cumBack += (STATIONS[i].legMin||0); arriveElapsed = olyBack + remain*(cumBack/backShape); }
+    const passed = STATIONS[i].mi <= nowMi;
+    if(passed){                                            // show passed stops on her real 2023 curve
+      arriveElapsed = (scale23 && STATIONS[i].mi<=STATIONS[DNF_IDX].mi) ? front23AtMile(STATIONS[i].mi)*scale23 : CUMLEG[i]*k;
+    } else {
+      const frac = remainUnits>0 ? (CUMLEG[i]-cumNow)/remainUnits : 1;   // 0..1 into the remaining course
+      const avgFade = 1 + (fmax-1)*Math.max(0,frac)/2;                    // fade grows toward the finish
+      arriveElapsed = state.nowElapsed + (CUMLEG[i]-cumNow)*k*avgFade;
+    }
     const legTime = arriveElapsed - rows[i-1].arriveElapsed;
     movingTotal += legTime;
-    rows.push({...STATIONS[i], leg:STATIONS[i].mi-STATIONS[i-1].mi, legTime, arriveElapsed});
+    rows.push({...STATIONS[i], leg:STATIONS[i].mi-STATIONS[i-1].mi, legTime, arriveElapsed, done:passed});
   }
-  return {rows, movingTotal, restTotal:0, finish:rows[rows.length-1].arriveElapsed, movingScale:0};
+  return {rows, movingTotal, restTotal:0, finish:rows[rows.length-1].arriveElapsed, movingScale:0, nowMi};
 }
 function compute(){ return computeS(AS()); }            // active scenario
 function tightestCut(rows){                             // {margin, i} of the binding cutoff
@@ -593,7 +647,7 @@ function mileAtElapsed(rows, target){
   }
   return null;
 }
-function goalMinutes(){ return AS().goalMin; }          // single source of truth = active scenario
+function goalMinutes(){ return compute().finish; }      // projected finish of the active estimate
 function startMinutes(){
   const el=document.getElementById('start');
   const [sh,sm]=((el&&el.value)||'09:00').split(':').map(Number);
@@ -639,26 +693,25 @@ function buildTable(){
 
 /* ---------------- Recompute: update dynamic cells, tiles, profile ---------------- */
 function recompute(){
-  const sc=AS(); const goalMin=sc.goalMin, startMin=startMinutes();
-  const {rows, movingTotal, restTotal, finish} = computeS(sc);
+  const sc=AS(); const startMin=startMinutes();
+  const {rows, movingTotal, restTotal, finish, nowMi} = computeS(sc);
   renderScenarioBar();
 
-  document.getElementById('rr-goal').textContent = fmtHM(goalMin);
+  const rg=document.getElementById('rr-goal'); if(rg) rg.textContent = sc.name+' est.';
   const fc=fmtClock(finish, startMin);
-  document.getElementById('rr-finish').textContent = fc.day+' '+fc.t;
+  const rf=document.getElementById('rr-finish'); if(rf) rf.textContent = fc.day+' '+fc.t;
 
   // tiles
   const avgPace = movingTotal/MI_MAX;
   const paceStr = Math.floor(avgPace)+':'+pad(Math.round((avgPace%1)*60));
   const nightHrs = Math.max(0,(Math.min(SUNRISE_SAT,finish)-SUNSET_FRI))/60;
   const cushion = 2160 - finish;                 // vs 36:00 (9 PM Sat) final cutoff
-  const delta = finish - goalMin;
-  const deltaTxt = Math.abs(delta)<1 ? `on the ${sc.name} target`
-        : (delta>0 ? `<span class="over">+${fmtHM(delta)} over target</span>` : `<span class="under">${fmtHM(delta)} under target</span>`);
+  const cushTxt = cushion>=0 ? `<span class="under">+${fmtHM(cushion)} on the 9 PM cutoff</span>` : `<span class="over">−${fmtHM(-cushion)} past the cutoff</span>`;
+  const fromClk = fmtClock(state.nowElapsed, startMin);
   document.getElementById('tiles').innerHTML = `
-    <div class="tile lead"><div class="t-lab">Projected finish</div><div class="t-val">${fc.t}<span class="u"> ${fc.day}</span></div><div class="t-sub">total ${fmtHM(finish)} · ${deltaTxt}</div></div>
-    <div class="tile"><div class="t-lab">Avg moving pace</div><div class="t-val">${paceStr}<span class="u"> /mi</span></div><div class="t-sub">${fmtHM(movingTotal)} moving</div></div>
-    <div class="tile"><div class="t-lab">Time resting</div><div class="t-val">${restTotal}<span class="u"> min</span></div><div class="t-sub">across 15 aid stations</div></div>
+    <div class="tile lead"><div class="t-lab">Projected finish · ${sc.name}</div><div class="t-val">${fc.t}<span class="u"> ${fc.day}</span></div><div class="t-sub">total ${fmtHM(finish)} · ${cushTxt}</div></div>
+    <div class="tile"><div class="t-lab">Tracking from</div><div class="t-val">mi ${nowMi.toFixed(1)}</div><div class="t-sub">at ${fmtHM(state.nowElapsed)} · ${fromClk.t} ${fromClk.day}</div></div>
+    <div class="tile"><div class="t-lab">Avg pace (proj.)</div><div class="t-val">${paceStr}<span class="u"> /mi</span></div><div class="t-sub">${fmtHM(movingTotal)} total moving</div></div>
     <div class="tile"><div class="t-lab">Running in the dark</div><div class="t-val">${nightHrs.toFixed(1)}<span class="u"> hrs</span></div><div class="t-sub">sunset 7:07p → sunrise 6:47a</div></div>
     <div class="tile"><div class="t-lab">Cushion at finish</div><div class="t-val">${cushion>=0?'+':''}${fmtHM(cushion)}</div><div class="t-sub">before the 9 PM (36 hr) cutoff</div></div>
   `;
@@ -691,7 +744,12 @@ function recompute(){
       buf=`<span class="buf ${cls}">${margin<0?'−':'+'}${fmtHM(Math.abs(margin))}</span>`;
     }
     document.getElementById('buf-'+i).innerHTML=buf;
+    const tr=document.getElementById('arr-'+i).closest('tr');
+    if(tr){ tr.classList.toggle('done', !!r.done); tr.classList.remove('now-row'); }
   });
+  // mark her current position = last passed station
+  let lastDone=-1; rows.forEach((r,i)=>{ if(r.done) lastDone=i; });
+  if(lastDone>0){ const tr=document.getElementById('arr-'+lastDone)?.closest('tr'); if(tr) tr.classList.add('now-row'); }
 
   drawProfile(rows, startMin);
   renderWeather();
@@ -937,7 +995,7 @@ function renderWeather(){
 }
 
 /* ---------------- Scenario bar + controls wiring ---------------- */
-const SCEN_KEYS=['S32','S33','S34','S35','S36'];
+const SCEN_KEYS=['HOLD','ON','FADE'];
 function renderScenarioBar(){
   const bar=document.getElementById('scenBar'); if(!bar) return;
   const startMin=startMinutes();
@@ -948,7 +1006,7 @@ function renderScenarioBar(){
     const tcTxt = tc ? `${tc.margin<0?'−':'+'}${fmtHM(Math.abs(tc.margin))} · ${STATIONS[tc.i].short}` : '—';
     const tcCls = !tc?'g':(tc.margin<=15?'d':(tc.margin<75?'w':'g'));
     return `<button class="scen scen-${k}${k===state.activeKey?' active':''}" data-k="${k}">
-      <div class="scen-h"><span class="scen-k">${k.replace('S','')}</span><span class="scen-nm">${sc.name}</span></div>
+      <div class="scen-h"><span class="scen-nm">${sc.name}</span></div>
       <div class="scen-sub">${sc.sub}</div>
       <div class="scen-fin"><span class="v">${fc.t}</span><span class="u"> ${fc.day} · ${fmtHM(finish)}</span></div>
       <div class="scen-row"><span>Finish cushion</span><b class="${cush<0?'d':(cush<30?'w':'g')}">${cush<0?'−':'+'}${fmtHM(Math.abs(cush))}</b></div>
@@ -960,6 +1018,17 @@ function setActive(k){ if(!state.scenarios[k])return; state.activeKey=k; recompu
 
 const scenBar=document.getElementById('scenBar');
 if(scenBar) scenBar.addEventListener('click',e=>{const b=e.target.closest('.scen'); if(b) setActive(b.dataset.k);});
+
+function readNow(){
+  const miEl=document.getElementById('nowMi'); const mi=parseFloat(miEl&&miEl.value);
+  if(!isNaN(mi)) state.nowMi=Math.max(0.1,Math.min(101.8,mi));
+  const h=parseInt((document.getElementById('nowH')||{}).value)||0;
+  const m=parseInt((document.getElementById('nowM')||{}).value)||0;
+  state.nowElapsed=Math.max(1,h*60+m);
+}
+['nowMi','nowH','nowM'].forEach(id=>['input','change'].forEach(ev=>{
+  const el=document.getElementById(id); if(el) el.addEventListener(ev,()=>{ readNow(); recompute(); });
+}));
 
 buildTable();
 recompute();
