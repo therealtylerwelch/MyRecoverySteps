@@ -183,6 +183,10 @@
   .badge.pace{background:var(--dusk-soft); color:var(--dusk)}
   .terr{font-size:12px; color:var(--ink-soft)}
   .terr .tt{display:inline-block; width:8px;height:8px;border-radius:2px;margin-right:6px}
+  .elevd{font-family:"IBM Plex Mono",monospace; font-size:10.5px; font-weight:600; white-space:nowrap}
+  .elevd.up{color:var(--danger)}
+  .elevd.dn{color:var(--good)}
+  #tbody td[id^="pace-"]{font-weight:600}
   .arrive{font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px}
   .arrive .dy{font-size:11px; color:var(--ink-faint); margin-left:4px}
   .elapsed{font-family:"IBM Plex Mono",monospace; color:var(--ink-soft)}
@@ -381,7 +385,7 @@
 
   <div class="sec-head">
     <h2>Aid-Station Splits</h2>
-    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> = crew allowed · <b style="color:var(--dusk)">◇ PACER</b> = pacer allowed · rows past her mile are projected from her live pace</span>
+    <span class="hint"><b style="color:var(--amber-ink)">◆ CREW</b> · <b style="color:var(--dusk)">◇ PACER</b> · <b>Pace /mi</b> = the min/mi she needs on that leg (elevation-adjusted) · rows past her mile are projected from her live pace</span>
   </div>
   <div class="tbl-scroll">
     <table>
@@ -390,9 +394,9 @@
           <th class="l">Aid Station</th>
           <th>Mile</th>
           <th>Leg</th>
-          <th class="l">Terrain</th>
+          <th class="l">Terrain · elev Δ</th>
           <th>Move</th>
-          <th>Rest (min)</th>
+          <th>Pace /mi</th>
           <th>Arrive</th>
           <th>Elapsed</th>
           <th>1st Attempt ’23</th>
@@ -667,15 +671,16 @@ function buildTable(){
     if(r.crew) badges+='<span class="badge crew">◆ CREW</span>';
     if(r.pacer) badges+='<span class="badge pace">◇ PACER</span>';
     const access = badges? `<span class="access">${badges}</span>` : '';
-    const terr = r.terr ? `<span class="terr"><span class="tt" style="background:${T[r.terr].c}"></span>${T[r.terr].l}</span>` : '';
-    const restCell = `<span class="rest-dash">—</span>`;
+    const dEl = i===0 ? 0 : (STATIONS[i].elev - STATIONS[i-1].elev);
+    const elTxt = i===0 ? '' : `<span class="elevd ${dEl>=0?'up':'dn'}">${dEl>=0?'▲':'▼'}${Math.abs(dEl).toLocaleString()} ft</span>`;
+    const terr = (r.terr ? `<span class="terr"><span class="tt" style="background:${T[r.terr].c}"></span>${T[r.terr].l}</span> ` : '') + elTxt;
     tr.innerHTML=`
       <td class="l"><span class="st-name">${r.name}${i>0?' ':''}${lap} ${access}</span></td>
       <td class="mono">${r.mi.toFixed(1)}</td>
       <td class="mono">${i===0?'—':(STATIONS[i].mi-STATIONS[i-1].mi).toFixed(1)}</td>
       <td class="l">${terr}</td>
       <td class="mono" id="move-${i}">—</td>
-      <td>${restCell}</td>
+      <td class="mono" id="pace-${i}">—</td>
       <td id="arr-${i}"></td>
       <td class="elapsed" id="el-${i}"></td>
       <td id="hist-${i}"></td>
@@ -718,7 +723,12 @@ function recompute(){
 
   // table cells
   rows.forEach((r,i)=>{
-    if(i>0) document.getElementById('move-'+i).textContent = fmtHM(r.legTime);
+    if(i>0){
+      document.getElementById('move-'+i).textContent = fmtHM(r.legTime);
+      const legMi = STATIONS[i].mi - STATIONS[i-1].mi;
+      const pc = document.getElementById('pace-'+i);
+      if(pc){ if(legMi>0){ const s=Math.round((r.legTime/legMi)*60); pc.textContent = Math.floor(s/60)+':'+pad(s%60); } else pc.textContent='—'; }
+    }
     const clock=fmtClock(r.arriveElapsed, startMin);
     const night=isNight(r.arriveElapsed);
     const sun = i===0 ? '' : `<span class="sun-emoji">${night?'🌙':'☀️'}</span>`;
